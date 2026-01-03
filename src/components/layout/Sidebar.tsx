@@ -1,4 +1,5 @@
 import { Plus, GripVertical, Trash2 } from 'lucide-react';
+import { ProjectManager } from '../projects/ProjectManager';
 import {
   DndContext,
   closestCenter,
@@ -125,6 +126,10 @@ export function Sidebar() {
 
   return (
     <aside className="w-72 h-full bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
+      <div className="p-4 border-b border-gray-200">
+        <ProjectManager />
+      </div>
+
       <div className="p-4 border-b border-gray-200">
         <label className="block text-xs font-medium text-gray-500 mb-2">
           Template Général
