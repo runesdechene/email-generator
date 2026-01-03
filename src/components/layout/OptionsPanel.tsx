@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import { X, Download, Loader2 } from 'lucide-react';
-import { toJpeg } from 'html-to-image';
+import { Download, Loader2, X } from 'lucide-react';
 import { useEmailStore } from '../../store/emailStore';
+import { useTemplates } from '../../hooks/useSupabase';
+import { exportSectionWithBackground } from '../../utils/exportWithBackground';
 
 interface OptionsPanelProps {
   sectionsRef: React.RefObject<Map<string, HTMLDivElement>>;
 }
 
 export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
-  const { sections, selectedSectionId, selectSection, updateSection } = useEmailStore();
+  const { selectedSectionId, sections, currentTemplateId, selectSection, updateSection } = useEmailStore();
+  const { templates } = useTemplates();
   const [exporting, setExporting] = useState(false);
   
   const selectedSection = sections.find((s) => s.id === selectedSectionId);
@@ -81,17 +83,17 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
 
             try {
               setExporting(true);
-              const dataUrl = await toJpeg(element, { 
-                quality: 0.95,
-                pixelRatio: 2,
-              });
+              
+              const currentTemplate = templates.find(t => t.id === currentTemplateId);
+              const backgroundImageUrl = currentTemplate?.backgroundImage;
               
               const fileName = `${selectedSection.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()}-section-${selectedSection.order + 1}.jpg`;
               
-              const link = document.createElement('a');
-              link.download = fileName;
-              link.href = dataUrl;
-              link.click();
+              await exportSectionWithBackground({
+                element,
+                backgroundImageUrl,
+                fileName,
+              });
               
               alert('✅ Section exportée avec succès !');
             } catch (error) {
