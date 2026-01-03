@@ -12,11 +12,11 @@ import {
   type DocumentData
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import type { EmailProject, SectionTemplateData } from '../types/firebase';
+import type { EmailProject, GlobalStyleTemplate } from '../types/firebase';
 
 const COLLECTIONS = {
   PROJECTS: 'email-projects',
-  TEMPLATES: 'section-templates',
+  TEMPLATES: 'global-style-templates',
 };
 
 export class FirebaseService {
@@ -71,7 +71,7 @@ export class FirebaseService {
     await deleteDoc(docRef);
   }
 
-  static async getTemplates(): Promise<SectionTemplateData[]> {
+  static async getTemplates(): Promise<GlobalStyleTemplate[]> {
     const q = query(
       collection(db, COLLECTIONS.TEMPLATES),
       orderBy('name', 'asc')
@@ -82,10 +82,10 @@ export class FirebaseService {
       ...doc.data(),
       createdAt: (doc.data().createdAt as Timestamp).toDate(),
       updatedAt: (doc.data().updatedAt as Timestamp).toDate(),
-    })) as SectionTemplateData[];
+    })) as GlobalStyleTemplate[];
   }
 
-  static async createTemplate(template: Omit<SectionTemplateData, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  static async createTemplate(template: Omit<GlobalStyleTemplate, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     const now = Timestamp.now();
     const docRef = await addDoc(collection(db, COLLECTIONS.TEMPLATES), {
       ...template,
@@ -95,7 +95,7 @@ export class FirebaseService {
     return docRef.id;
   }
 
-  static async updateTemplate(id: string, updates: Partial<Omit<SectionTemplateData, 'id' | 'createdAt'>>): Promise<void> {
+  static async updateTemplate(id: string, updates: Partial<Omit<GlobalStyleTemplate, 'id' | 'createdAt'>>): Promise<void> {
     const docRef = doc(db, COLLECTIONS.TEMPLATES, id);
     await updateDoc(docRef, {
       ...updates,

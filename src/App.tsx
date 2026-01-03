@@ -4,12 +4,18 @@ import { Navbar } from './components/layout/Navbar';
 import { Sidebar } from './components/layout/Sidebar';
 import { OptionsPanel } from './components/layout/OptionsPanel';
 import { EmailPreview } from './components/editor/EmailPreview';
+import { TemplateList } from './components/settings/TemplateList';
+import { TemplateEditor } from './components/settings/TemplateEditor';
 import { useEmailStore } from './store/emailStore';
+import { useTemplates } from './hooks/useFirebase';
+import type { GlobalStyleTemplate } from './types/firebase';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<'editor' | 'settings'>('editor');
+  const [editingTemplate, setEditingTemplate] = useState<GlobalStyleTemplate | null>(null);
   const sectionsRef = useRef<Map<string, HTMLDivElement>>(new Map());
   const { sections } = useEmailStore();
+  const { updateTemplate } = useTemplates();
 
   const handleExport = async () => {
     if (sections.length === 0) {
@@ -57,14 +63,22 @@ function App() {
         </>
       ) : (
         <div className="flex-1 p-8 overflow-y-auto">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">Réglages</h1>
-            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-              <p className="text-gray-500">
-                Les réglages de la feuille de style globale seront disponibles ici.
-              </p>
+          {editingTemplate ? (
+            <TemplateEditor
+              template={editingTemplate}
+              onSave={async (updates) => {
+                await updateTemplate(editingTemplate.id, updates);
+                setEditingTemplate(null);
+              }}
+              onBack={() => setEditingTemplate(null)}
+            />
+          ) : (
+            <div className="max-w-6xl mx-auto space-y-6">
+              <h1 className="text-2xl font-bold text-gray-900">Réglages</h1>
+              
+              <TemplateList onSelectTemplate={setEditingTemplate} />
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>

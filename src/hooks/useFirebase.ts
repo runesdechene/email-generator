@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FirebaseService } from '../services/firebase.service';
-import type { EmailProject, SectionTemplateData } from '../types/firebase';
+import type { EmailProject, GlobalStyleTemplate } from '../types/firebase';
 
 export function useProjects() {
   const [projects, setProjects] = useState<EmailProject[]>([]);
@@ -68,7 +68,7 @@ export function useProjects() {
 }
 
 export function useTemplates() {
-  const [templates, setTemplates] = useState<SectionTemplateData[]>([]);
+  const [templates, setTemplates] = useState<GlobalStyleTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -90,7 +90,7 @@ export function useTemplates() {
     loadTemplates();
   }, []);
 
-  const createTemplate = async (template: Omit<SectionTemplateData, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const createTemplate = async (template: Omit<GlobalStyleTemplate, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
       const id = await FirebaseService.createTemplate(template);
       await loadTemplates();
@@ -101,7 +101,7 @@ export function useTemplates() {
     }
   };
 
-  const updateTemplate = async (id: string, updates: Partial<Omit<SectionTemplateData, 'id' | 'createdAt'>>) => {
+  const updateTemplate = async (id: string, updates: Partial<Omit<GlobalStyleTemplate, 'id' | 'createdAt'>>) => {
     try {
       await FirebaseService.updateTemplate(id, updates);
       await loadTemplates();

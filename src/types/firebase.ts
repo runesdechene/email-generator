@@ -14,13 +14,28 @@ export interface EmailProject {
   updatedAt: Date;
 }
 
-export interface SectionTemplateData {
+export interface GlobalStyleTemplate {
   id: string;
   name: string;
-  description: string;
-  category: 'hero' | 'text' | 'image' | 'cta' | 'product' | 'footer' | 'custom';
-  thumbnail?: string;
-  defaultContent: Record<string, unknown>;
+  description?: string;
+  fonts: {
+    title: string;
+    paragraph: string;
+  };
+  colors: {
+    primary: string;
+    secondary: string;
+    background: string;
+    text: string;
+    accent: string;
+  };
+  buttonStyle: {
+    borderRadius: string;
+    backgroundColor: string;
+    textColor: string;
+    hoverBackgroundColor: string;
+    padding: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }

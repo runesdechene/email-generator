@@ -1,11 +1,10 @@
 import { create } from 'zustand';
-import type { EmailSection, EmailTemplate } from '../types';
+import type { EmailSection } from '../types';
 
 interface EmailStore {
   sections: EmailSection[];
   selectedSectionId: string | null;
   currentTemplateId: string | null;
-  templates: EmailTemplate[];
   
   addSection: (section: EmailSection) => void;
   removeSection: (id: string) => void;
@@ -19,11 +18,6 @@ export const useEmailStore = create<EmailStore>((set) => ({
   sections: [],
   selectedSectionId: null,
   currentTemplateId: null,
-  templates: [
-    { id: 'default', name: 'Template par défaut', description: 'Template standard' },
-    { id: 'promo', name: 'Promotion', description: 'Template promotionnel' },
-    { id: 'newsletter', name: 'Newsletter', description: 'Template newsletter' },
-  ],
 
   addSection: (section) =>
     set((state) => ({

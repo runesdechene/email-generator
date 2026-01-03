@@ -1,5 +1,6 @@
 import { Plus, GripVertical, Trash2 } from 'lucide-react';
 import { ProjectManager } from '../projects/ProjectManager';
+import { useTemplates } from '../../hooks/useFirebase';
 import {
   DndContext,
   closestCenter,
@@ -83,13 +84,14 @@ export function Sidebar() {
     sections, 
     selectedSectionId, 
     currentTemplateId,
-    templates,
     selectSection, 
     removeSection, 
     reorderSections,
     addSection,
     setCurrentTemplate,
   } = useEmailStore();
+
+  const { templates, loading: templatesLoading } = useTemplates();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -138,8 +140,11 @@ export function Sidebar() {
           value={currentTemplateId || ''}
           onChange={(e) => setCurrentTemplate(e.target.value)}
           className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+          disabled={templatesLoading}
         >
-          <option value="">Sélectionner un template</option>
+          <option value="">
+            {templatesLoading ? 'Chargement...' : 'Sélectionner un template'}
+          </option>
           {templates.map((template) => (
             <option key={template.id} value={template.id}>
               {template.name}
