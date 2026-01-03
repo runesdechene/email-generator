@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown, Loader2 } from 'lucide-react';
-import { useProjects } from '../../hooks/useFirebase';
-import { useTemplates } from '../../hooks/useFirebase';
+import { useProjects, useTemplates } from '../../hooks/useSupabase';
 import { useEmailStore } from '../../store/emailStore';
 import type { EmailProject } from '../../types/firebase';
 

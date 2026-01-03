@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import { toPng } from 'html-to-image';
 import { Navbar } from './components/layout/Navbar';
 import { Sidebar } from './components/layout/Sidebar';
 import { OptionsPanel } from './components/layout/OptionsPanel';
@@ -7,38 +6,15 @@ import { EmailPreview } from './components/editor/EmailPreview';
 import { EditorNavbar } from './components/editor/EditorNavbar';
 import { TemplateList } from './components/settings/TemplateList';
 import { TemplateEditor } from './components/settings/TemplateEditor';
-import { useEmailStore } from './store/emailStore';
-import { useTemplates } from './hooks/useFirebase';
+import { useTemplates } from './hooks/useSupabase';
 import type { GlobalStyleTemplate } from './types/firebase';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<'editor' | 'settings'>('editor');
   const [editingTemplate, setEditingTemplate] = useState<GlobalStyleTemplate | null>(null);
   const sectionsRef = useRef<Map<string, HTMLDivElement>>(new Map());
-  const { sections } = useEmailStore();
   const { updateTemplate } = useTemplates();
 
-  const handleExport = async () => {
-    if (sections.length === 0) {
-      alert('Aucune section à exporter');
-      return;
-    }
-
-    for (const section of sections) {
-      const element = sectionsRef.current.get(section.id);
-      if (element) {
-        try {
-          const dataUrl = await toPng(element, { quality: 0.95 });
-          const link = document.createElement('a');
-          link.download = `${section.name.replace(/\s+/g, '-').toLowerCase()}-${section.order + 1}.png`;
-          link.href = dataUrl;
-          link.click();
-        } catch (error) {
-          console.error(`Erreur export section ${section.name}:`, error);
-        }
-      }
-    }
-  };
 
   return (
     <div className="w-screen h-screen flex bg-gray-100 overflow-hidden">
@@ -46,7 +22,6 @@ function App() {
       <Navbar
         currentPage={currentPage}
         onPageChange={setCurrentPage}
-        onExport={handleExport}
       />
 
       {currentPage === 'editor' ? (
@@ -63,7 +38,7 @@ function App() {
           </div>
 
           {/* 4. Options Panel droite - largeur fixe, conditionnel */}
-          <OptionsPanel />
+          <OptionsPanel sectionsRef={sectionsRef} />
         </>
       ) : (
         <div className="flex-1 p-8 overflow-y-auto">

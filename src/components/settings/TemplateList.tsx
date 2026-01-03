@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, Trash2, Loader2, ChevronRight } from 'lucide-react';
-import { useTemplates } from '../../hooks/useFirebase';
+import { useTemplates } from '../../hooks/useSupabase';
 import type { GlobalStyleTemplate } from '../../types/firebase';
 
 interface TemplateListProps {
@@ -24,6 +24,7 @@ export function TemplateList({ onSelectTemplate }: TemplateListProps) {
       await createTemplate({
         name: templateName,
         description: '',
+        backgroundImage: '',
         fonts: {
           title: 'Arial, sans-serif',
           paragraph: 'Arial, sans-serif',

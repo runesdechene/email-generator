@@ -18,6 +18,7 @@ export interface GlobalStyleTemplate {
   id: string;
   name: string;
   description?: string;
+  backgroundImage?: string;
   fonts: {
     title: string;
     paragraph: string;

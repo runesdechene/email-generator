@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Save, FolderOpen, Loader2, Trash2 } from 'lucide-react';
-import { useProjects } from '../../hooks/useFirebase';
+import { useProjects } from '../../hooks/useSupabase';
 import { useEmailStore } from '../../store/emailStore';
 import type { EmailProject } from '../../types/firebase';
 
@@ -127,8 +127,14 @@ export function ProjectManager() {
       </button>
 
       {showSaveDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl">
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          onClick={() => setShowSaveDialog(false)}
+        >
+          <div 
+            className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h2 className="text-xl font-bold text-gray-900 mb-4">Sauvegarder le projet</h2>
             
             <div className="space-y-4">

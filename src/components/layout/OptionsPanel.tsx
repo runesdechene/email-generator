@@ -1,8 +1,15 @@
-import { X } from 'lucide-react';
+import { useState } from 'react';
+import { X, Download, Loader2 } from 'lucide-react';
+import { toJpeg } from 'html-to-image';
 import { useEmailStore } from '../../store/emailStore';
 
-export function OptionsPanel() {
+interface OptionsPanelProps {
+  sectionsRef: React.RefObject<Map<string, HTMLDivElement>>;
+}
+
+export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
   const { sections, selectedSectionId, selectSection, updateSection } = useEmailStore();
+  const [exporting, setExporting] = useState(false);
   
   const selectedSection = sections.find((s) => s.id === selectedSectionId);
 
@@ -59,6 +66,56 @@ export function OptionsPanel() {
             Les options de contenu dépendront du template sélectionné.
           </p>
         </div>
+      </div>
+
+      <div className="p-4 border-t border-gray-200">
+        <button
+          onClick={async () => {
+            if (!selectedSection) return;
+            
+            const element = sectionsRef.current?.get(selectedSection.id);
+            if (!element) {
+              alert('Impossible de trouver la section à exporter');
+              return;
+            }
+
+            try {
+              setExporting(true);
+              const dataUrl = await toJpeg(element, { 
+                quality: 0.95,
+                pixelRatio: 2,
+              });
+              
+              const fileName = `${selectedSection.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()}-section-${selectedSection.order + 1}.jpg`;
+              
+              const link = document.createElement('a');
+              link.download = fileName;
+              link.href = dataUrl;
+              link.click();
+              
+              alert('✅ Section exportée avec succès !');
+            } catch (error) {
+              console.error('Erreur export section:', error);
+              alert('❌ Erreur lors de l\'export de la section');
+            } finally {
+              setExporting(false);
+            }
+          }}
+          disabled={exporting}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 transition-all disabled:opacity-50 disabled:cursor-wait text-sm font-medium"
+        >
+          {exporting ? (
+            <>
+              <Loader2 size={16} className="animate-spin" />
+              Export en cours...
+            </>
+          ) : (
+            <>
+              <Download size={16} />
+              Exporter cette section en JPG
+            </>
+          )}
+        </button>
       </div>
     </aside>
   );

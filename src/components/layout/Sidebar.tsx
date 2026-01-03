@@ -1,6 +1,6 @@
 import { Plus, GripVertical, Trash2 } from 'lucide-react';
 import { ProjectManager } from '../projects/ProjectManager';
-import { useTemplates } from '../../hooks/useFirebase';
+import { useTemplates } from '../../hooks/useSupabase';
 import {
   DndContext,
   closestCenter,
@@ -158,7 +158,7 @@ export function Sidebar() {
           <h2 className="text-sm font-semibold text-gray-700">Sections</h2>
           <button
             onClick={handleAddSection}
-            className="w-8 h-8 rounded-lg bg-violet-600 hover:bg-violet-500 flex items-center justify-center transition-all"
+            className="w-8 h-8 rounded-lg bg-violet-600 hover:bg-violet-500 flex items-center justify-center transition-all text-white"
           >
             <Plus size={18} />
           </button>
