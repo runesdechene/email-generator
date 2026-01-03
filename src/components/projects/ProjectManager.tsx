@@ -5,8 +5,8 @@ import { useEmailStore } from '../../store/emailStore';
 import type { EmailProject } from '../../types/firebase';
 
 export function ProjectManager() {
-  const { projects, loading, createProject, deleteProject } = useProjects();
-  const { sections, currentTemplateId } = useEmailStore();
+  const { projects, loading, createProject, updateProject, deleteProject } = useProjects();
+  const { sections, currentTemplateId, currentProjectId, setCurrentProject } = useEmailStore();
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showLoadDialog, setShowLoadDialog] = useState(false);
   const [projectName, setProjectName] = useState('');
@@ -14,45 +14,71 @@ export function ProjectManager() {
   const [saving, setSaving] = useState(false);
 
   const handleSaveProject = async () => {
-    if (!projectName.trim()) {
-      alert('Veuillez entrer un nom de projet');
-      return;
-    }
+    const currentProject = projects.find(p => p.id === currentProjectId);
 
-    try {
-      setSaving(true);
-      await createProject({
-        name: projectName,
-        description: projectDescription,
-        templateId: currentTemplateId || 'default',
-        sections: sections.map(s => ({
-          id: s.id,
-          templateId: s.templateId,
-          name: s.name,
-          content: s.content,
-          order: s.order,
-        })),
-      });
-      setShowSaveDialog(false);
-      setProjectName('');
-      setProjectDescription('');
-      alert('Projet sauvegardé avec succès !');
-    } catch (error) {
-      console.error('Error saving project:', error);
-      alert('Erreur lors de la sauvegarde du projet');
-    } finally {
-      setSaving(false);
+    if (currentProject) {
+      try {
+        setSaving(true);
+        await updateProject(currentProject.id, {
+          templateId: currentTemplateId || currentProject.templateId,
+          sections: sections.map(s => ({
+            id: s.id,
+            templateId: s.templateId,
+            name: s.name,
+            content: s.content,
+            order: s.order,
+          })),
+        });
+        alert('Projet mis à jour avec succès !');
+      } catch (error) {
+        console.error('Error updating project:', error);
+        alert('Erreur lors de la mise à jour du projet');
+      } finally {
+        setSaving(false);
+      }
+    } else {
+      if (!projectName.trim()) {
+        alert('Veuillez entrer un nom de projet');
+        return;
+      }
+
+      try {
+        setSaving(true);
+        const newProjectId = await createProject({
+          name: projectName,
+          description: projectDescription,
+          templateId: currentTemplateId || 'default',
+          sections: sections.map(s => ({
+            id: s.id,
+            templateId: s.templateId,
+            name: s.name,
+            content: s.content,
+            order: s.order,
+          })),
+        });
+        setCurrentProject(newProjectId);
+        setShowSaveDialog(false);
+        setProjectName('');
+        setProjectDescription('');
+        alert('Projet sauvegardé avec succès !');
+      } catch (error) {
+        console.error('Error saving project:', error);
+        alert('Erreur lors de la sauvegarde du projet');
+      } finally {
+        setSaving(false);
+      }
     }
   };
 
   const handleLoadProject = (project: EmailProject) => {
-    if (sections.length > 0) {
+    if (sections.length > 0 && currentProjectId !== project.id) {
       if (!confirm('Charger ce projet remplacera votre travail actuel. Continuer ?')) {
         return;
       }
     }
 
-    const { setCurrentTemplate, reorderSections } = useEmailStore.getState();
+    const { setCurrentTemplate, reorderSections, setCurrentProject } = useEmailStore.getState();
+    setCurrentProject(project.id);
     setCurrentTemplate(project.templateId);
     reorderSections(project.sections);
     setShowLoadDialog(false);
@@ -76,12 +102,19 @@ export function ProjectManager() {
   return (
     <div className="flex gap-2">
       <button
-        onClick={() => setShowSaveDialog(true)}
+        onClick={() => {
+          const currentProject = projects.find(p => p.id === currentProjectId);
+          if (currentProject) {
+            handleSaveProject();
+          } else {
+            setShowSaveDialog(true);
+          }
+        }}
         className="flex items-center gap-2 px-3 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-all text-sm font-medium"
-        title="Sauvegarder le projet"
+        title={currentProjectId ? "Sauvegarder les modifications" : "Sauvegarder le projet"}
       >
         <Save size={16} />
-        <span className="hidden xl:inline">Sauvegarder</span>
+        {currentProjectId ? 'Sauvegarder' : 'Sauvegarder'}
       </button>
 
       <button

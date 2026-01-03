@@ -5,6 +5,7 @@ interface EmailStore {
   sections: EmailSection[];
   selectedSectionId: string | null;
   currentTemplateId: string | null;
+  currentProjectId: string | null;
   
   addSection: (section: EmailSection) => void;
   removeSection: (id: string) => void;
@@ -12,12 +13,14 @@ interface EmailStore {
   reorderSections: (sections: EmailSection[]) => void;
   selectSection: (id: string | null) => void;
   setCurrentTemplate: (id: string) => void;
+  setCurrentProject: (id: string | null) => void;
 }
 
 export const useEmailStore = create<EmailStore>((set) => ({
   sections: [],
   selectedSectionId: null,
   currentTemplateId: null,
+  currentProjectId: null,
 
   addSection: (section) =>
     set((state) => ({
@@ -42,4 +45,6 @@ export const useEmailStore = create<EmailStore>((set) => ({
   selectSection: (id) => set({ selectedSectionId: id }),
 
   setCurrentTemplate: (id) => set({ currentTemplateId: id }),
+
+  setCurrentProject: (id) => set({ currentProjectId: id }),
 }));
