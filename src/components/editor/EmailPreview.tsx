@@ -1,6 +1,7 @@
 import { useEmailStore } from '../../store/emailStore';
 import { useTemplates } from '../../hooks/useSupabase';
 import { SectionRenderer } from './SectionRenderer';
+import './EmailPreview.css';
 
 interface EmailPreviewProps {
   sectionsRef: React.RefObject<Map<string, HTMLDivElement> | null>;
@@ -17,12 +18,9 @@ export function EmailPreview({ sectionsRef }: EmailPreviewProps) {
   return (
     <div className="w-full max-w-2xl">
       <div 
-        className="bg-white rounded-lg shadow-2xl overflow-hidden"
+        className={`bg-white rounded-lg shadow-2xl overflow-hidden ${backgroundImage ? 'email-preview-container' : ''}`}
         style={backgroundImage ? {
           backgroundImage: `url(${backgroundImage})`,
-          backgroundRepeat: 'repeat-y',
-          backgroundSize: 'contain',
-          backgroundPosition: 'center',
         } : undefined}
       >
         {sortedSections.length === 0 ? (

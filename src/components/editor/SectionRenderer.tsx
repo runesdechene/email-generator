@@ -41,7 +41,7 @@ function HeroSection({ section }: SectionRendererProps) {
 
 function TextSection({ section }: SectionRendererProps) {
   return (
-    <div className="bg-white p-8">
+    <div className="bg-transparent p-8">
       <h2 className="text-xl font-semibold text-zinc-800 mb-4">
         {(section.content.title as string) || 'Titre de section'}
       </h2>
@@ -89,7 +89,7 @@ function CTASection({ section }: SectionRendererProps) {
 
 function ProductSection({ section }: SectionRendererProps) {
   return (
-    <div className="bg-white p-8 flex gap-6">
+    <div className="bg-transparent p-8 flex gap-6">
       <div className="w-32 h-32 bg-zinc-100 rounded-lg flex items-center justify-center flex-shrink-0">
         {section.content.imageUrl ? (
           <img
