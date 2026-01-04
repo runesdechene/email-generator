@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Save, FolderOpen, Loader2, Trash2 } from 'lucide-react';
+import { Save, FolderOpen, Loader2, Trash2, Pencil } from 'lucide-react';
 import { useProjects } from '../../hooks/useSupabase';
 import { useEmailStore } from '../../store/emailStore';
 import type { EmailProject } from '../../types/firebase';
@@ -12,6 +12,8 @@ export function ProjectManager() {
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
   const [saving, setSaving] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editingProjectName, setEditingProjectName] = useState('');
 
   const handleSaveProject = async () => {
     const currentProject = projects.find(p => p.id === currentProjectId);
@@ -47,7 +49,7 @@ export function ProjectManager() {
         const newProjectId = await createProject({
           name: projectName,
           description: projectDescription,
-          templateId: currentTemplateId || 'default',
+          templateId: currentTemplateId || '',
           sections: sections.map(s => ({
             id: s.id,
             templateId: s.templateId,
@@ -56,11 +58,14 @@ export function ProjectManager() {
             order: s.order,
           })),
         });
+        
+        // Charger automatiquement le projet créé
         setCurrentProject(newProjectId);
+        
         setShowSaveDialog(false);
         setProjectName('');
         setProjectDescription('');
-        alert('Projet sauvegardé avec succès !');
+        alert('Projet créé et chargé avec succès !');
       } catch (error) {
         console.error('Error saving project:', error);
         alert('Erreur lors de la sauvegarde du projet');
@@ -71,18 +76,37 @@ export function ProjectManager() {
   };
 
   const handleLoadProject = (project: EmailProject) => {
+    console.log('🔄 Chargement du projet:', project);
+    
     if (sections.length > 0 && currentProjectId !== project.id) {
       if (!confirm('Charger ce projet remplacera votre travail actuel. Continuer ?')) {
+        console.log('❌ Chargement annulé par l\'utilisateur');
         return;
       }
     }
 
-    const { setCurrentTemplate, reorderSections, setCurrentProject } = useEmailStore.getState();
-    setCurrentProject(project.id);
-    setCurrentTemplate(project.templateId);
-    reorderSections(project.sections);
-    setShowLoadDialog(false);
-    alert('Projet chargé avec succès !');
+    try {
+      // Récupérer les fonctions du store
+      const { setCurrentTemplate, reorderSections } = useEmailStore.getState();
+      
+      console.log('📋 Sections à charger:', project.sections);
+      console.log('🎨 Template ID:', project.templateId);
+      
+      // Charger le projet
+      setCurrentProject(project.id);
+      setCurrentTemplate(project.templateId);
+      reorderSections(project.sections);
+      
+      console.log('✅ Projet chargé dans le store');
+      
+      // Fermer la modal
+      setShowLoadDialog(false);
+      
+      alert('Projet chargé avec succès !');
+    } catch (error) {
+      console.error('❌ Erreur lors du chargement:', error);
+      alert('Erreur lors du chargement du projet');
+    }
   };
 
   const handleDeleteProject = async (id: string, name: string) => {
@@ -99,7 +123,34 @@ export function ProjectManager() {
     }
   };
 
+  const handleEditProjectName = async () => {
+    if (!editingProjectName.trim()) {
+      alert('Veuillez entrer un nom de projet');
+      return;
+    }
+
+    if (!currentProjectId) {
+      return;
+    }
+
+    try {
+      setSaving(true);
+      await updateProject(currentProjectId, {
+        name: editingProjectName,
+      });
+      setShowEditDialog(false);
+      setEditingProjectName('');
+      alert('Nom du projet mis à jour avec succès !');
+    } catch (error) {
+      console.error('Error updating project name:', error);
+      alert('Erreur lors de la mise à jour du nom du projet');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
+    <>
     <div className="flex gap-2">
       <button
         onClick={() => {
@@ -111,10 +162,19 @@ export function ProjectManager() {
           }
         }}
         className="flex items-center gap-2 px-3 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-all text-sm font-medium"
-        title={currentProjectId ? "Sauvegarder les modifications" : "Sauvegarder le projet"}
+        title={currentProjectId ? "Sauvegarder les modifications" : "Créer un nouveau projet"}
       >
-        <Save size={16} />
-        {currentProjectId ? 'Sauvegarder' : 'Sauvegarder'}
+        {currentProjectId ? (
+          <>
+            <Save size={16} />
+            Sauvegarder
+          </>
+        ) : (
+          <>
+            <Save size={16} />
+            + Nouveau projet
+          </>
+        )}
       </button>
 
       <button
@@ -125,6 +185,86 @@ export function ProjectManager() {
         <FolderOpen size={16} />
         <span className="hidden xl:inline">Charger</span>
       </button>
+
+  </div>
+  {currentProjectId && (
+    <div>
+      <div className="ml-2 flex items-center gap-2 pt-5">
+        <span className="text-lg font-semibold text-gray-900">
+          {projects.find(p => p.id === currentProjectId)?.name || ''}
+        </span>
+        <button
+          onClick={() => {
+            const currentProject = projects.find(p => p.id === currentProjectId);
+            if (currentProject) {
+              setEditingProjectName(currentProject.name);
+              setShowEditDialog(true);
+            }
+          }}
+          className="p-1.5 text-gray-400 hover:text-violet-600 transition-all rounded-lg hover:bg-violet-50"
+          title="Modifier le nom du projet"
+        >
+          <Pencil size={16} />
+        </button>
+      </div>
+    </div>
+  )}
+      {showEditDialog && (
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          onClick={() => setShowEditDialog(false)}
+        >
+          <div 
+            className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Modifier le nom du projet</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nom du projet *
+                </label>
+                <input
+                  type="text"
+                  value={editingProjectName}
+                  onChange={(e) => setEditingProjectName(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  placeholder="Mon email marketing"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleEditProjectName}
+                disabled={saving}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    Mise à jour...
+                  </>
+                ) : (
+                  <>
+                    <Save size={16} />
+                    Enregistrer
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => setShowEditDialog(false)}
+                disabled={saving}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all disabled:opacity-50"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showSaveDialog && (
         <div 
@@ -260,6 +400,7 @@ export function ProjectManager() {
           </div>
         </div>
       )}
-    </div>
+  </>
   );
+  
 }

@@ -17,3 +17,11 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
 }
+
+
+/* AJOUT DE STYLE POUR L'INSTANT */
+
+.topbar 
+{
+  display: none;
+}

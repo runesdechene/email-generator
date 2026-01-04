@@ -117,9 +117,12 @@ export function Sidebar() {
   const handleAddSection = () => {
     const newSection: EmailSection = {
       id: `section-${Date.now()}`,
-      templateId: 'hero',
+      templateId: 'paragraph',
       name: `Section ${sections.length + 1}`,
-      content: {},
+      content: {
+        title: 'Titre de section',
+        subtitle: 'Sous-titre ou description',
+      },
       order: sections.length,
     };
     addSection(newSection);
@@ -127,7 +130,7 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-72 h-full bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
+    <aside className="w-100 h-full bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
       <div className="p-4 border-b border-gray-200">
         <ProjectManager />
       </div>

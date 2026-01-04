@@ -25,7 +25,7 @@ export function EditorNavbar() {
   };
 
   return (
-    <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-center px-6 relative z-30">
+    <div className="topbar h-16 bg-white border-b border-gray-200 flex items-center justify-center px-6 relative z-30">
       <div className="relative">
         <button
           onClick={() => setShowProjectSelector(!showProjectSelector)}

@@ -1,0 +1,1 @@
+export { TitleBrick } from './TitleBrick';
