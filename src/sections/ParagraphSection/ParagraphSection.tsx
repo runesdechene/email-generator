@@ -8,6 +8,8 @@ interface ParagraphSectionProps {
   options?: {
     padding?: number;
     fontFamily?: 'heading' | 'paragraph';
+    fontSize?: number;
+    color?: string;
     textStyle?: {
       align?: 'left' | 'center' | 'right' | 'justify';
       lineHeight?: number;
@@ -23,6 +25,8 @@ export function ParagraphSection({ data, options = {} }: ParagraphSectionProps) 
   
   const padding = options.padding ?? 32;
   const fontFamily = options.fontFamily ?? 'paragraph';
+  const fontSize = options.fontSize ?? 16;
+  const color = options.color ?? '#000000';
   const textAlign = options.textStyle?.align ?? 'left';
   const lineHeight = options.textStyle?.lineHeight ?? 1.6;
   const letterSpacing = options.textStyle?.letterSpacing ?? 0;
@@ -42,6 +46,8 @@ export function ParagraphSection({ data, options = {} }: ParagraphSectionProps) 
     lineHeight,
     letterSpacing: `${letterSpacing}px`,
     fontFamily: fontFamilyValue ? `'${fontFamilyValue}', sans-serif` : undefined,
+    fontSize: `${fontSize}px`,
+    color,
   };
 
   // Parser le CSS personnalisé

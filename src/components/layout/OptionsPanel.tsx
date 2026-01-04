@@ -11,7 +11,7 @@ interface OptionsPanelProps {
 export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
   const { selectedSectionId, sections, currentTemplateId, selectSection, updateSection } = useEmailStore();
   const { templates } = useTemplates();
-  const { sectionTemplates, loading: templatesLoading } = useSectionTemplates();
+  const { sectionTemplates } = useSectionTemplates();
   const [exporting, setExporting] = useState(false);
   
   const selectedSection = sections.find((s) => s.id === selectedSectionId);
@@ -74,26 +74,13 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
           />
         </div>
 
-        <div>
-          <label className="block text-xs font-medium text-gray-500 mb-2">
-            Type de section
-          </label>
-          <select
-            value={selectedSection.templateId}
-            onChange={(e) => updateSection(selectedSection.id, { templateId: e.target.value })}
-            className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
-            disabled={templatesLoading}
-          >
-            <option value="">
-              {templatesLoading ? 'Chargement...' : 'Sélectionner un type'}
-            </option>
-            {sectionTemplates.map((template) => (
-              <option key={template.id} value={template.id}>
-                {template.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        {sectionType && (
+          <div className="bg-violet-50 border border-violet-200 rounded-lg px-3 py-2">
+            <p className="text-xs text-violet-600">
+              <span className="font-semibold">Type :</span> {sectionType.name}
+            </p>
+          </div>
+        )}
 
         {sectionType?.name === 'Texte' && (
           <>
@@ -133,6 +120,51 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                 <option value="paragraph">Paragraph (du template)</option>
                 <option value="heading">Heading (du template)</option>
               </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-2">
+                Taille de police (px)
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="range"
+                  min="8"
+                  max="72"
+                  value={(selectedSection.content.options as any)?.fontSize ?? 16}
+                  onChange={(e) => updateOption(['fontSize'], parseInt(e.target.value))}
+                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-violet-600"
+                />
+                <input
+                  type="number"
+                  min="8"
+                  max="72"
+                  value={(selectedSection.content.options as any)?.fontSize ?? 16}
+                  onChange={(e) => updateOption(['fontSize'], parseInt(e.target.value) || 16)}
+                  className="w-16 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-2">
+                Couleur
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={(selectedSection.content.options as any)?.color ?? '#000000'}
+                  onChange={(e) => updateOption(['color'], e.target.value)}
+                  className="w-12 h-10 rounded border border-gray-300 cursor-pointer"
+                />
+                <input
+                  type="text"
+                  value={(selectedSection.content.options as any)?.color ?? '#000000'}
+                  onChange={(e) => updateOption(['color'], e.target.value)}
+                  className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 font-mono focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  placeholder="#000000"
+                />
+              </div>
             </div>
 
             <div className="border-t border-gray-200 pt-4">
