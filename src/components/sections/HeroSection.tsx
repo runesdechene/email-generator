@@ -1,5 +1,7 @@
 import { useTemplates } from '../../hooks/useSupabase';
 import { scopeCSS } from '../../utils/scopeCSS';
+import { generateDividerSVG } from '../../utils/dividerSVG';
+import { generateBackgroundBlur } from '../../utils/overlayStyle';
 import type { EmailSection } from '../../types';
 
 interface HeroSectionProps {
@@ -20,6 +22,10 @@ export function HeroSection({ section }: HeroSectionProps) {
   const backgroundSize = options.backgroundSize || 'cover';
   const backgroundPosition = options.backgroundPosition || 'center';
   const backgroundRepeat = options.backgroundRepeat || 'no-repeat';
+
+  // Gérer les dividers
+  const topDividerEnabled = options.topDividerEnabled || false;
+  const bottomDividerEnabled = options.bottomDividerEnabled || false;
 
   // Gérer les paddings
   const paddingTop = options.useTemplatePaddingBlock 
@@ -85,6 +91,10 @@ export function HeroSection({ section }: HeroSectionProps) {
   const customCSS = options.customCSS || '';
   const scopedCSS = customCSS ? scopeCSS(customCSS, sectionId) : '';
 
+  // Générer le filtre blur si activé
+  const blurValue = options.overlay?.blur || 0;
+  const blurFilter = generateBackgroundBlur(blurValue);
+
   const style: React.CSSProperties = {
     paddingTop: `${paddingTop}px`,
     paddingBottom: `${paddingBottom}px`,
@@ -99,13 +109,29 @@ export function HeroSection({ section }: HeroSectionProps) {
     textDecoration,
     lineHeight,
     position: 'relative',
-    ...(backgroundImageUrl && {
+    // N'appliquer l'image de fond que si pas de blur
+    ...(backgroundImageUrl && blurValue === 0 && {
       backgroundImage: `url(${backgroundImageUrl})`,
       backgroundSize,
       backgroundPosition,
       backgroundRepeat,
     }),
   };
+
+  // Style pour l'image de fond avec blur si activé
+  const backgroundStyle: React.CSSProperties | undefined = backgroundImageUrl && blurValue > 0 ? {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundImage: `url(${backgroundImageUrl})`,
+    backgroundSize,
+    backgroundPosition,
+    backgroundRepeat,
+    filter: blurFilter,
+    zIndex: 0,
+  } : undefined;
 
   // Si une image est présente, utiliser un layout avec image
   if (options.imageUrl) {
@@ -118,14 +144,101 @@ export function HeroSection({ section }: HeroSectionProps) {
         {scopedCSS && (
           <style dangerouslySetInnerHTML={{ __html: scopedCSS }} />
         )}
-        <div style={style} data-section-id={sectionId}>
-          <div style={{ 
+        <div className="section-hero section-container" style={{ ...style, position: 'relative', overflow: 'hidden' }} data-section-id={sectionId}>
+          {/* Image de fond avec blur si activé */}
+          {backgroundStyle && (
+            <div className="section-background-blur" style={backgroundStyle} />
+          )}
+
+          {/* Overlay */}
+          {options.overlay?.enabled && options.overlay.type !== 'color' && (
+            <div 
+              className="section-overlay" 
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                background: `linear-gradient(${options.overlay.gradientDirection || 'to-bottom'}, ${options.overlay.gradientStart || '#000000'}, ${options.overlay.gradientEnd || '#ffffff'})`,
+                opacity: (options.overlay.opacity ?? 50) / 100,
+                pointerEvents: 'none',
+                zIndex: 2,
+              }}
+            />
+          )}
+          {options.overlay?.enabled && options.overlay.type === 'color' && (
+            <div 
+              className="section-overlay" 
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundColor: options.overlay.color || '#000000',
+                opacity: (options.overlay.opacity ?? 50) / 100,
+                pointerEvents: 'none',
+                zIndex: 2,
+              }}
+            />
+          )}
+
+          {/* Top Divider */}
+          {topDividerEnabled && (
+            <div
+              className="section-divider section-divider-top"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: `${options.topDividerHeight || 100}px`,
+                overflow: 'hidden',
+                lineHeight: 0,
+                pointerEvents: 'none',
+                zIndex: 3,
+              }}
+            >
+              {options.topDividerType === 'svg' ? (
+                <div
+                  className="section-divider-svg"
+                  dangerouslySetInnerHTML={{
+                    __html: generateDividerSVG(
+                      options.topDividerSvgType || 'wave',
+                      options.topDividerColor || '#1E90FF',
+                      options.topDividerFlip || false
+                    ),
+                  }}
+                />
+              ) : (
+                options.topDividerImageUrl && (
+                  <img
+                    className="section-divider-image"
+                    src={options.topDividerImageUrl}
+                    alt="Top divider"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transform: options.topDividerFlip ? 'scaleY(-1)' : 'none',
+                    }}
+                  />
+                )
+              )}
+            </div>
+          )}
+
+          <div className="section-content-wrapper" style={{ 
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: 'center',
-            gap: '24px'
+            gap: '24px',
+            position: 'relative',
+            zIndex: 5,
           }}>
             <img 
+              className="section-hero-image"
               src={options.imageUrl} 
               alt="Hero" 
               style={{ 
@@ -136,10 +249,56 @@ export function HeroSection({ section }: HeroSectionProps) {
               }} 
             />
             <div 
+              className="section-content"
               dangerouslySetInnerHTML={{ __html: content }}
               style={{ width: '100%' }}
             />
           </div>
+
+          {/* Bottom Divider */}
+          {bottomDividerEnabled && (
+            <div
+              className="section-divider section-divider-bottom"
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                width: '100%',
+                height: `${options.bottomDividerHeight || 100}px`,
+                overflow: 'hidden',
+                lineHeight: 0,
+                pointerEvents: 'none',
+                zIndex: 3,
+              }}
+            >
+              {options.bottomDividerType === 'svg' ? (
+                <div
+                  className="section-divider-svg"
+                  dangerouslySetInnerHTML={{
+                    __html: generateDividerSVG(
+                      options.bottomDividerSvgType || 'wave',
+                      options.bottomDividerColor || '#1E90FF',
+                      options.bottomDividerFlip || false
+                    ),
+                  }}
+                />
+              ) : (
+                options.bottomDividerImageUrl && (
+                  <img
+                    className="section-divider-image"
+                    src={options.bottomDividerImageUrl}
+                    alt="Bottom divider"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transform: options.bottomDividerFlip ? 'scaleY(-1)' : 'none',
+                    }}
+                  />
+                )
+              )}
+            </div>
+          )}
         </div>
       </>
     );
@@ -152,10 +311,146 @@ export function HeroSection({ section }: HeroSectionProps) {
         <style dangerouslySetInnerHTML={{ __html: scopedCSS }} />
       )}
       <div 
-        style={style}
+        className="section-hero section-container"
+        style={{ ...style, position: 'relative', overflow: 'hidden' }}
         data-section-id={sectionId}
-        dangerouslySetInnerHTML={{ __html: content }}
-      />
+      >
+        {/* Image de fond avec blur si activé */}
+        {backgroundStyle && (
+          <div className="section-background-blur" style={backgroundStyle} />
+        )}
+
+        {/* Overlay */}
+        {options.overlay?.enabled && options.overlay.type !== 'color' && (
+          <div 
+            className="section-overlay" 
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              background: `linear-gradient(${options.overlay.gradientDirection || 'to-bottom'}, ${options.overlay.gradientStart || '#000000'}, ${options.overlay.gradientEnd || '#ffffff'})`,
+              opacity: (options.overlay.opacity ?? 50) / 100,
+              pointerEvents: 'none',
+              zIndex: 2,
+            }}
+          />
+        )}
+        {options.overlay?.enabled && options.overlay.type === 'color' && (
+          <div 
+            className="section-overlay" 
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: options.overlay.color || '#000000',
+              opacity: (options.overlay.opacity ?? 50) / 100,
+              pointerEvents: 'none',
+              zIndex: 2,
+            }}
+          />
+        )}
+
+        {/* Top Divider */}
+        {topDividerEnabled && (
+          <div
+            className="section-divider section-divider-top"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: `${options.topDividerHeight || 100}px`,
+              overflow: 'hidden',
+              lineHeight: 0,
+              pointerEvents: 'none',
+              zIndex: 3,
+            }}
+          >
+            {options.topDividerType === 'svg' ? (
+              <div
+                className="section-divider-svg"
+                dangerouslySetInnerHTML={{
+                  __html: generateDividerSVG(
+                    options.topDividerSvgType || 'wave',
+                    options.topDividerColor || '#1E90FF',
+                    options.topDividerFlip || false
+                  ),
+                }}
+              />
+            ) : (
+              options.topDividerImageUrl && (
+                <img
+                  className="section-divider-image"
+                  src={options.topDividerImageUrl}
+                  alt="Top divider"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    transform: options.topDividerFlip ? 'scaleY(-1)' : 'none',
+                  }}
+                />
+              )
+            )}
+          </div>
+        )}
+
+        {/* Content */}
+        <div 
+          className="section-content"
+          dangerouslySetInnerHTML={{ __html: content }}
+          style={{ position: 'relative', zIndex: 5 }}
+        />
+
+        {/* Bottom Divider */}
+        {bottomDividerEnabled && (
+          <div
+            className="section-divider section-divider-bottom"
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              width: '100%',
+              height: `${options.bottomDividerHeight || 100}px`,
+              overflow: 'hidden',
+              lineHeight: 0,
+              pointerEvents: 'none',
+              zIndex: 3,
+            }}
+          >
+            {options.bottomDividerType === 'svg' ? (
+              <div
+                className="section-divider-svg"
+                dangerouslySetInnerHTML={{
+                  __html: generateDividerSVG(
+                    options.bottomDividerSvgType || 'wave',
+                    options.bottomDividerColor || '#1E90FF',
+                    options.bottomDividerFlip || false
+                  ),
+                }}
+              />
+            ) : (
+              options.bottomDividerImageUrl && (
+                <img
+                  className="section-divider-image"
+                  src={options.bottomDividerImageUrl}
+                  alt="Bottom divider"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    transform: options.bottomDividerFlip ? 'scaleY(-1)' : 'none',
+                  }}
+                />
+              )
+            )}
+          </div>
+        )}
+      </div>
     </>
   );
 }

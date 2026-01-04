@@ -15,7 +15,9 @@ import {
   ColorControl, 
   TextStyleControl, 
   CustomCSSControl,
-  BackgroundImageControl 
+  BackgroundImageControl,
+  DividerControl,
+  OverlayControl
 } from '../ui/controls';
 import type { SectionPreset } from '../../types/supabase';
 
@@ -175,6 +177,12 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               onUpdate={updateOption}
             />
 
+            <OverlayControl
+              value={(selectedSection.content.options as any)?.overlay || {}}
+              onChange={(value) => updateOption(['overlay'], value)}
+              label="Overlay sur l'image de fond"
+            />
+
             <PaddingControl
               paddingTop={(selectedSection.content.options as any)?.paddingTop}
               paddingBottom={(selectedSection.content.options as any)?.paddingBottom}
@@ -214,6 +222,25 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
 
             <CustomCSSControl
               customCSS={(selectedSection.content.options as any)?.customCSS}
+              onUpdate={updateOption}
+            />
+
+            <DividerControl
+              topDividerEnabled={(selectedSection.content.options as any)?.topDividerEnabled}
+              topDividerType={(selectedSection.content.options as any)?.topDividerType}
+              topDividerImageUrl={(selectedSection.content.options as any)?.topDividerImageUrl}
+              topDividerSvgType={(selectedSection.content.options as any)?.topDividerSvgType}
+              topDividerColor={(selectedSection.content.options as any)?.topDividerColor}
+              topDividerHeight={(selectedSection.content.options as any)?.topDividerHeight}
+              topDividerFlip={(selectedSection.content.options as any)?.topDividerFlip}
+              bottomDividerEnabled={(selectedSection.content.options as any)?.bottomDividerEnabled}
+              bottomDividerType={(selectedSection.content.options as any)?.bottomDividerType}
+              bottomDividerImageUrl={(selectedSection.content.options as any)?.bottomDividerImageUrl}
+              bottomDividerSvgType={(selectedSection.content.options as any)?.bottomDividerSvgType}
+              bottomDividerColor={(selectedSection.content.options as any)?.bottomDividerColor}
+              bottomDividerHeight={(selectedSection.content.options as any)?.bottomDividerHeight}
+              bottomDividerFlip={(selectedSection.content.options as any)?.bottomDividerFlip}
+              sectionId={selectedSection.id}
               onUpdate={updateOption}
             />
           </>
@@ -284,6 +311,12 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               onUpdate={updateOption}
             />
 
+            <OverlayControl
+              value={(selectedSection.content.options as any)?.overlay || {}}
+              onChange={(value) => updateOption(['overlay'], value)}
+              label="Overlay sur l'image de fond"
+            />
+
             <PaddingControl
               paddingTop={(selectedSection.content.options as any)?.paddingTop}
               paddingBottom={(selectedSection.content.options as any)?.paddingBottom}
@@ -323,6 +356,25 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
 
             <CustomCSSControl
               customCSS={(selectedSection.content.options as any)?.customCSS}
+              onUpdate={updateOption}
+            />
+
+            <DividerControl
+              topDividerEnabled={(selectedSection.content.options as any)?.topDividerEnabled}
+              topDividerType={(selectedSection.content.options as any)?.topDividerType}
+              topDividerImageUrl={(selectedSection.content.options as any)?.topDividerImageUrl}
+              topDividerSvgType={(selectedSection.content.options as any)?.topDividerSvgType}
+              topDividerColor={(selectedSection.content.options as any)?.topDividerColor}
+              topDividerHeight={(selectedSection.content.options as any)?.topDividerHeight}
+              topDividerFlip={(selectedSection.content.options as any)?.topDividerFlip}
+              bottomDividerEnabled={(selectedSection.content.options as any)?.bottomDividerEnabled}
+              bottomDividerType={(selectedSection.content.options as any)?.bottomDividerType}
+              bottomDividerImageUrl={(selectedSection.content.options as any)?.bottomDividerImageUrl}
+              bottomDividerSvgType={(selectedSection.content.options as any)?.bottomDividerSvgType}
+              bottomDividerColor={(selectedSection.content.options as any)?.bottomDividerColor}
+              bottomDividerHeight={(selectedSection.content.options as any)?.bottomDividerHeight}
+              bottomDividerFlip={(selectedSection.content.options as any)?.bottomDividerFlip}
+              sectionId={selectedSection.id}
               onUpdate={updateOption}
             />
           </>

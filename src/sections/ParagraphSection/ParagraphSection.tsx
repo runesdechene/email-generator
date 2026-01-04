@@ -1,6 +1,8 @@
 import { useEmailStore } from '../../store/emailStore';
 import { useTemplates } from '../../hooks/useSupabase';
 import { scopeCSS } from '../../utils/scopeCSS';
+import { generateDividerSVG } from '../../utils/dividerSVG';
+import { generateBackgroundBlur } from '../../utils/overlayStyle';
 
 interface ParagraphSectionProps {
   sectionId: string;
@@ -12,6 +14,30 @@ interface ParagraphSectionProps {
     backgroundSize?: string;
     backgroundPosition?: string;
     backgroundRepeat?: string;
+    overlay?: {
+      enabled?: boolean;
+      type?: 'color' | 'gradient';
+      color?: string;
+      gradientStart?: string;
+      gradientEnd?: string;
+      gradientDirection?: 'to-bottom' | 'to-top' | 'to-right' | 'to-left' | 'to-bottom-right' | 'to-bottom-left';
+      opacity?: number;
+      blur?: number;
+    };
+    topDividerEnabled?: boolean;
+    topDividerType?: 'image' | 'svg';
+    topDividerImageUrl?: string;
+    topDividerSvgType?: 'wave' | 'slant';
+    topDividerColor?: string;
+    topDividerHeight?: number;
+    topDividerFlip?: boolean;
+    bottomDividerEnabled?: boolean;
+    bottomDividerType?: 'image' | 'svg';
+    bottomDividerImageUrl?: string;
+    bottomDividerSvgType?: 'wave' | 'slant';
+    bottomDividerColor?: string;
+    bottomDividerHeight?: number;
+    bottomDividerFlip?: boolean;
     paddingTop?: number;
     paddingRight?: number;
     paddingBottom?: number;
@@ -86,6 +112,10 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
   const finalPaddingLeft = useTemplatePaddingInline && currentTemplate ? currentTemplate.paddingInline : paddingLeft;
   const finalPaddingRight = useTemplatePaddingInline && currentTemplate ? currentTemplate.paddingInline : paddingRight;
 
+  // Générer le filtre blur si activé
+  const blurValue = options.overlay?.blur || 0;
+  const blurFilter = generateBackgroundBlur(blurValue);
+
   // Styles de base
   const baseStyle: React.CSSProperties = {
     paddingTop: `${finalPaddingTop}px`,
@@ -99,7 +129,8 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
     fontFamily: fontFamilyValue ? `'${fontFamilyValue}', sans-serif` : undefined,
     fontSize: `${fontSize}px`,
     color: color || '#000000',
-    ...(options.backgroundImageUrl && {
+    // N'appliquer l'image de fond que si pas de blur
+    ...(options.backgroundImageUrl && blurValue === 0 && {
       backgroundImage: `url(${options.backgroundImageUrl})`,
       backgroundSize: options.backgroundSize || 'cover',
       backgroundPosition: options.backgroundPosition || 'center',
@@ -107,8 +138,65 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
     }),
   };
 
+  // Ajouter le style pour l'image de fond avec blur
+  const containerStyle: React.CSSProperties = {
+    ...baseStyle,
+    position: 'relative',
+    overflow: 'hidden',
+  };
+
+  // Style pour un élément qui contiendra l'image de fond avec blur
+  const backgroundStyle: React.CSSProperties | undefined = options.backgroundImageUrl && blurValue > 0 ? {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundImage: `url(${options.backgroundImageUrl})`,
+    backgroundSize: options.backgroundSize || 'cover',
+    backgroundPosition: options.backgroundPosition || 'center',
+    backgroundRepeat: options.backgroundRepeat || 'no-repeat',
+    filter: blurFilter,
+    zIndex: 0,
+  } : undefined;
+
   // Scoper le CSS personnalisé à cette section uniquement
   const scopedCSS = customCSS ? scopeCSS(customCSS, sectionId) : '';
+
+  // Calculer le style de l'overlay
+  const overlayGradientDirection = options.overlay?.gradientDirection || 'to bottom';
+  const overlayGradientStart = options.overlay?.gradientStart || '#000000';
+  const overlayGradientEnd = options.overlay?.gradientEnd || '#ffffff';
+  const overlayOpacity = (options.overlay?.opacity ?? 50) / 100;
+  
+  const overlayStyle: React.CSSProperties | null = options.overlay?.enabled && options.overlay.type !== 'color' ? {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    background: `linear-gradient(${overlayGradientDirection}, ${overlayGradientStart}, ${overlayGradientEnd})`,
+    opacity: overlayOpacity,
+    pointerEvents: 'none',
+    zIndex: 2,
+  } : null;
+
+  const overlayColorStyle: React.CSSProperties | null = options.overlay?.enabled && options.overlay.type === 'color' ? {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: options.overlay.color || '#000000',
+    opacity: (options.overlay.opacity ?? 50) / 100,
+    pointerEvents: 'none',
+    zIndex: 2,
+  } : null;
+
+  // Debug
+  if (overlayStyle) {
+    console.log('Overlay gradient style:', overlayStyle);
+  }
 
   return (
     <>
@@ -116,11 +204,131 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
         <style dangerouslySetInnerHTML={{ __html: scopedCSS }} />
       )}
       <div
-        className="section-texte"
+        className="section-texte section-container"
         data-section-id={sectionId}
-        style={baseStyle}
-        dangerouslySetInnerHTML={{ __html: data.content }}
-      />
+        style={containerStyle}
+      >
+        {/* Image de fond avec blur si activé */}
+        {backgroundStyle && (
+          <div className="section-background-blur" style={backgroundStyle} />
+        )}
+
+        {/* Overlay */}
+        {overlayStyle && options.overlay && (
+          <>
+            <style dangerouslySetInnerHTML={{ __html: `
+              [data-section-id="${sectionId}"] .section-overlay-gradient {
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                background: linear-gradient(${overlayGradientDirection}, ${overlayGradientStart}, ${overlayGradientEnd}) !important;
+                opacity: ${overlayOpacity} !important;
+                pointer-events: none !important;
+                z-index: 10 !important;
+              }
+            ` }} />
+            <div className="section-overlay section-overlay-gradient" />
+          </>
+        )}
+        {overlayColorStyle && (
+          <div className="section-overlay" style={overlayColorStyle} />
+        )}
+
+        {/* Top Divider */}
+        {options.topDividerEnabled && (
+          <div
+            className="section-divider section-divider-top"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: `${options.topDividerHeight || 100}px`,
+              overflow: 'hidden',
+              lineHeight: 0,
+              pointerEvents: 'none',
+              zIndex: 3,
+            }}
+          >
+            {options.topDividerType === 'svg' ? (
+              <div
+                className="section-divider-svg"
+                dangerouslySetInnerHTML={{
+                  __html: generateDividerSVG(
+                    options.topDividerSvgType || 'wave',
+                    options.topDividerColor || '#1E90FF',
+                    options.topDividerFlip || false
+                  ),
+                }}
+              />
+            ) : (
+              options.topDividerImageUrl && (
+                <img
+                  className="section-divider-image"
+                  src={options.topDividerImageUrl}
+                  alt="Top divider"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    transform: options.topDividerFlip ? 'scaleY(-1)' : 'none',
+                  }}
+                />
+              )
+            )}
+          </div>
+        )}
+
+        {/* Content */}
+        <div className="section-content" style={{ position: 'relative', zIndex: 5 }} dangerouslySetInnerHTML={{ __html: data.content }} />
+
+        {/* Bottom Divider */}
+        {options.bottomDividerEnabled && (
+          <div
+            className="section-divider section-divider-bottom"
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              width: '100%',
+              height: `${options.bottomDividerHeight || 100}px`,
+              overflow: 'hidden',
+              lineHeight: 0,
+              pointerEvents: 'none',
+              zIndex: 3,
+            }}
+          >
+            {options.bottomDividerType === 'svg' ? (
+              <div
+                className="section-divider-svg"
+                dangerouslySetInnerHTML={{
+                  __html: generateDividerSVG(
+                    options.bottomDividerSvgType || 'wave',
+                    options.bottomDividerColor || '#1E90FF',
+                    options.bottomDividerFlip || false
+                  ),
+                }}
+              />
+            ) : (
+              options.bottomDividerImageUrl && (
+                <img
+                  className="section-divider-image"
+                  src={options.bottomDividerImageUrl}
+                  alt="Bottom divider"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    transform: options.bottomDividerFlip ? 'scaleY(-1)' : 'none',
+                  }}
+                />
+              )
+            )}
+          </div>
+        )}
+      </div>
     </>
   );
 }
