@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ChevronDown, Loader2 } from 'lucide-react';
 import { useProjects, useTemplates } from '../../hooks/useSupabase';
 import { useEmailStore } from '../../store/emailStore';
-import type { EmailProject } from '../../types/firebase';
+import type { EmailProject } from '../../types/supabase';
 
 export function EditorNavbar() {
   const { projects, loading: projectsLoading } = useProjects();
@@ -102,3 +102,4 @@ export function EditorNavbar() {
     </div>
   );
 }
+

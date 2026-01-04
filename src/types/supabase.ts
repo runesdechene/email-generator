@@ -41,12 +41,17 @@ export interface GlobalStyleTemplate {
     text: string;
     accent: string;
   };
-  buttonStyle: {
-    borderRadius: string;
-    backgroundColor: string;
-    textColor: string;
-    hoverBackgroundColor: string;
-    padding: string;
+  customColors?: Array<{
+    name: string;
+    value: string;
+  }>;
+  fontSizes: {
+    xxl: number;
+    xl: number;
+    l: number;
+    m: number;
+    s: number;
+    xs: number;
   };
   createdAt: Date;
   updatedAt: Date;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { SupabaseService } from '../services/supabase.service';
 import type { TemplateData, ProjectData, SectionTemplateData } from '../services/supabase.service';
-import type { GlobalStyleTemplate, EmailProject, SectionTemplate } from '../types/firebase';
+import type { GlobalStyleTemplate, EmailProject, SectionTemplate } from '../types/supabase';
 
 // Convertir les données Supabase vers le format de l'app
 function templateFromSupabase(data: TemplateData): GlobalStyleTemplate {
@@ -13,7 +13,8 @@ function templateFromSupabase(data: TemplateData): GlobalStyleTemplate {
     backgroundSize: (data.background_size as 'cover' | 'repeat') || undefined,
     fonts: data.fonts,
     colors: data.colors,
-    buttonStyle: data.button_style,
+    customColors: data.custom_colors || undefined,
+    fontSizes: data.font_sizes,
     createdAt: new Date(data.created_at),
     updatedAt: new Date(data.updated_at),
   };
@@ -27,7 +28,8 @@ function templateToSupabase(template: Omit<GlobalStyleTemplate, 'id' | 'createdA
     background_size: template.backgroundSize || null,
     fonts: template.fonts,
     colors: template.colors,
-    button_style: template.buttonStyle,
+    custom_colors: template.customColors || null,
+    font_sizes: template.fontSizes,
   };
 }
 
@@ -117,7 +119,8 @@ export function useTemplates() {
       if (updates.backgroundSize !== undefined) supabaseUpdates.background_size = updates.backgroundSize || null;
       if (updates.fonts !== undefined) supabaseUpdates.fonts = updates.fonts;
       if (updates.colors !== undefined) supabaseUpdates.colors = updates.colors;
-      if (updates.buttonStyle !== undefined) supabaseUpdates.button_style = updates.buttonStyle;
+      if (updates.customColors !== undefined) supabaseUpdates.custom_colors = updates.customColors || null;
+      if (updates.fontSizes !== undefined) supabaseUpdates.font_sizes = updates.fontSizes;
 
       console.log('Mise à jour Supabase:', supabaseUpdates);
       await SupabaseService.updateTemplate(id, supabaseUpdates);
@@ -292,3 +295,4 @@ export function useProjects() {
     refresh: loadProjects,
   };
 }
+

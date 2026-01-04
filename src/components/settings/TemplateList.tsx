@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Plus, Trash2, Loader2, ChevronRight } from 'lucide-react';
 import { useTemplates } from '../../hooks/useSupabase';
-import type { GlobalStyleTemplate } from '../../types/firebase';
+import type { GlobalStyleTemplate } from '../../types/supabase';
 
 interface TemplateListProps {
   onSelectTemplate: (template: GlobalStyleTemplate) => void;
@@ -37,12 +37,14 @@ export function TemplateList({ onSelectTemplate }: TemplateListProps) {
           text: '#1f2937',
           accent: '#10b981',
         },
-        buttonStyle: {
-          borderRadius: '8px',
-          backgroundColor: '#6366f1',
-          textColor: '#ffffff',
-          hoverBackgroundColor: '#4f46e5',
-          padding: '12px 24px',
+        customColors: [],
+        fontSizes: {
+          xxl: 48,
+          xl: 36,
+          l: 24,
+          m: 16,
+          s: 14,
+          xs: 12,
         },
       });
       setShowCreateDialog(false);
@@ -212,3 +214,4 @@ export function TemplateList({ onSelectTemplate }: TemplateListProps) {
     </div>
   );
 }
+

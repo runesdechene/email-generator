@@ -17,12 +17,17 @@ export interface TemplateData {
     text: string;
     accent: string;
   };
-  button_style: {
-    borderRadius: string;
-    backgroundColor: string;
-    textColor: string;
-    hoverBackgroundColor: string;
-    padding: string;
+  custom_colors: Array<{
+    name: string;
+    value: string;
+  }> | null;
+  font_sizes: {
+    xxl: number;
+    xl: number;
+    l: number;
+    m: number;
+    s: number;
+    xs: number;
   };
   created_at: string;
   updated_at: string;

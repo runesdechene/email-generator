@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Save, Loader2, Upload, X } from 'lucide-react';
 import { SupabaseStorageService } from '../../services/supabase-storage.service';
-import type { GlobalStyleTemplate } from '../../types/firebase';
+import type { GlobalStyleTemplate } from '../../types/supabase';
 import { GOOGLE_FONTS, loadGoogleFont, getFontFamily } from '../../utils/googleFonts';
 import './TemplateEditor.css';
 
@@ -19,10 +19,13 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
     backgroundSize: template.backgroundSize || 'cover',
     fonts: template.fonts,
     colors: template.colors,
-    buttonStyle: template.buttonStyle,
+    customColors: template.customColors || [],
+    fontSizes: template.fontSizes,
   });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [newColorName, setNewColorName] = useState('');
+  const [newColorValue, setNewColorValue] = useState('#000000');
 
   // Charger les fonts Google sélectionnées
   useEffect(() => {
@@ -398,113 +401,163 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
             </div>
           </div>
 
-          {/* Style des boutons */}
+          {/* Couleurs personnalisées */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Style des boutons</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Couleur de fond
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="color"
-                    value={formData.buttonStyle.backgroundColor}
-                    onChange={(e) => setFormData({ ...formData, buttonStyle: { ...formData.buttonStyle, backgroundColor: e.target.value } })}
-                    className="w-16 h-10 rounded border border-gray-300 cursor-pointer"
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Couleurs personnalisées</h3>
+            <p className="text-sm text-gray-600 mb-4">Ajoutez des couleurs personnalisées avec un nom pour les réutiliser dans vos sections.</p>
+            
+            {/* Liste des couleurs personnalisées */}
+            <div className="space-y-2 mb-4">
+              {formData.customColors.map((color, index) => (
+                <div key={index} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                  <div
+                    className="w-10 h-10 rounded border border-gray-300"
+                    style={{ backgroundColor: color.value }}
                   />
-                  <input
-                    type="text"
-                    value={formData.buttonStyle.backgroundColor}
-                    onChange={(e) => setFormData({ ...formData, buttonStyle: { ...formData.buttonStyle, backgroundColor: e.target.value } })}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-mono text-sm"
-                  />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">{color.name}</p>
+                    <p className="text-xs text-gray-500 font-mono">{color.value}</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const newColors = formData.customColors.filter((_, i) => i !== index);
+                      setFormData({ ...formData, customColors: newColors });
+                    }}
+                    className="p-2 text-red-500 hover:bg-red-50 rounded transition-colors"
+                  >
+                    <X size={16} />
+                  </button>
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Couleur au survol
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="color"
-                    value={formData.buttonStyle.hoverBackgroundColor}
-                    onChange={(e) => setFormData({ ...formData, buttonStyle: { ...formData.buttonStyle, hoverBackgroundColor: e.target.value } })}
-                    className="w-16 h-10 rounded border border-gray-300 cursor-pointer"
-                  />
-                  <input
-                    type="text"
-                    value={formData.buttonStyle.hoverBackgroundColor}
-                    onChange={(e) => setFormData({ ...formData, buttonStyle: { ...formData.buttonStyle, hoverBackgroundColor: e.target.value } })}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-mono text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Couleur du texte
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="color"
-                    value={formData.buttonStyle.textColor}
-                    onChange={(e) => setFormData({ ...formData, buttonStyle: { ...formData.buttonStyle, textColor: e.target.value } })}
-                    className="w-16 h-10 rounded border border-gray-300 cursor-pointer"
-                  />
-                  <input
-                    type="text"
-                    value={formData.buttonStyle.textColor}
-                    onChange={(e) => setFormData({ ...formData, buttonStyle: { ...formData.buttonStyle, textColor: e.target.value } })}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-mono text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Arrondi des coins
-                </label>
-                <input
-                  type="text"
-                  value={formData.buttonStyle.borderRadius}
-                  onChange={(e) => setFormData({ ...formData, buttonStyle: { ...formData.buttonStyle, borderRadius: e.target.value } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
-                  placeholder="8px"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Padding
-                </label>
-                <input
-                  type="text"
-                  value={formData.buttonStyle.padding}
-                  onChange={(e) => setFormData({ ...formData, buttonStyle: { ...formData.buttonStyle, padding: e.target.value } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
-                  placeholder="12px 24px"
-                />
-              </div>
+              ))}
             </div>
 
-            {/* Aperçu du bouton */}
-            <div className="mt-6 p-6 bg-gray-50 rounded-lg">
-              <p className="text-sm font-medium text-gray-700 mb-3">Aperçu du bouton</p>
+            {/* Ajouter une nouvelle couleur */}
+            <div className="border-t border-gray-200 pt-4">
+              <p className="text-sm font-medium text-gray-700 mb-3">Ajouter une couleur</p>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Nom</label>
+                  <input
+                    type="text"
+                    value={newColorName}
+                    onChange={(e) => setNewColorName(e.target.value)}
+                    placeholder="Ex: Brand Blue"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Couleur</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={newColorValue}
+                      onChange={(e) => setNewColorValue(e.target.value)}
+                      className="w-12 h-10 rounded border border-gray-300 cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={newColorValue}
+                      onChange={(e) => setNewColorValue(e.target.value)}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-mono text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
               <button
-                style={{
-                  backgroundColor: formData.buttonStyle.backgroundColor,
-                  color: formData.buttonStyle.textColor,
-                  borderRadius: formData.buttonStyle.borderRadius,
-                  padding: formData.buttonStyle.padding,
+                onClick={() => {
+                  if (newColorName.trim()) {
+                    setFormData({
+                      ...formData,
+                      customColors: [...formData.customColors, { name: newColorName, value: newColorValue }]
+                    });
+                    setNewColorName('');
+                    setNewColorValue('#000000');
+                  }
                 }}
-                className="transition-all duration-200"
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = formData.buttonStyle.hoverBackgroundColor}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = formData.buttonStyle.backgroundColor}
+                className="w-full px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-colors text-sm font-medium"
               >
-                Bouton exemple
+                Ajouter la couleur
               </button>
             </div>
           </div>
+
+          {/* Tailles de texte */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Tailles de texte</h3>
+            <p className="text-sm text-gray-600 mb-4">Définissez les tailles de texte par défaut pour vos sections.</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">XXL</label>
+                <input
+                  type="number"
+                  value={formData.fontSizes.xxl}
+                  onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, xxl: parseInt(e.target.value) || 48 } })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  min="8"
+                  max="100"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">XL</label>
+                <input
+                  type="number"
+                  value={formData.fontSizes.xl}
+                  onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, xl: parseInt(e.target.value) || 36 } })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  min="8"
+                  max="100"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">L</label>
+                <input
+                  type="number"
+                  value={formData.fontSizes.l}
+                  onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, l: parseInt(e.target.value) || 24 } })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  min="8"
+                  max="100"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">M</label>
+                <input
+                  type="number"
+                  value={formData.fontSizes.m}
+                  onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, m: parseInt(e.target.value) || 16 } })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  min="8"
+                  max="100"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">S</label>
+                <input
+                  type="number"
+                  value={formData.fontSizes.s}
+                  onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, s: parseInt(e.target.value) || 14 } })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  min="8"
+                  max="100"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">XS</label>
+                <input
+                  type="number"
+                  value={formData.fontSizes.xs}
+                  onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, xs: parseInt(e.target.value) || 12 } })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  min="8"
+                  max="100"
+                />
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
   );
 }
+

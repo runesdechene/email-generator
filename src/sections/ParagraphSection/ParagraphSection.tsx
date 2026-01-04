@@ -25,18 +25,44 @@ export function ParagraphSection({ data, options = {} }: ParagraphSectionProps) 
   
   const padding = options.padding ?? 32;
   const fontFamily = options.fontFamily ?? 'paragraph';
-  const fontSize = options.fontSize ?? 16;
-  const color = options.color ?? '#000000';
+  const fontSizeOption = options.fontSize ?? 16;
+  const colorOption = options.color ?? '#000000';
   const textAlign = options.textStyle?.align ?? 'left';
   const lineHeight = options.textStyle?.lineHeight ?? 1.6;
   const letterSpacing = options.textStyle?.letterSpacing ?? 0;
   const customCSS = options.customCSS ?? '';
 
-  // Récupérer le template actuel pour obtenir les polices
+  // Récupérer le template actuel pour obtenir les polices, couleurs et tailles
   const currentTemplate = templates.find(t => t.id === currentTemplateId);
   const fontFamilyValue = fontFamily === 'heading' 
     ? currentTemplate?.fonts.title 
     : currentTemplate?.fonts.paragraph;
+  
+  // Résoudre la taille de police : si c'est une variable du template (ex: 'xxl'), utiliser la taille du template
+  const fontSizeKeys = ['xxl', 'xl', 'l', 'm', 's', 'xs'];
+  const fontSize = typeof fontSizeOption === 'string' && fontSizeKeys.includes(fontSizeOption) && currentTemplate
+    ? currentTemplate.fontSizes[fontSizeOption as keyof typeof currentTemplate.fontSizes]
+    : typeof fontSizeOption === 'number'
+    ? fontSizeOption
+    : 16;
+  
+  // Résoudre la couleur : si c'est une variable du template (ex: 'primary' ou nom de couleur personnalisée), utiliser la couleur du template
+  const templateColorKeys = ['primary', 'secondary', 'background', 'text', 'accent'];
+  let color = colorOption;
+  
+  if (currentTemplate) {
+    // Vérifier si c'est une couleur principale
+    if (templateColorKeys.includes(colorOption)) {
+      color = currentTemplate.colors[colorOption as keyof typeof currentTemplate.colors];
+    }
+    // Vérifier si c'est une couleur personnalisée
+    else if (currentTemplate.customColors) {
+      const customColor = currentTemplate.customColors.find(c => c.name === colorOption);
+      if (customColor) {
+        color = customColor.value;
+      }
+    }
+  }
 
   // Styles de base
   const baseStyle: React.CSSProperties = {
@@ -47,7 +73,7 @@ export function ParagraphSection({ data, options = {} }: ParagraphSectionProps) 
     letterSpacing: `${letterSpacing}px`,
     fontFamily: fontFamilyValue ? `'${fontFamilyValue}', sans-serif` : undefined,
     fontSize: `${fontSize}px`,
-    color,
+    color: color || '#000000',
   };
 
   // Parser le CSS personnalisé

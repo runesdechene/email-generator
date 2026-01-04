@@ -124,47 +124,243 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
 
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-2">
-                Taille de police (px)
+                Taille de police
               </label>
-              <div className="flex items-center gap-3">
-                <input
-                  type="range"
-                  min="8"
-                  max="72"
-                  value={(selectedSection.content.options as any)?.fontSize ?? 16}
-                  onChange={(e) => updateOption(['fontSize'], parseInt(e.target.value))}
-                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-violet-600"
-                />
-                <input
-                  type="number"
-                  min="8"
-                  max="72"
-                  value={(selectedSection.content.options as any)?.fontSize ?? 16}
-                  onChange={(e) => updateOption(['fontSize'], parseInt(e.target.value) || 16)}
-                  className="w-16 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
-                />
+              
+              {/* Sélection : Variable du template ou personnalisée */}
+              <div className="mb-3">
+                <div className="flex gap-2 mb-2">
+                  <button
+                    onClick={() => {
+                      const currentSize = (selectedSection.content.options as any)?.fontSize;
+                      if (typeof currentSize === 'number') {
+                        updateOption(['fontSize'], 'm');
+                      }
+                    }}
+                    className={`flex-1 px-3 py-2 text-xs rounded border transition-all ${
+                      typeof (selectedSection.content.options as any)?.fontSize === 'string'
+                        ? 'bg-violet-600 text-white border-violet-600'
+                        : 'bg-white text-gray-700 border-gray-300 hover:border-violet-400'
+                    }`}
+                  >
+                    Variable du template
+                  </button>
+                  <button
+                    onClick={() => {
+                      const currentSize = (selectedSection.content.options as any)?.fontSize;
+                      if (typeof currentSize === 'string') {
+                        updateOption(['fontSize'], 16);
+                      }
+                    }}
+                    className={`flex-1 px-3 py-2 text-xs rounded border transition-all ${
+                      typeof (selectedSection.content.options as any)?.fontSize === 'number' || (selectedSection.content.options as any)?.fontSize === undefined
+                        ? 'bg-violet-600 text-white border-violet-600'
+                        : 'bg-white text-gray-700 border-gray-300 hover:border-violet-400'
+                    }`}
+                  >
+                    Taille personnalisée
+                  </button>
+                </div>
               </div>
+
+              {/* Si variable du template : afficher les tailles disponibles */}
+              {typeof (selectedSection.content.options as any)?.fontSize === 'string' && (
+                <div className="grid grid-cols-3 gap-2">
+                  {(['xxl', 'xl', 'l', 'm', 's', 'xs'] as const).map((sizeKey) => {
+                    const currentTemplate = templates.find(t => t.id === currentTemplateId);
+                    const sizeValue = currentTemplate?.fontSizes[sizeKey] || 16;
+                    const isSelected = (selectedSection.content.options as any)?.fontSize === sizeKey;
+                    
+                    return (
+                      <button
+                        key={sizeKey}
+                        onClick={() => updateOption(['fontSize'], sizeKey)}
+                        className={`px-3 py-2 rounded-lg border-2 transition-all ${
+                          isSelected ? 'border-violet-600 bg-violet-50' : 'border-gray-300 hover:border-violet-400'
+                        }`}
+                      >
+                        <p className={`font-semibold ${
+                          isSelected ? 'text-violet-600' : 'text-gray-900'
+                        }`}>{sizeKey.toUpperCase()}</p>
+                        <p className="text-xs text-gray-500">{sizeValue}px</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Si taille personnalisée : afficher le range + input */}
+              {(typeof (selectedSection.content.options as any)?.fontSize === 'number' || (selectedSection.content.options as any)?.fontSize === undefined) && (
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range"
+                    min="8"
+                    max="72"
+                    value={(selectedSection.content.options as any)?.fontSize ?? 16}
+                    onChange={(e) => updateOption(['fontSize'], parseInt(e.target.value))}
+                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-violet-600"
+                  />
+                  <input
+                    type="number"
+                    min="8"
+                    max="72"
+                    value={(selectedSection.content.options as any)?.fontSize ?? 16}
+                    onChange={(e) => updateOption(['fontSize'], parseInt(e.target.value) || 16)}
+                    className="w-16 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  />
+                </div>
+              )}
             </div>
 
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-2">
                 Couleur
               </label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="color"
-                  value={(selectedSection.content.options as any)?.color ?? '#000000'}
-                  onChange={(e) => updateOption(['color'], e.target.value)}
-                  className="w-12 h-10 rounded border border-gray-300 cursor-pointer"
-                />
-                <input
-                  type="text"
-                  value={(selectedSection.content.options as any)?.color ?? '#000000'}
-                  onChange={(e) => updateOption(['color'], e.target.value)}
-                  className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 font-mono focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
-                  placeholder="#000000"
-                />
+              
+              {/* Sélection : Couleur du template ou personnalisée */}
+              <div className="mb-3">
+                <div className="flex gap-2 mb-2">
+                  <button
+                    onClick={() => {
+                      const currentColor = (selectedSection.content.options as any)?.color ?? '#000000';
+                      const currentTemplate = templates.find(t => t.id === currentTemplateId);
+                      const allTemplateColors = ['primary', 'secondary', 'background', 'text', 'accent', ...(currentTemplate?.customColors?.map(c => c.name) || [])];
+                      if (!allTemplateColors.includes(currentColor)) {
+                        updateOption(['color'], 'primary');
+                      }
+                    }}
+                    className={`flex-1 px-3 py-2 text-xs rounded border transition-all ${
+                      (() => {
+                        const currentColor = (selectedSection.content.options as any)?.color ?? '#000000';
+                        const currentTemplate = templates.find(t => t.id === currentTemplateId);
+                        const allTemplateColors = ['primary', 'secondary', 'background', 'text', 'accent', ...(currentTemplate?.customColors?.map(c => c.name) || [])];
+                        return allTemplateColors.includes(currentColor)
+                          ? 'bg-violet-600 text-white border-violet-600'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-violet-400';
+                      })()
+                    }`}
+                  >
+                    Variable du template
+                  </button>
+                  <button
+                    onClick={() => {
+                      const currentColor = (selectedSection.content.options as any)?.color ?? '#000000';
+                      const currentTemplate = templates.find(t => t.id === currentTemplateId);
+                      const allTemplateColors = ['primary', 'secondary', 'background', 'text', 'accent', ...(currentTemplate?.customColors?.map(c => c.name) || [])];
+                      if (allTemplateColors.includes(currentColor)) {
+                        updateOption(['color'], '#000000');
+                      }
+                    }}
+                    className={`flex-1 px-3 py-2 text-xs rounded border transition-all ${
+                      (() => {
+                        const currentColor = (selectedSection.content.options as any)?.color ?? '#000000';
+                        const currentTemplate = templates.find(t => t.id === currentTemplateId);
+                        const allTemplateColors = ['primary', 'secondary', 'background', 'text', 'accent', ...(currentTemplate?.customColors?.map(c => c.name) || [])];
+                        return !allTemplateColors.includes(currentColor)
+                          ? 'bg-violet-600 text-white border-violet-600'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-violet-400';
+                      })()
+                    }`}
+                  >
+                    Couleur personnalisée
+                  </button>
+                </div>
               </div>
+
+              {/* Si variable du template : afficher les couleurs disponibles */}
+              {(() => {
+                const currentColor = (selectedSection.content.options as any)?.color ?? '#000000';
+                const currentTemplate = templates.find(t => t.id === currentTemplateId);
+                const allTemplateColors = ['primary', 'secondary', 'background', 'text', 'accent', ...(currentTemplate?.customColors?.map(c => c.name) || [])];
+                return allTemplateColors.includes(currentColor);
+              })() && (
+                <div>
+                  {/* Couleurs principales */}
+                  <p className="text-xs text-gray-500 mb-2">Couleurs principales</p>
+                  <div className="grid grid-cols-5 gap-2 mb-4">
+                    {(['primary', 'secondary', 'background', 'text', 'accent'] as const).map((colorKey) => {
+                      const currentTemplate = templates.find(t => t.id === currentTemplateId);
+                      const colorValue = currentTemplate?.colors[colorKey] || '#000000';
+                      const isSelected = (selectedSection.content.options as any)?.color === colorKey;
+                      
+                      return (
+                        <button
+                          key={colorKey}
+                          onClick={() => updateOption(['color'], colorKey)}
+                          className={`relative aspect-square rounded-lg border-2 transition-all ${
+                            isSelected ? 'border-violet-600 ring-2 ring-violet-200' : 'border-gray-300 hover:border-violet-400'
+                          }`}
+                          style={{ backgroundColor: colorValue }}
+                          title={`${colorKey}: ${colorValue}`}
+                        >
+                          {isSelected && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="w-2 h-2 bg-white rounded-full shadow-lg"></div>
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Couleurs personnalisées */}
+                  {(() => {
+                    const currentTemplate = templates.find(t => t.id === currentTemplateId);
+                    return currentTemplate?.customColors && currentTemplate.customColors.length > 0;
+                  })() && (
+                    <div>
+                      <p className="text-xs text-gray-500 mb-2">Couleurs personnalisées</p>
+                      <div className="grid grid-cols-5 gap-2">
+                        {templates.find(t => t.id === currentTemplateId)?.customColors?.map((customColor) => {
+                          const isSelected = (selectedSection.content.options as any)?.color === customColor.name;
+                          
+                          return (
+                            <button
+                              key={customColor.name}
+                              onClick={() => updateOption(['color'], customColor.name)}
+                              className={`relative aspect-square rounded-lg border-2 transition-all ${
+                                isSelected ? 'border-violet-600 ring-2 ring-violet-200' : 'border-gray-300 hover:border-violet-400'
+                              }`}
+                              style={{ backgroundColor: customColor.value }}
+                              title={`${customColor.name}: ${customColor.value}`}
+                            >
+                              {isSelected && (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <div className="w-2 h-2 bg-white rounded-full shadow-lg"></div>
+                                </div>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Si couleur personnalisée : afficher le color picker */}
+              {(() => {
+                const currentColor = (selectedSection.content.options as any)?.color ?? '#000000';
+                const currentTemplate = templates.find(t => t.id === currentTemplateId);
+                const allTemplateColors = ['primary', 'secondary', 'background', 'text', 'accent', ...(currentTemplate?.customColors?.map(c => c.name) || [])];
+                return !allTemplateColors.includes(currentColor);
+              })() && (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={(selectedSection.content.options as any)?.color ?? '#000000'}
+                    onChange={(e) => updateOption(['color'], e.target.value)}
+                    className="w-12 h-10 rounded border border-gray-300 cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={(selectedSection.content.options as any)?.color ?? '#000000'}
+                    onChange={(e) => updateOption(['color'], e.target.value)}
+                    className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 font-mono focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    placeholder="#000000"
+                  />
+                </div>
+              )}
             </div>
 
             <div className="border-t border-gray-200 pt-4">

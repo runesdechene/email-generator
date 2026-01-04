@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import type { SectionTemplate } from '../../types/firebase';
+import type { SectionTemplate } from '../../types/supabase';
 
 interface TemplateSelectorPanelProps {
   sectionTypes: SectionTemplate[];
@@ -77,3 +77,4 @@ export function TemplateSelectorPanel({ sectionTypes, onSelectSectionType, onClo
     </aside>
   );
 }
+

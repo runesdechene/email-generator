@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Save, FolderOpen, Loader2, Trash2, Pencil } from 'lucide-react';
 import { useProjects } from '../../hooks/useSupabase';
 import { useEmailStore } from '../../store/emailStore';
-import type { EmailProject } from '../../types/firebase';
+import type { EmailProject } from '../../types/supabase';
 import { useToast } from '../../hooks/useToast';
 import { ToastContainer } from '../ui/Toast';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
@@ -444,3 +444,4 @@ export function ProjectManager() {
   );
   
 }
+
