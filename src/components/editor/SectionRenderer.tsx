@@ -1,28 +1,53 @@
 import type { EmailSection } from '../../types';
 import { ParagraphSection } from '../../sections/ParagraphSection';
+import { useSectionTemplates } from '../../hooks/useSupabase';
+import { AlertCircle } from 'lucide-react';
 
 interface SectionRendererProps {
   section: EmailSection;
 }
 
 export function SectionRenderer({ section }: SectionRendererProps) {
-  // Nouvelle architecture : une seule section pour l'instant
-  if (section.templateId === 'paragraph') {
+  const { sectionTemplates, loading } = useSectionTemplates();
+  
+  // Pendant le chargement, afficher un placeholder neutre
+  if (loading) {
+    return (
+      <div className="bg-gray-50 rounded-lg p-8 animate-pulse">
+        <div className="h-4 bg-gray-200 rounded w-3/4 mb-3"></div>
+        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+      </div>
+    );
+  }
+  
+  // Trouver le type de section correspondant
+  const sectionType = sectionTemplates.find(t => t.id === section.templateId);
+  
+  // Si le type de section est "Texte" (par nom, pas par ID)
+  if (sectionType?.name === 'Texte') {
     return (
       <ParagraphSection
         data={{
-          title: (section.content.title as string) || 'Titre de section',
-          subtitle: (section.content.subtitle as string) || 'Sous-titre ou description',
+          content: (section.content.content as string) || '<p>Votre contenu ici...</p>',
         }}
         options={section.content.options as any}
       />
     );
   }
 
-  // Fallback pour les sections non reconnues
+  // Fallback pour les sections non reconnues (seulement après le chargement)
   return (
-    <div className="bg-zinc-50 p-8 text-center">
-      <p className="text-zinc-400">Section non reconnue : {section.templateId}</p>
+    <div className="bg-red-50 border-2 border-red-200 rounded-lg p-8 text-center">
+      <div className="flex items-center justify-center gap-2 text-red-600 mb-2">
+        <AlertCircle size={20} />
+        <p className="font-semibold">Type de section non reconnu</p>
+      </div>
+      <p className="text-sm text-red-500 mb-3">
+        {sectionType ? `Type "${sectionType.name}" non implémenté` : `ID: ${section.templateId}`}
+      </p>
+      <p className="text-xs text-gray-600">
+        Supprimez cette section et créez-en une nouvelle depuis le panneau de droite
+      </p>
     </div>
   );
 }

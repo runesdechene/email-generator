@@ -31,9 +31,9 @@ CREATE TRIGGER trigger_update_section_templates_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION update_section_templates_updated_at();
 
--- Insérer le template de section Paragraph
+-- Insérer le template de section Texte
 INSERT INTO section_templates (name, description, default_content) VALUES
-  ('Paragraph', 'Section de paragraphe avec titre et contenu', '{"title": "Titre de section", "subtitle": "Sous-titre ou description"}')
+  ('Texte', 'Section de texte personnalisable avec options de style', '{"content": "<p>Votre contenu ici...</p>"}')
 ON CONFLICT DO NOTHING;
 
 -- Activer RLS (Row Level Security) si nécessaire

@@ -15,10 +15,39 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
   const [exporting, setExporting] = useState(false);
   
   const selectedSection = sections.find((s) => s.id === selectedSectionId);
+  const sectionType = sectionTemplates.find(t => t.id === selectedSection?.templateId);
 
   if (!selectedSection) {
     return null;
   }
+
+  const updateContent = (field: string, value: any) => {
+    updateSection(selectedSection.id, {
+      content: {
+        ...selectedSection.content,
+        [field]: value,
+      },
+    });
+  };
+
+  const updateOption = (path: string[], value: any) => {
+    const options = { ...(selectedSection.content.options as any) || {} };
+    let current = options;
+    
+    for (let i = 0; i < path.length - 1; i++) {
+      if (!current[path[i]]) current[path[i]] = {};
+      current = current[path[i]];
+    }
+    
+    current[path[path.length - 1]] = value;
+    
+    updateSection(selectedSection.id, {
+      content: {
+        ...selectedSection.content,
+        options,
+      },
+    });
+  };
 
   return (
     <aside className="w-80 h-full bg-white border-l border-gray-200 flex flex-col flex-shrink-0">
@@ -47,7 +76,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
 
         <div>
           <label className="block text-xs font-medium text-gray-500 mb-2">
-            Template de section
+            Type de section
           </label>
           <select
             value={selectedSection.templateId}
@@ -56,7 +85,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
             disabled={templatesLoading}
           >
             <option value="">
-              {templatesLoading ? 'Chargement...' : 'Sélectionner un template'}
+              {templatesLoading ? 'Chargement...' : 'Sélectionner un type'}
             </option>
             {sectionTemplates.map((template) => (
               <option key={template.id} value={template.id}>
@@ -66,12 +95,124 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
           </select>
         </div>
 
-        <div className="border-t border-gray-200 pt-6">
-          <h3 className="text-xs font-semibold text-gray-700 mb-4">Contenu</h3>
-          <p className="text-xs text-gray-500">
-            Les options de contenu dépendront du template sélectionné.
-          </p>
-        </div>
+        {sectionType?.name === 'Texte' && (
+          <>
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="text-xs font-semibold text-gray-700 mb-2">Contenu</h3>
+              <textarea
+                value={(selectedSection.content.content as string) || ''}
+                onChange={(e) => updateContent('content', e.target.value)}
+                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-mono"
+                rows={6}
+                placeholder="<p>Votre contenu HTML ici...</p>"
+              />
+              <p className="text-xs text-gray-400 mt-1">Supporte le HTML</p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-2">
+                Padding (px)
+              </label>
+              <input
+                type="number"
+                value={(selectedSection.content.options as any)?.padding ?? 32}
+                onChange={(e) => updateOption(['padding'], parseInt(e.target.value) || 0)}
+                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-2">
+                Police
+              </label>
+              <select
+                value={(selectedSection.content.options as any)?.fontFamily ?? 'paragraph'}
+                onChange={(e) => updateOption(['fontFamily'], e.target.value)}
+                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+              >
+                <option value="paragraph">Paragraph (du template)</option>
+                <option value="heading">Heading (du template)</option>
+              </select>
+            </div>
+
+            <div className="border-t border-gray-200 pt-4">
+              <h3 className="text-xs font-semibold text-gray-700 mb-3">Style du texte</h3>
+              
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-2">
+                    Alignement
+                  </label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {['left', 'center', 'right', 'justify'].map((align) => (
+                      <button
+                        key={align}
+                        onClick={() => updateOption(['textStyle', 'align'], align)}
+                        className={`px-2 py-1.5 text-xs rounded border transition-all ${
+                          ((selectedSection.content.options as any)?.textStyle?.align ?? 'left') === align
+                            ? 'bg-violet-600 text-white border-violet-600'
+                            : 'bg-white text-gray-700 border-gray-300 hover:border-violet-400'
+                        }`}
+                      >
+                        {align === 'left' && 'Left'}
+                        {align === 'center' && 'Center'}
+                        {align === 'right' && 'Right'}
+                        {align === 'justify' && 'Justify'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-2">
+                    Line Height
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={(selectedSection.content.options as any)?.textStyle?.lineHeight ?? 1.6}
+                    onChange={(e) => updateOption(['textStyle', 'lineHeight'], parseFloat(e.target.value) || 1.6)}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-2">
+                    Letter Spacing (px)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    value={(selectedSection.content.options as any)?.textStyle?.letterSpacing ?? 0}
+                    onChange={(e) => updateOption(['textStyle', 'letterSpacing'], parseFloat(e.target.value) || 0)}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 pt-4">
+              <h3 className="text-xs font-semibold text-gray-700 mb-2">CSS personnalisé</h3>
+              <textarea
+                value={(selectedSection.content.options as any)?.customCSS ?? ''}
+                onChange={(e) => updateOption(['customCSS'], e.target.value)}
+                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-mono"
+                rows={4}
+                placeholder="color: #333; font-size: 16px;"
+              />
+              <p className="text-xs text-gray-400 mt-1">Format CSS (sans accolades)</p>
+            </div>
+          </>
+        )}
+
+        {sectionType?.name !== 'Texte' && (
+          <div className="border-t border-gray-200 pt-6">
+            <h3 className="text-xs font-semibold text-gray-700 mb-4">Contenu</h3>
+            <p className="text-xs text-gray-500">
+              Les options de contenu pour ce type de section ne sont pas encore disponibles.
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="p-4 border-t border-gray-200">

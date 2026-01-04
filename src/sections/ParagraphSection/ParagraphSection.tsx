@@ -1,51 +1,74 @@
-import { TitleBrick } from '../_bricks/TitleBrick';
-import { ParagraphBrick } from '../_bricks/ParagraphBrick';
+import { useEmailStore } from '../../store/emailStore';
+import { useTemplates } from '../../hooks/useSupabase';
 
 interface ParagraphSectionProps {
   data: {
-    title: string;
-    subtitle: string;
+    content: string;
   };
   options?: {
-    title?: {
-      fontSize?: number;
-      fontWeight?: 'normal' | 'bold' | 'extrabold';
-      color?: string;
-      align?: 'left' | 'center' | 'right';
-    };
-    subtitle?: {
-      fontSize?: number;
-      color?: string;
-      align?: 'left' | 'center' | 'right';
+    padding?: number;
+    fontFamily?: 'heading' | 'paragraph';
+    textStyle?: {
+      align?: 'left' | 'center' | 'right' | 'justify';
       lineHeight?: number;
+      letterSpacing?: number;
     };
-    container?: {
-      padding?: number;
-      backgroundColor?: string;
-    };
+    customCSS?: string;
   };
 }
 
 export function ParagraphSection({ data, options = {} }: ParagraphSectionProps) {
-  const containerPadding = options.container?.padding ?? 32;
-  const containerBgColor = options.container?.backgroundColor ?? 'transparent';
+  const { currentTemplateId } = useEmailStore();
+  const { templates } = useTemplates();
+  
+  const padding = options.padding ?? 32;
+  const fontFamily = options.fontFamily ?? 'paragraph';
+  const textAlign = options.textStyle?.align ?? 'left';
+  const lineHeight = options.textStyle?.lineHeight ?? 1.6;
+  const letterSpacing = options.textStyle?.letterSpacing ?? 0;
+  const customCSS = options.customCSS ?? '';
+
+  // Récupérer le template actuel pour obtenir les polices
+  const currentTemplate = templates.find(t => t.id === currentTemplateId);
+  const fontFamilyValue = fontFamily === 'heading' 
+    ? currentTemplate?.fonts.title 
+    : currentTemplate?.fonts.paragraph;
+
+  // Styles de base
+  const baseStyle: React.CSSProperties = {
+    padding: `${padding}px`,
+    backgroundColor: 'transparent',
+    textAlign,
+    lineHeight,
+    letterSpacing: `${letterSpacing}px`,
+    fontFamily: fontFamilyValue ? `'${fontFamilyValue}', sans-serif` : undefined,
+  };
+
+  // Parser le CSS personnalisé
+  let parsedCustomStyle: React.CSSProperties = {};
+  if (customCSS) {
+    try {
+      const cssProperties = customCSS.split(';').filter(prop => prop.trim());
+      cssProperties.forEach(prop => {
+        const [key, value] = prop.split(':').map(s => s.trim());
+        if (key && value) {
+          const camelKey = key.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+          (parsedCustomStyle as any)[camelKey] = value;
+        }
+      });
+    } catch (error) {
+      console.error('Erreur lors du parsing du CSS personnalisé:', error);
+    }
+  }
 
   return (
     <div
+      className="section-texte"
       style={{
-        padding: `${containerPadding}px`,
-        backgroundColor: containerBgColor,
+        ...baseStyle,
+        ...parsedCustomStyle,
       }}
-    >
-      <TitleBrick 
-        value={data.title} 
-        options={options.title}
-        style={{ marginBottom: '16px' }}
-      />
-      <ParagraphBrick 
-        value={data.subtitle} 
-        options={options.subtitle}
-      />
-    </div>
+      dangerouslySetInnerHTML={{ __html: data.content }}
+    />
   );
 }

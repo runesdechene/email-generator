@@ -64,7 +64,7 @@ function SortableSectionItem({ section, isSelected, onSelect, onDelete, template
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-gray-900 truncate">{section.name}</p>
         {templateName && (
-          <p className="text-xs text-gray-500">Template: {templateName}</p>
+          <p className="text-xs text-gray-500">Type: {templateName}</p>
         )}
       </div>
 
@@ -81,7 +81,11 @@ function SortableSectionItem({ section, isSelected, onSelect, onDelete, template
   );
 }
 
-export function Sidebar() {
+interface SidebarProps {
+  onOpenTemplateSelector: () => void;
+}
+
+export function Sidebar({ onOpenTemplateSelector }: SidebarProps) {
   const { 
     sections, 
     selectedSectionId, 
@@ -89,7 +93,6 @@ export function Sidebar() {
     selectSection, 
     removeSection, 
     reorderSections,
-    addSection,
     setCurrentTemplate,
   } = useEmailStore();
 
@@ -118,21 +121,7 @@ export function Sidebar() {
   };
 
   const handleAddSection = () => {
-    const defaultTemplate = sectionTemplates[0];
-    if (!defaultTemplate) {
-      alert('Aucun template de section disponible');
-      return;
-    }
-
-    const newSection: EmailSection = {
-      id: `section-${Date.now()}`,
-      templateId: defaultTemplate.id,
-      name: `Section ${sections.length + 1}`,
-      content: defaultTemplate.defaultContent,
-      order: sections.length,
-    };
-    addSection(newSection);
-    selectSection(newSection.id);
+    onOpenTemplateSelector();
   };
 
   return (
