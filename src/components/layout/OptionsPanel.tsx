@@ -1,9 +1,13 @@
 import { useState } from 'react';
-import { Download, Loader2, X } from 'lucide-react';
+import { Download, Loader2, X, LayoutGrid, Save } from 'lucide-react';
 import { useEmailStore } from '../../store/emailStore';
 import { useTemplates, useSectionTemplates } from '../../hooks/useSupabase';
+import { usePresets } from '../../hooks/usePresets';
 import { exportSectionWithBackground } from '../../utils/exportWithBackground';
 import { useToast } from '../../hooks/useToast';
+import { SavePresetDialog } from '../presets/SavePresetDialog';
+import { LoadPresetDialog } from '../presets/LoadPresetDialog';
+import type { SectionPreset } from '../../types/supabase';
 
 interface OptionsPanelProps {
   sectionsRef: React.RefObject<Map<string, HTMLDivElement>>;
@@ -13,8 +17,11 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
   const { selectedSectionId, sections, currentTemplateId, selectSection, updateSection } = useEmailStore();
   const { templates } = useTemplates();
   const { sectionTemplates } = useSectionTemplates();
+  const { createPreset } = usePresets();
   const toast = useToast();
   const [exporting, setExporting] = useState(false);
+  const [showSavePresetDialog, setShowSavePresetDialog] = useState(false);
+  const [showLoadPresetDialog, setShowLoadPresetDialog] = useState(false);
   
   const selectedSection = sections.find((s) => s.id === selectedSectionId);
   const sectionType = sectionTemplates.find(t => t.id === selectedSection?.templateId);
@@ -52,10 +59,45 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
     });
   };
 
+  const handleSavePreset = async (name: string, description: string, templateIds: string[]) => {
+    if (!sectionType) return;
+
+    try {
+      await createPreset({
+        user_id: '', // Sera remplacé automatiquement par le hook
+        name,
+        description,
+        sectionType: sectionType.name,
+        content: selectedSection.content,
+        templateIds,
+      });
+      toast.success('Preset sauvegardé avec succès !');
+    } catch (error) {
+      console.error('Error saving preset:', error);
+      toast.error('Erreur lors de la sauvegarde du preset');
+    }
+  };
+
+  const handleLoadPreset = (preset: SectionPreset) => {
+    // Appliquer le contenu du preset à la section actuelle
+    updateSection(selectedSection.id, {
+      content: preset.content,
+    });
+    toast.success(`Preset "${preset.name}" appliqué avec succès !`);
+  };
+
   return (
     <aside className="w-100 h-full bg-white border-l border-gray-200 flex flex-col flex-shrink-0">
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
-        <h2 className="text-sm font-semibold text-gray-900">Options de la section</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-semibold text-gray-900">Options de la section</h2>
+          {sectionType && (
+            <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-[#1E90FF] rounded text-xs text-[#1E90FF] font-medium">
+              <LayoutGrid size={12} />
+              <span>{sectionType.name}</span>
+            </div>
+          )}
+        </div>
         <button
           onClick={() => selectSection(null)}
           className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-all"
@@ -77,13 +119,28 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
           />
         </div>
 
-        {sectionType && (
-          <div className="bg-blue-50 border border-[#1E90FF] rounded-lg px-3 py-2">
-            <p className="text-xs text-[#1E90FF] font-medium">
-              <span className="font-semibold">Type :</span> {sectionType.name}
-            </p>
+        {/* Sélecteur de preset */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-xs font-medium text-gray-500">
+              Preset de section
+            </label>
+            <button
+              onClick={() => setShowSavePresetDialog(true)}
+              className="flex items-center gap-1 px-2 py-1 text-xs text-[#1E90FF] hover:bg-blue-50 rounded transition-all"
+              title="Sauvegarder comme preset"
+            >
+              <Save size={12} />
+              <span>Sauvegarder</span>
+            </button>
           </div>
-        )}
+          <button
+            onClick={() => setShowLoadPresetDialog(true)}
+            className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 hover:border-[#1E90FF] hover:bg-blue-50 transition-all text-left"
+          >
+            Charger un preset...
+          </button>
+        </div>
 
         {sectionType?.name === 'Texte' && (
           <>
@@ -583,6 +640,26 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
           )}
         </button>
       </div>
+
+      {/* Dialogs */}
+      {showSavePresetDialog && sectionType && currentTemplateId && (
+        <SavePresetDialog
+          sectionType={sectionType.name}
+          sectionContent={selectedSection.content}
+          currentTemplateId={currentTemplateId}
+          onSave={handleSavePreset}
+          onClose={() => setShowSavePresetDialog(false)}
+        />
+      )}
+
+      {showLoadPresetDialog && sectionType && currentTemplateId && (
+        <LoadPresetDialog
+          sectionType={sectionType.name}
+          currentTemplateId={currentTemplateId}
+          onLoad={handleLoadPreset}
+          onClose={() => setShowLoadPresetDialog(false)}
+        />
+      )}
     </aside>
   );
 }

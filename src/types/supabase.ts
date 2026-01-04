@@ -60,3 +60,15 @@ export interface GlobalStyleTemplate {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface SectionPreset {
+  id: string;
+  user_id: string;
+  name: string;
+  description?: string;
+  sectionType: string;
+  content: Record<string, unknown>;
+  templateIds: string[]; // IDs des templates auxquels ce preset est lié
+  createdAt: Date;
+  updatedAt: Date;
+}
