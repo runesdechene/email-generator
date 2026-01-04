@@ -1,11 +1,17 @@
 import { useEmailStore } from '../../store/emailStore';
 import { useTemplates } from '../../hooks/useSupabase';
+import { scopeCSS } from '../../utils/scopeCSS';
 
 interface ParagraphSectionProps {
+  sectionId: string;
   data: {
     content: string;
   };
   options?: {
+    backgroundImageUrl?: string;
+    backgroundSize?: string;
+    backgroundPosition?: string;
+    backgroundRepeat?: string;
     paddingTop?: number;
     paddingRight?: number;
     paddingBottom?: number;
@@ -24,7 +30,7 @@ interface ParagraphSectionProps {
   };
 }
 
-export function ParagraphSection({ data, options = {} }: ParagraphSectionProps) {
+export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSectionProps) {
   const { currentTemplateId } = useEmailStore();
   const { templates } = useTemplates();
   
@@ -93,33 +99,28 @@ export function ParagraphSection({ data, options = {} }: ParagraphSectionProps) 
     fontFamily: fontFamilyValue ? `'${fontFamilyValue}', sans-serif` : undefined,
     fontSize: `${fontSize}px`,
     color: color || '#000000',
+    ...(options.backgroundImageUrl && {
+      backgroundImage: `url(${options.backgroundImageUrl})`,
+      backgroundSize: options.backgroundSize || 'cover',
+      backgroundPosition: options.backgroundPosition || 'center',
+      backgroundRepeat: options.backgroundRepeat || 'no-repeat',
+    }),
   };
 
-  // Parser le CSS personnalisé
-  let parsedCustomStyle: React.CSSProperties = {};
-  if (customCSS) {
-    try {
-      const cssProperties = customCSS.split(';').filter(prop => prop.trim());
-      cssProperties.forEach(prop => {
-        const [key, value] = prop.split(':').map(s => s.trim());
-        if (key && value) {
-          const camelKey = key.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-          (parsedCustomStyle as any)[camelKey] = value;
-        }
-      });
-    } catch (error) {
-      console.error('Erreur lors du parsing du CSS personnalisé:', error);
-    }
-  }
+  // Scoper le CSS personnalisé à cette section uniquement
+  const scopedCSS = customCSS ? scopeCSS(customCSS, sectionId) : '';
 
   return (
-    <div
-      className="section-texte"
-      style={{
-        ...baseStyle,
-        ...parsedCustomStyle,
-      }}
-      dangerouslySetInnerHTML={{ __html: data.content }}
-    />
+    <>
+      {scopedCSS && (
+        <style dangerouslySetInnerHTML={{ __html: scopedCSS }} />
+      )}
+      <div
+        className="section-texte"
+        data-section-id={sectionId}
+        style={baseStyle}
+        dangerouslySetInnerHTML={{ __html: data.content }}
+      />
+    </>
   );
 }

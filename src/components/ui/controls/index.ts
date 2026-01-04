@@ -1,0 +1,7 @@
+export { PaddingControl } from './PaddingControl';
+export { FontControl } from './FontControl';
+export { FontSizeControl } from './FontSizeControl';
+export { ColorControl } from './ColorControl';
+export { TextStyleControl } from './TextStyleControl';
+export { CustomCSSControl } from './CustomCSSControl';
+export { BackgroundImageControl } from './BackgroundImageControl';

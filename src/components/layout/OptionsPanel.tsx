@@ -7,6 +7,16 @@ import { exportSectionWithBackground } from '../../utils/exportWithBackground';
 import { useToast } from '../../hooks/useToast';
 import { SavePresetDialog } from '../presets/SavePresetDialog';
 import { LoadPresetDialog } from '../presets/LoadPresetDialog';
+import { ImagePicker } from '../ui/ImagePicker';
+import { 
+  PaddingControl, 
+  FontControl, 
+  FontSizeControl, 
+  ColorControl, 
+  TextStyleControl, 
+  CustomCSSControl,
+  BackgroundImageControl 
+} from '../ui/controls';
 import type { SectionPreset } from '../../types/supabase';
 
 interface OptionsPanelProps {
@@ -156,420 +166,166 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               <p className="text-xs text-gray-400 mt-1">Supporte le HTML</p>
             </div>
 
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-2">
-                Padding
-              </label>
-              
-              {/* Toggles pour utiliser les paddings du template */}
-              <div className="flex gap-2 mb-3">
-                <button
-                  onClick={() => updateOption(['useTemplatePaddingInline'], !(selectedSection.content.options as any)?.useTemplatePaddingInline)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs rounded border transition-all ${
-                    (selectedSection.content.options as any)?.useTemplatePaddingInline
-                      ? 'bg-[#1E90FF] text-white border-[#1E90FF] shadow-sm'
-                      : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E90FF]'
-                  }`}
-                  title="Utiliser le padding inline du template (gauche/droite)"
-                >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V8m10 8V8M5 12h14" />
-                  </svg>
-                  Inline
-                </button>
-                <button
-                  onClick={() => updateOption(['useTemplatePaddingBlock'], !(selectedSection.content.options as any)?.useTemplatePaddingBlock)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs rounded border transition-all ${
-                    (selectedSection.content.options as any)?.useTemplatePaddingBlock
-                      ? 'bg-[#1E90FF] text-white border-[#1E90FF] shadow-sm'
-                      : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E90FF]'
-                  }`}
-                  title="Utiliser le padding block du template (haut/bas)"
-                >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V5m8 2V5M12 5v14m-4 2h8M7 12h10" />
-                  </svg>
-                  Block
-                </button>
-              </div>
+            <BackgroundImageControl
+              backgroundImageUrl={(selectedSection.content.options as any)?.backgroundImageUrl}
+              backgroundSize={(selectedSection.content.options as any)?.backgroundSize}
+              backgroundPosition={(selectedSection.content.options as any)?.backgroundPosition}
+              backgroundRepeat={(selectedSection.content.options as any)?.backgroundRepeat}
+              sectionId={selectedSection.id}
+              onUpdate={updateOption}
+            />
 
-              {/* Paddings 4 directions */}
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">Haut</label>
-                  <input
-                    type="number"
-                    value={(selectedSection.content.options as any)?.paddingTop ?? 32}
-                    onChange={(e) => updateOption(['paddingTop'], parseInt(e.target.value) || 0)}
-                    disabled={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
-                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">Bas</label>
-                  <input
-                    type="number"
-                    value={(selectedSection.content.options as any)?.paddingBottom ?? 32}
-                    onChange={(e) => updateOption(['paddingBottom'], parseInt(e.target.value) || 0)}
-                    disabled={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
-                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">Gauche</label>
-                  <input
-                    type="number"
-                    value={(selectedSection.content.options as any)?.paddingLeft ?? 32}
-                    onChange={(e) => updateOption(['paddingLeft'], parseInt(e.target.value) || 0)}
-                    disabled={(selectedSection.content.options as any)?.useTemplatePaddingInline}
-                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">Droite</label>
-                  <input
-                    type="number"
-                    value={(selectedSection.content.options as any)?.paddingRight ?? 32}
-                    onChange={(e) => updateOption(['paddingRight'], parseInt(e.target.value) || 0)}
-                    disabled={(selectedSection.content.options as any)?.useTemplatePaddingInline}
-                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
-                </div>
-              </div>
-            </div>
+            <PaddingControl
+              paddingTop={(selectedSection.content.options as any)?.paddingTop}
+              paddingBottom={(selectedSection.content.options as any)?.paddingBottom}
+              paddingLeft={(selectedSection.content.options as any)?.paddingLeft}
+              paddingRight={(selectedSection.content.options as any)?.paddingRight}
+              useTemplatePaddingInline={(selectedSection.content.options as any)?.useTemplatePaddingInline}
+              useTemplatePaddingBlock={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
+              onUpdate={updateOption}
+            />
 
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-2">
-                Police
-              </label>
-              <select
-                value={(selectedSection.content.options as any)?.fontFamily ?? 'paragraph'}
-                onChange={(e) => updateOption(['fontFamily'], e.target.value)}
-                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
-              >
-                <option value="paragraph">Paragraph (du template)</option>
-                <option value="heading">Heading (du template)</option>
-              </select>
-            </div>
+            <FontControl
+              font={(selectedSection.content.options as any)?.fontFamily}
+              onUpdate={updateOption}
+            />
 
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-2">
-                Taille de police
-              </label>
-              
-              {/* Sélection : Variable du template ou personnalisée */}
-              <div className="mb-3">
-                <div className="flex gap-2 mb-2">
-                  <button
-                    onClick={() => {
-                      const currentSize = (selectedSection.content.options as any)?.fontSize;
-                      if (typeof currentSize === 'number') {
-                        updateOption(['fontSize'], 'm');
-                      }
-                    }}
-                    className={`flex-1 px-3 py-2 text-xs rounded border transition-all ${
-                      typeof (selectedSection.content.options as any)?.fontSize === 'string'
-                        ? 'bg-[#1E90FF] text-white border-[#1E90FF] shadow-sm'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E90FF]'
-                    }`}
-                  >
-                    Variable du template
-                  </button>
-                  <button
-                    onClick={() => {
-                      const currentSize = (selectedSection.content.options as any)?.fontSize;
-                      if (typeof currentSize === 'string') {
-                        updateOption(['fontSize'], 16);
-                      }
-                    }}
-                    className={`flex-1 px-3 py-2 text-xs rounded border transition-all ${
-                      typeof (selectedSection.content.options as any)?.fontSize === 'number' || (selectedSection.content.options as any)?.fontSize === undefined
-                        ? 'bg-[#1E90FF] text-white border-[#1E90FF] shadow-sm'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E90FF]'
-                    }`}
-                  >
-                    Taille personnalisée
-                  </button>
-                </div>
-              </div>
+            <FontSizeControl
+              fontSize={(selectedSection.content.options as any)?.fontSize}
+              currentTemplate={templates.find(t => t.id === currentTemplateId)}
+              onUpdate={updateOption}
+            />
 
-              {/* Si variable du template : afficher les tailles disponibles */}
-              {typeof (selectedSection.content.options as any)?.fontSize === 'string' && (
-                <div className="grid grid-cols-3 gap-2">
-                  {(['xxl', 'xl', 'l', 'm', 's', 'xs'] as const).map((sizeKey) => {
-                    const currentTemplate = templates.find(t => t.id === currentTemplateId);
-                    const sizeValue = currentTemplate?.fontSizes[sizeKey] || 16;
-                    const isSelected = (selectedSection.content.options as any)?.fontSize === sizeKey;
-                    
-                    return (
-                      <button
-                        key={sizeKey}
-                        onClick={() => updateOption(['fontSize'], sizeKey)}
-                        className={`px-3 py-2 rounded-lg border-2 transition-all ${
-                          isSelected ? 'border-[#1E90FF] bg-blue-50 shadow-sm' : 'border-gray-300 hover:border-[#1E90FF]'
-                        }`}
-                      >
-                        <p className={`font-semibold ${
-                          isSelected ? 'text-[#1E90FF]' : 'text-gray-900'
-                        }`}>{sizeKey.toUpperCase()}</p>
-                        <p className="text-xs text-gray-500">{sizeValue}px</p>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+            <ColorControl
+              color={(selectedSection.content.options as any)?.color}
+              currentTemplate={templates.find(t => t.id === currentTemplateId)}
+              onUpdate={updateOption}
+            />
 
-              {/* Si taille personnalisée : afficher le range + input */}
-              {(typeof (selectedSection.content.options as any)?.fontSize === 'number' || (selectedSection.content.options as any)?.fontSize === undefined) && (
-                <div className="flex items-center gap-3">
-                  <input
-                    type="range"
-                    min="8"
-                    max="72"
-                    value={(selectedSection.content.options as any)?.fontSize ?? 16}
-                    onChange={(e) => updateOption(['fontSize'], parseInt(e.target.value))}
-                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#1E90FF]"
-                  />
-                  <input
-                    type="number"
-                    min="8"
-                    max="72"
-                    value={(selectedSection.content.options as any)?.fontSize ?? 16}
-                    onChange={(e) => updateOption(['fontSize'], parseInt(e.target.value) || 16)}
-                    className="w-16 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
-                  />
-                </div>
-              )}
-            </div>
+            <TextStyleControl
+              align={(selectedSection.content.options as any)?.textStyle?.align}
+              bold={(selectedSection.content.options as any)?.textStyle?.bold}
+              italic={(selectedSection.content.options as any)?.textStyle?.italic}
+              underline={(selectedSection.content.options as any)?.textStyle?.underline}
+              lineHeight={(selectedSection.content.options as any)?.textStyle?.lineHeight}
+              letterSpacing={(selectedSection.content.options as any)?.textStyle?.letterSpacing}
+              onUpdate={updateOption}
+            />
 
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-2">
-                Couleur
-              </label>
-              
-              {/* Sélection : Couleur du template ou personnalisée */}
-              <div className="mb-3">
-                <div className="flex gap-2 mb-2">
-                  <button
-                    onClick={() => {
-                      const currentColor = (selectedSection.content.options as any)?.color ?? '#000000';
-                      const currentTemplate = templates.find(t => t.id === currentTemplateId);
-                      const allTemplateColors = ['primary', 'secondary', 'background', 'text', 'accent', ...(currentTemplate?.customColors?.map(c => c.name) || [])];
-                      if (!allTemplateColors.includes(currentColor)) {
-                        updateOption(['color'], 'primary');
-                      }
-                    }}
-                    className={`flex-1 px-3 py-2 text-xs rounded border transition-all ${
-                      (() => {
-                        const currentColor = (selectedSection.content.options as any)?.color ?? '#000000';
-                        const currentTemplate = templates.find(t => t.id === currentTemplateId);
-                        const allTemplateColors = ['primary', 'secondary', 'background', 'text', 'accent', ...(currentTemplate?.customColors?.map(c => c.name) || [])];
-                        return allTemplateColors.includes(currentColor)
-                          ? 'bg-[#1E90FF] text-white border-[#1E90FF] shadow-sm'
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E90FF]';
-                      })()
-                    }`}
-                  >
-                    Variable du template
-                  </button>
-                  <button
-                    onClick={() => {
-                      const currentColor = (selectedSection.content.options as any)?.color ?? '#000000';
-                      const currentTemplate = templates.find(t => t.id === currentTemplateId);
-                      const allTemplateColors = ['primary', 'secondary', 'background', 'text', 'accent', ...(currentTemplate?.customColors?.map(c => c.name) || [])];
-                      if (allTemplateColors.includes(currentColor)) {
-                        updateOption(['color'], '#000000');
-                      }
-                    }}
-                    className={`flex-1 px-3 py-2 text-xs rounded border transition-all ${
-                      (() => {
-                        const currentColor = (selectedSection.content.options as any)?.color ?? '#000000';
-                        const currentTemplate = templates.find(t => t.id === currentTemplateId);
-                        const allTemplateColors = ['primary', 'secondary', 'background', 'text', 'accent', ...(currentTemplate?.customColors?.map(c => c.name) || [])];
-                        return !allTemplateColors.includes(currentColor)
-                          ? 'bg-[#1E90FF] text-white border-[#1E90FF] shadow-sm'
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E90FF]';
-                      })()
-                    }`}
-                  >
-                    Couleur personnalisée
-                  </button>
-                </div>
-              </div>
-
-              {/* Si variable du template : afficher les couleurs disponibles */}
-              {(() => {
-                const currentColor = (selectedSection.content.options as any)?.color ?? '#000000';
-                const currentTemplate = templates.find(t => t.id === currentTemplateId);
-                const allTemplateColors = ['primary', 'secondary', 'background', 'text', 'accent', ...(currentTemplate?.customColors?.map(c => c.name) || [])];
-                return allTemplateColors.includes(currentColor);
-              })() && (
-                <div>
-                  {/* Couleurs principales */}
-                  <p className="text-xs text-gray-500 mb-2">Couleurs principales</p>
-                  <div className="grid grid-cols-5 gap-2 mb-4">
-                    {(['primary', 'secondary', 'background', 'text', 'accent'] as const).map((colorKey) => {
-                      const currentTemplate = templates.find(t => t.id === currentTemplateId);
-                      const colorValue = currentTemplate?.colors[colorKey] || '#000000';
-                      const isSelected = (selectedSection.content.options as any)?.color === colorKey;
-                      
-                      return (
-                        <button
-                          key={colorKey}
-                          onClick={() => updateOption(['color'], colorKey)}
-                          className={`relative aspect-square rounded-lg border-2 transition-all ${
-                            isSelected ? 'border-[#1E90FF] ring-2 ring-blue-200 shadow-sm' : 'border-gray-300 hover:border-[#1E90FF]'
-                          }`}
-                          style={{ backgroundColor: colorValue }}
-                          title={`${colorKey}: ${colorValue}`}
-                        >
-                          {isSelected && (
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="w-2 h-2 bg-white rounded-full shadow-lg"></div>
-                            </div>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Couleurs personnalisées */}
-                  {(() => {
-                    const currentTemplate = templates.find(t => t.id === currentTemplateId);
-                    return currentTemplate?.customColors && currentTemplate.customColors.length > 0;
-                  })() && (
-                    <div>
-                      <p className="text-xs text-gray-500 mb-2">Couleurs personnalisées</p>
-                      <div className="grid grid-cols-5 gap-2">
-                        {templates.find(t => t.id === currentTemplateId)?.customColors?.map((customColor) => {
-                          const isSelected = (selectedSection.content.options as any)?.color === customColor.name;
-                          
-                          return (
-                            <button
-                              key={customColor.name}
-                              onClick={() => updateOption(['color'], customColor.name)}
-                              className={`relative aspect-square rounded-lg border-2 transition-all ${
-                                isSelected ? 'border-[#1E90FF] ring-2 ring-blue-200 shadow-sm' : 'border-gray-300 hover:border-[#1E90FF]'
-                              }`}
-                              style={{ backgroundColor: customColor.value }}
-                              title={`${customColor.name}: ${customColor.value}`}
-                            >
-                              {isSelected && (
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                  <div className="w-2 h-2 bg-white rounded-full shadow-lg"></div>
-                                </div>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Si couleur personnalisée : afficher le color picker */}
-              {(() => {
-                const currentColor = (selectedSection.content.options as any)?.color ?? '#000000';
-                const currentTemplate = templates.find(t => t.id === currentTemplateId);
-                const allTemplateColors = ['primary', 'secondary', 'background', 'text', 'accent', ...(currentTemplate?.customColors?.map(c => c.name) || [])];
-                return !allTemplateColors.includes(currentColor);
-              })() && (
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={(selectedSection.content.options as any)?.color ?? '#000000'}
-                    onChange={(e) => updateOption(['color'], e.target.value)}
-                    className="w-12 h-10 rounded border border-gray-300 cursor-pointer"
-                  />
-                  <input
-                    type="text"
-                    value={(selectedSection.content.options as any)?.color ?? '#000000'}
-                    onChange={(e) => updateOption(['color'], e.target.value)}
-                    className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 font-mono focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
-                    placeholder="#000000"
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="border-t border-gray-200 pt-4">
-              <h3 className="text-xs font-semibold text-gray-700 mb-3">Style du texte</h3>
-              
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-2">
-                    Alignement
-                  </label>
-                  <div className="grid grid-cols-4 gap-2">
-                    {['left', 'center', 'right', 'justify'].map((align) => (
-                      <button
-                        key={align}
-                        onClick={() => updateOption(['textStyle', 'align'], align)}
-                        className={`px-2 py-1.5 text-xs rounded border transition-all ${
-                          ((selectedSection.content.options as any)?.textStyle?.align ?? 'left') === align
-                            ? 'bg-[#1E90FF] text-white border-[#1E90FF] shadow-sm'
-                            : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E90FF]'
-                        }`}
-                      >
-                        {align === 'left' && 'Left'}
-                        {align === 'center' && 'Center'}
-                        {align === 'right' && 'Right'}
-                        {align === 'justify' && 'Justify'}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-2">
-                    Line Height
-                  </label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={(selectedSection.content.options as any)?.textStyle?.lineHeight ?? 1.6}
-                    onChange={(e) => updateOption(['textStyle', 'lineHeight'], parseFloat(e.target.value) || 1.6)}
-                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-2">
-                    Letter Spacing (px)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.5"
-                    value={(selectedSection.content.options as any)?.textStyle?.letterSpacing ?? 0}
-                    onChange={(e) => updateOption(['textStyle', 'letterSpacing'], parseFloat(e.target.value) || 0)}
-                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t border-gray-200 pt-4">
-              <h3 className="text-xs font-semibold text-gray-700 mb-2">CSS personnalisé</h3>
-              <textarea
-                value={(selectedSection.content.options as any)?.customCSS ?? ''}
-                onChange={(e) => updateOption(['customCSS'], e.target.value)}
-                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] font-mono"
-                rows={4}
-                placeholder="color: #333; font-size: 16px;"
-              />
-              <p className="text-xs text-gray-400 mt-1">Format CSS (sans accolades)</p>
-            </div>
+            <CustomCSSControl
+              customCSS={(selectedSection.content.options as any)?.customCSS}
+              onUpdate={updateOption}
+            />
           </>
         )}
 
-        {sectionType?.name !== 'Texte' && (
-          <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-xs font-semibold text-gray-700 mb-4">Contenu</h3>
-            <p className="text-xs text-gray-500">
-              Les options de contenu pour ce type de section ne sont pas encore disponibles.
-            </p>
-          </div>
+        {sectionType?.name === 'Hero' && (
+          <>
+            {/* Image Picker */}
+            <div className="border-t border-gray-200 pt-6">
+              <ImagePicker
+                value={(selectedSection.content.options as any)?.imageUrl || ''}
+                onChange={(url) => updateOption(['imageUrl'], url)}
+                sectionId={selectedSection.id}
+                label="Image Hero"
+              />
+            </div>
+
+            {/* Taille de l'image */}
+            {(selectedSection.content.options as any)?.imageUrl && (
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-2">
+                  Taille de l'image
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range"
+                    min="20"
+                    max="100"
+                    value={(selectedSection.content.options as any)?.imageSize ?? 80}
+                    onChange={(e) => updateOption(['imageSize'], parseInt(e.target.value))}
+                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#1E90FF]"
+                  />
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="number"
+                      min="20"
+                      max="100"
+                      value={(selectedSection.content.options as any)?.imageSize ?? 80}
+                      onChange={(e) => updateOption(['imageSize'], parseInt(e.target.value) || 80)}
+                      className="w-16 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
+                    />
+                    <span className="text-xs text-gray-500">%</span>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400 mt-1">Largeur de l'image (20% à 100%)</p>
+              </div>
+            )}
+
+            {/* Contenu */}
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="text-xs font-semibold text-gray-700 mb-2">Contenu</h3>
+              <textarea
+                value={(selectedSection.content.content as string) || ''}
+                onChange={(e) => updateContent('content', e.target.value)}
+                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] font-mono"
+                rows={6}
+                placeholder="<h1>Titre principal</h1><p>Votre texte ici...</p>"
+              />
+              <p className="text-xs text-gray-400 mt-1">Supporte le HTML</p>
+            </div>
+
+            <BackgroundImageControl
+              backgroundImageUrl={(selectedSection.content.options as any)?.backgroundImageUrl}
+              backgroundSize={(selectedSection.content.options as any)?.backgroundSize}
+              backgroundPosition={(selectedSection.content.options as any)?.backgroundPosition}
+              backgroundRepeat={(selectedSection.content.options as any)?.backgroundRepeat}
+              sectionId={selectedSection.id}
+              onUpdate={updateOption}
+            />
+
+            <PaddingControl
+              paddingTop={(selectedSection.content.options as any)?.paddingTop}
+              paddingBottom={(selectedSection.content.options as any)?.paddingBottom}
+              paddingLeft={(selectedSection.content.options as any)?.paddingLeft}
+              paddingRight={(selectedSection.content.options as any)?.paddingRight}
+              useTemplatePaddingInline={(selectedSection.content.options as any)?.useTemplatePaddingInline}
+              useTemplatePaddingBlock={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
+              onUpdate={updateOption}
+            />
+
+            <FontControl
+              font={(selectedSection.content.options as any)?.font}
+              onUpdate={updateOption}
+            />
+
+            <FontSizeControl
+              fontSize={(selectedSection.content.options as any)?.fontSize}
+              currentTemplate={templates.find(t => t.id === currentTemplateId)}
+              onUpdate={updateOption}
+            />
+
+            <ColorControl
+              color={(selectedSection.content.options as any)?.color}
+              currentTemplate={templates.find(t => t.id === currentTemplateId)}
+              onUpdate={updateOption}
+            />
+
+            <TextStyleControl
+              align={(selectedSection.content.options as any)?.textStyle?.align}
+              bold={(selectedSection.content.options as any)?.textStyle?.bold}
+              italic={(selectedSection.content.options as any)?.textStyle?.italic}
+              underline={(selectedSection.content.options as any)?.textStyle?.underline}
+              lineHeight={(selectedSection.content.options as any)?.textStyle?.lineHeight}
+              letterSpacing={(selectedSection.content.options as any)?.textStyle?.letterSpacing}
+              onUpdate={updateOption}
+            />
+
+            <CustomCSSControl
+              customCSS={(selectedSection.content.options as any)?.customCSS}
+              onUpdate={updateOption}
+            />
+          </>
         )}
       </div>
 
