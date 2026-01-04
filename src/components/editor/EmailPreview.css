@@ -1,5 +1,6 @@
 .email-preview-container {
   background-repeat: repeat-y;
   background-size: cover;
-  background-position: center;
+  background-position: center top;
+  transition: none;
 }
