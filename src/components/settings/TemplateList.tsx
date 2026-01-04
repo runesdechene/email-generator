@@ -90,7 +90,7 @@ export function TemplateList({ onSelectTemplate }: TemplateListProps) {
           </div>
           <button
             onClick={() => setShowCreateDialog(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-[#1E90FF] text-white rounded-lg shadow-md hover:bg-[#0066CC] hover:shadow-lg transition-all"
           >
             <Plus size={18} />
             Nouveau template
@@ -101,7 +101,7 @@ export function TemplateList({ onSelectTemplate }: TemplateListProps) {
       <div className="p-6">
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 size={32} className="animate-spin text-violet-600" />
+            <Loader2 size={32} className="animate-spin text-[#1E90FF]" />
           </div>
         ) : templates.length === 0 ? (
           <div className="text-center py-12">
@@ -116,7 +116,7 @@ export function TemplateList({ onSelectTemplate }: TemplateListProps) {
               <div
                 key={template.id}
                 onClick={() => onSelectTemplate(template)}
-                className="border border-gray-200 rounded-lg p-4 hover:border-violet-400 hover:bg-violet-50/50 transition-all cursor-pointer group"
+                className="border border-gray-200 rounded-lg p-4 hover:border-[#1E90FF] hover:bg-blue-50 hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
@@ -150,7 +150,7 @@ export function TemplateList({ onSelectTemplate }: TemplateListProps) {
                     >
                       <Trash2 size={18} />
                     </button>
-                    <ChevronRight size={20} className="text-gray-400 group-hover:text-violet-600 transition-all" />
+                    <ChevronRight size={20} className="text-gray-400 group-hover:text-[#1E90FF] transition-all" />
                   </div>
                 </div>
               </div>
@@ -175,7 +175,7 @@ export function TemplateList({ onSelectTemplate }: TemplateListProps) {
                 value={templateName}
                 onChange={(e) => setTemplateName(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleCreate()}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                 placeholder="Runes de Chêne"
                 autoFocus
               />
@@ -188,7 +188,7 @@ export function TemplateList({ onSelectTemplate }: TemplateListProps) {
               <button
                 onClick={handleCreate}
                 disabled={creating}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[#1E90FF] text-white rounded-lg shadow-md hover:bg-[#0066CC] hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {creating ? (
                   <>

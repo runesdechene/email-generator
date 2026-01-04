@@ -79,7 +79,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 bg-[#1E90FF] text-white rounded-lg shadow-md hover:bg-[#0066CC] hover:shadow-lg transition-all disabled:opacity-50"
           >
             {saving ? (
               <>
@@ -108,7 +108,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                 />
               </div>
               <div>
@@ -118,7 +118,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] resize-none"
                   rows={3}
                   placeholder="Description de votre template..."
                 />
@@ -141,7 +141,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                     </label>
                     <div className="flex gap-3">
                       <label className="flex-1 cursor-pointer">
-                        <div className="flex items-center justify-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-violet-400 transition-all">
+                        <div className="flex items-center justify-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#1E90FF] transition-all">
                           <Upload size={18} className="text-gray-400" />
                           <span className="text-sm text-gray-600">
                             {uploading ? 'Upload en cours...' : 'Choisir une image'}
@@ -197,7 +197,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                       type="text"
                       value={formData.backgroundImage}
                       onChange={(e) => setFormData({ ...formData, backgroundImage: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                       placeholder="https://exemple.com/parchemin.jpg"
                     />
                   </div>
@@ -210,7 +210,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                     <select
                       value={formData.backgroundSize}
                       onChange={(e) => setFormData({ ...formData, backgroundSize: e.target.value as 'cover' | 'repeat' })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                     >
                       <option value="cover">Cover (étire pour remplir)</option>
                       <option value="repeat">Répétition (100% auto)</option>
@@ -253,7 +253,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                   list="title-fonts"
                   value={formData.fonts.title}
                   onChange={(e) => setFormData({ ...formData, fonts: { ...formData.fonts, title: e.target.value } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                   placeholder="Ex: Roboto, Arial, Helvetica..."
                   style={{ fontFamily: getFontFamily(formData.fonts.title) }}
                 />
@@ -281,7 +281,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                   list="paragraph-fonts"
                   value={formData.fonts.paragraph}
                   onChange={(e) => setFormData({ ...formData, fonts: { ...formData.fonts, paragraph: e.target.value } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                   placeholder="Ex: Open Sans, Arial, Verdana..."
                   style={{ fontFamily: getFontFamily(formData.fonts.paragraph) }}
                 />
@@ -322,7 +322,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                     type="text"
                     value={formData.colors.primary}
                     onChange={(e) => setFormData({ ...formData, colors: { ...formData.colors, primary: e.target.value } })}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-mono text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] font-mono text-sm"
                   />
                 </div>
               </div>
@@ -341,7 +341,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                     type="text"
                     value={formData.colors.secondary}
                     onChange={(e) => setFormData({ ...formData, colors: { ...formData.colors, secondary: e.target.value } })}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-mono text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] font-mono text-sm"
                   />
                 </div>
               </div>
@@ -360,7 +360,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                     type="text"
                     value={formData.colors.accent}
                     onChange={(e) => setFormData({ ...formData, colors: { ...formData.colors, accent: e.target.value } })}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-mono text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] font-mono text-sm"
                   />
                 </div>
               </div>
@@ -379,7 +379,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                     type="text"
                     value={formData.colors.background}
                     onChange={(e) => setFormData({ ...formData, colors: { ...formData.colors, background: e.target.value } })}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-mono text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] font-mono text-sm"
                   />
                 </div>
               </div>
@@ -398,7 +398,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                     type="text"
                     value={formData.colors.text}
                     onChange={(e) => setFormData({ ...formData, colors: { ...formData.colors, text: e.target.value } })}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-mono text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] font-mono text-sm"
                   />
                 </div>
               </div>
@@ -446,7 +446,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                     value={newColorName}
                     onChange={(e) => setNewColorName(e.target.value)}
                     placeholder="Ex: Brand Blue"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 text-sm"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] text-sm"
                   />
                 </div>
                 <div>
@@ -462,7 +462,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                       type="text"
                       value={newColorValue}
                       onChange={(e) => setNewColorValue(e.target.value)}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-mono text-sm"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] font-mono text-sm"
                     />
                   </div>
                 </div>
@@ -478,7 +478,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                     setNewColorValue('#000000');
                   }
                 }}
-                className="w-full px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-colors text-sm font-medium"
+                className="w-full px-4 py-2 bg-[#1E90FF] text-white rounded-lg shadow-md hover:bg-[#0066CC] hover:shadow-lg transition-colors text-sm font-medium"
               >
                 Ajouter la couleur
               </button>
@@ -496,7 +496,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                   type="number"
                   value={formData.paddingInline}
                   onChange={(e) => setFormData({ ...formData, paddingInline: parseInt(e.target.value) || 32 })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                   min="0"
                   max="200"
                 />
@@ -508,7 +508,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                   type="number"
                   value={formData.paddingBlock}
                   onChange={(e) => setFormData({ ...formData, paddingBlock: parseInt(e.target.value) || 32 })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                   min="0"
                   max="200"
                 />
@@ -528,7 +528,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                   type="number"
                   value={formData.fontSizes.xxl}
                   onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, xxl: parseInt(e.target.value) || 48 } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                   min="8"
                   max="100"
                 />
@@ -539,7 +539,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                   type="number"
                   value={formData.fontSizes.xl}
                   onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, xl: parseInt(e.target.value) || 36 } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                   min="8"
                   max="100"
                 />
@@ -550,7 +550,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                   type="number"
                   value={formData.fontSizes.l}
                   onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, l: parseInt(e.target.value) || 24 } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                   min="8"
                   max="100"
                 />
@@ -561,7 +561,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                   type="number"
                   value={formData.fontSizes.m}
                   onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, m: parseInt(e.target.value) || 16 } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                   min="8"
                   max="100"
                 />
@@ -572,7 +572,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                   type="number"
                   value={formData.fontSizes.s}
                   onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, s: parseInt(e.target.value) || 14 } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                   min="8"
                   max="100"
                 />
@@ -583,7 +583,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                   type="number"
                   value={formData.fontSizes.xs}
                   onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, xs: parseInt(e.target.value) || 12 } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                   min="8"
                   max="100"
                 />

@@ -28,8 +28,8 @@ export function Navbar({ currentPage, onPageChange }: NavbarProps) {
           onClick={() => onPageChange('editor')}
           className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
             currentPage === 'editor'
-              ? 'bg-violet-600 text-white'
-              : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+              ? 'bg-[#1E90FF] text-white shadow-md'
+              : 'text-gray-600 hover:bg-blue-50 hover:text-[#1E90FF]'
           }`}
           title="Éditeur"
         >
@@ -40,8 +40,8 @@ export function Navbar({ currentPage, onPageChange }: NavbarProps) {
           onClick={() => onPageChange('settings')}
           className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
             currentPage === 'settings'
-              ? 'bg-violet-600 text-white'
-              : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+              ? 'bg-[#1E90FF] text-white shadow-md'
+              : 'text-gray-600 hover:bg-blue-50 hover:text-[#1E90FF]'
           }`}
           title="Réglages"
         >

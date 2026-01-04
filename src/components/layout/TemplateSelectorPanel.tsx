@@ -30,7 +30,7 @@ export function TemplateSelectorPanel({ sectionTypes, onSelectSectionType, onClo
             <button
               key={sectionType.id}
               onClick={() => onSelectSectionType(sectionType)}
-              className="group relative aspect-square rounded-lg border-2 border-gray-200 hover:border-violet-500 transition-all overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 hover:from-violet-50 hover:to-violet-100"
+              className="group relative aspect-square rounded-lg border-2 border-gray-200 hover:border-[#1E90FF] transition-all overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 hover:from-blue-50 hover:to-blue-100"
             >
               {sectionType.thumbnail ? (
                 <img
@@ -40,8 +40,8 @@ export function TemplateSelectorPanel({ sectionTypes, onSelectSectionType, onClo
                 />
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center p-3">
-                  <div className="w-12 h-12 rounded-lg bg-violet-100 group-hover:bg-violet-200 flex items-center justify-center mb-2 transition-colors">
-                    <span className="text-2xl font-bold text-violet-600">
+                  <div className="w-12 h-12 rounded-lg bg-blue-100 group-hover:bg-blue-200 flex items-center justify-center mb-2 transition-colors">
+                    <span className="text-2xl font-bold text-[#1E90FF]">
                       {sectionType.name.charAt(0)}
                     </span>
                   </div>

@@ -48,10 +48,10 @@ export function EmailPreview({ sectionsRef, selectedSections }: EmailPreviewProp
               onClick={() => selectSection(section.id)}
               className={`cursor-pointer transition-all ${
                 selectedSections.has(section.id)
-                  ? 'ring-4 ring-emerald-500'
+                  ? 'ring-4 ring-[#FFA500]'
                   : selectedSectionId === section.id
-                  ? 'ring-2 ring-violet-500'
-                  : 'hover:ring-2 hover:ring-violet-300'
+                  ? 'ring-2 ring-[#1E90FF]'
+                  : 'hover:ring-2 hover:ring-[#00BFFF]'
               }`}
             >
               <SectionRenderer section={section} />

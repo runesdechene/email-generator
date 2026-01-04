@@ -292,7 +292,7 @@ function AppContent() {
                       selectSection(null);
                     }}
                     onMouseDown={(e) => e.stopPropagation()}
-                    className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 hover:border-violet-400 transition-all"
+                    className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-blue-50 hover:border-[#1E90FF] transition-all"
                     title="Mode visualisation (désélectionner la section)"
                   >
                     <Eye size={16} className="text-gray-600" />
@@ -310,7 +310,7 @@ function AppContent() {
                       }}
                       onMouseDown={(e) => e.stopPropagation()}
                       disabled={exportingMultiple}
-                      className="flex items-center gap-2 px-3 py-2 bg-emerald-600 text-white rounded-lg shadow-sm hover:bg-emerald-500 transition-all disabled:opacity-50 disabled:cursor-wait"
+                      className="flex items-center gap-2 px-3 py-2 bg-[#1E90FF] text-white rounded-lg shadow-md hover:bg-[#0066CC] hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-wait"
                       title={`Exporter ${selectedSectionsForExport.size} sections en 1 JPG`}
                     >
                       {exportingMultiple ? (
@@ -333,7 +333,7 @@ function AppContent() {
                       }}
                       onMouseDown={(e) => e.stopPropagation()}
                       disabled={exportingMultiple}
-                      className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-500 transition-all disabled:opacity-50 disabled:cursor-wait"
+                      className="flex items-center gap-2 px-3 py-2 bg-[#FFA500] text-white rounded-lg shadow-md hover:bg-[#FF8C00] hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-wait"
                       title={`Exporter ${selectedSectionsForExport.size} sections en ${selectedSectionsForExport.size} JPG`}
                     >
                       {exportingMultiple ? (

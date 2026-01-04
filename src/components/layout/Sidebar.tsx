@@ -49,8 +49,8 @@ function SortableSectionItem({ section, isSelected, onSelect, onDelete, onDuplic
       style={style}
       className={`group flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-all ${
         isSelected
-          ? 'bg-violet-50 border border-violet-500'
-          : 'bg-gray-50 border border-gray-200 hover:bg-gray-100'
+          ? 'bg-blue-50 border-2 border-[#1E90FF] shadow-sm'
+          : 'bg-gray-50 border border-gray-200 hover:bg-blue-50 hover:border-[#1E90FF]'
       }`}
       onClick={onSelect}
     >
@@ -75,7 +75,7 @@ function SortableSectionItem({ section, isSelected, onSelect, onDelete, onDuplic
             e.stopPropagation();
             onDuplicate();
           }}
-          className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-violet-600 transition-all p-1 rounded hover:bg-violet-50"
+          className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-[#1E90FF] transition-all p-1 rounded hover:bg-blue-100"
           title="Dupliquer la section"
         >
           <Copy size={14} />
@@ -152,7 +152,7 @@ export function Sidebar({ onOpenTemplateSelector }: SidebarProps) {
         <select
           value={currentTemplateId || ''}
           onChange={(e) => setCurrentTemplate(e.target.value)}
-          className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+          className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
           disabled={templatesLoading}
         >
           <option value="">
@@ -171,7 +171,7 @@ export function Sidebar({ onOpenTemplateSelector }: SidebarProps) {
           <h2 className="text-sm font-semibold text-gray-700">Sections</h2>
           <button
             onClick={handleAddSection}
-            className="w-8 h-8 rounded-lg bg-violet-600 hover:bg-violet-500 flex items-center justify-center transition-all text-white"
+            className="w-8 h-8 rounded-lg bg-[#1E90FF] hover:bg-[#0066CC] shadow-md hover:shadow-lg flex items-center justify-center transition-all text-white"
           >
             <Plus size={18} />
           </button>

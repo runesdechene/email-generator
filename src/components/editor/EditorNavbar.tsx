@@ -53,7 +53,7 @@ export function EditorNavbar() {
             <div className="absolute top-full mt-2 left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-xl max-h-96 overflow-y-auto z-20">
               {projectsLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 size={24} className="animate-spin text-violet-600" />
+                  <Loader2 size={24} className="animate-spin text-[#1E90FF]" />
                 </div>
               ) : projects.length === 0 ? (
                 <div className="p-4 text-center">
@@ -69,9 +69,9 @@ export function EditorNavbar() {
                     <button
                       key={project.id}
                       onClick={() => handleSelectProject(project)}
-                      className={`w-full px-4 py-3 text-left hover:bg-violet-50 transition-all border-l-2 ${
+                      className={`w-full px-4 py-3 text-left hover:bg-blue-50 transition-all border-l-2 ${
                         currentProject?.id === project.id
-                          ? 'border-violet-500 bg-violet-50'
+                          ? 'border-[#1E90FF] bg-blue-50'
                           : 'border-transparent'
                       }`}
                     >
@@ -82,7 +82,7 @@ export function EditorNavbar() {
                             <p className="text-xs text-gray-500 truncate mt-0.5">{project.description}</p>
                           )}
                           <div className="flex items-center gap-3 mt-1.5">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-violet-100 text-violet-700">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-[#1E90FF]">
                               {getTemplateName(project.templateId)}
                             </span>
                             <span className="text-xs text-gray-400">

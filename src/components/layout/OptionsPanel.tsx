@@ -73,13 +73,13 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
             type="text"
             value={selectedSection.name}
             onChange={(e) => updateSection(selectedSection.id, { name: e.target.value })}
-            className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+            className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
           />
         </div>
 
         {sectionType && (
-          <div className="bg-violet-50 border border-violet-200 rounded-lg px-3 py-2">
-            <p className="text-xs text-violet-600">
+          <div className="bg-blue-50 border border-[#1E90FF] rounded-lg px-3 py-2">
+            <p className="text-xs text-[#1E90FF] font-medium">
               <span className="font-semibold">Type :</span> {sectionType.name}
             </p>
           </div>
@@ -92,7 +92,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               <textarea
                 value={(selectedSection.content.content as string) || ''}
                 onChange={(e) => updateContent('content', e.target.value)}
-                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-mono"
+                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] font-mono"
                 rows={6}
                 placeholder="<p>Votre contenu HTML ici...</p>"
               />
@@ -110,8 +110,8 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                   onClick={() => updateOption(['useTemplatePaddingInline'], !(selectedSection.content.options as any)?.useTemplatePaddingInline)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 text-xs rounded border transition-all ${
                     (selectedSection.content.options as any)?.useTemplatePaddingInline
-                      ? 'bg-violet-600 text-white border-violet-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:border-violet-400'
+                      ? 'bg-[#1E90FF] text-white border-[#1E90FF] shadow-sm'
+                      : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E90FF]'
                   }`}
                   title="Utiliser le padding inline du template (gauche/droite)"
                 >
@@ -124,8 +124,8 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                   onClick={() => updateOption(['useTemplatePaddingBlock'], !(selectedSection.content.options as any)?.useTemplatePaddingBlock)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 text-xs rounded border transition-all ${
                     (selectedSection.content.options as any)?.useTemplatePaddingBlock
-                      ? 'bg-violet-600 text-white border-violet-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:border-violet-400'
+                      ? 'bg-[#1E90FF] text-white border-[#1E90FF] shadow-sm'
+                      : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E90FF]'
                   }`}
                   title="Utiliser le padding block du template (haut/bas)"
                 >
@@ -145,7 +145,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                     value={(selectedSection.content.options as any)?.paddingTop ?? 32}
                     onChange={(e) => updateOption(['paddingTop'], parseInt(e.target.value) || 0)}
                     disabled={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
-                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
                 <div>
@@ -155,7 +155,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                     value={(selectedSection.content.options as any)?.paddingBottom ?? 32}
                     onChange={(e) => updateOption(['paddingBottom'], parseInt(e.target.value) || 0)}
                     disabled={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
-                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
                 <div>
@@ -165,7 +165,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                     value={(selectedSection.content.options as any)?.paddingLeft ?? 32}
                     onChange={(e) => updateOption(['paddingLeft'], parseInt(e.target.value) || 0)}
                     disabled={(selectedSection.content.options as any)?.useTemplatePaddingInline}
-                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
                 <div>
@@ -175,7 +175,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                     value={(selectedSection.content.options as any)?.paddingRight ?? 32}
                     onChange={(e) => updateOption(['paddingRight'], parseInt(e.target.value) || 0)}
                     disabled={(selectedSection.content.options as any)?.useTemplatePaddingInline}
-                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -188,7 +188,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               <select
                 value={(selectedSection.content.options as any)?.fontFamily ?? 'paragraph'}
                 onChange={(e) => updateOption(['fontFamily'], e.target.value)}
-                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
               >
                 <option value="paragraph">Paragraph (du template)</option>
                 <option value="heading">Heading (du template)</option>
@@ -212,8 +212,8 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                     }}
                     className={`flex-1 px-3 py-2 text-xs rounded border transition-all ${
                       typeof (selectedSection.content.options as any)?.fontSize === 'string'
-                        ? 'bg-violet-600 text-white border-violet-600'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-violet-400'
+                        ? 'bg-[#1E90FF] text-white border-[#1E90FF] shadow-sm'
+                        : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E90FF]'
                     }`}
                   >
                     Variable du template
@@ -227,8 +227,8 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                     }}
                     className={`flex-1 px-3 py-2 text-xs rounded border transition-all ${
                       typeof (selectedSection.content.options as any)?.fontSize === 'number' || (selectedSection.content.options as any)?.fontSize === undefined
-                        ? 'bg-violet-600 text-white border-violet-600'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-violet-400'
+                        ? 'bg-[#1E90FF] text-white border-[#1E90FF] shadow-sm'
+                        : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E90FF]'
                     }`}
                   >
                     Taille personnalisée
@@ -249,11 +249,11 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                         key={sizeKey}
                         onClick={() => updateOption(['fontSize'], sizeKey)}
                         className={`px-3 py-2 rounded-lg border-2 transition-all ${
-                          isSelected ? 'border-violet-600 bg-violet-50' : 'border-gray-300 hover:border-violet-400'
+                          isSelected ? 'border-[#1E90FF] bg-blue-50 shadow-sm' : 'border-gray-300 hover:border-[#1E90FF]'
                         }`}
                       >
                         <p className={`font-semibold ${
-                          isSelected ? 'text-violet-600' : 'text-gray-900'
+                          isSelected ? 'text-[#1E90FF]' : 'text-gray-900'
                         }`}>{sizeKey.toUpperCase()}</p>
                         <p className="text-xs text-gray-500">{sizeValue}px</p>
                       </button>
@@ -271,7 +271,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                     max="72"
                     value={(selectedSection.content.options as any)?.fontSize ?? 16}
                     onChange={(e) => updateOption(['fontSize'], parseInt(e.target.value))}
-                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-violet-600"
+                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#1E90FF]"
                   />
                   <input
                     type="number"
@@ -279,7 +279,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                     max="72"
                     value={(selectedSection.content.options as any)?.fontSize ?? 16}
                     onChange={(e) => updateOption(['fontSize'], parseInt(e.target.value) || 16)}
-                    className="w-16 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="w-16 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                   />
                 </div>
               )}
@@ -308,8 +308,8 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                         const currentTemplate = templates.find(t => t.id === currentTemplateId);
                         const allTemplateColors = ['primary', 'secondary', 'background', 'text', 'accent', ...(currentTemplate?.customColors?.map(c => c.name) || [])];
                         return allTemplateColors.includes(currentColor)
-                          ? 'bg-violet-600 text-white border-violet-600'
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-violet-400';
+                          ? 'bg-[#1E90FF] text-white border-[#1E90FF] shadow-sm'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E90FF]';
                       })()
                     }`}
                   >
@@ -330,8 +330,8 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                         const currentTemplate = templates.find(t => t.id === currentTemplateId);
                         const allTemplateColors = ['primary', 'secondary', 'background', 'text', 'accent', ...(currentTemplate?.customColors?.map(c => c.name) || [])];
                         return !allTemplateColors.includes(currentColor)
-                          ? 'bg-violet-600 text-white border-violet-600'
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-violet-400';
+                          ? 'bg-[#1E90FF] text-white border-[#1E90FF] shadow-sm'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E90FF]';
                       })()
                     }`}
                   >
@@ -361,7 +361,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                           key={colorKey}
                           onClick={() => updateOption(['color'], colorKey)}
                           className={`relative aspect-square rounded-lg border-2 transition-all ${
-                            isSelected ? 'border-violet-600 ring-2 ring-violet-200' : 'border-gray-300 hover:border-violet-400'
+                            isSelected ? 'border-[#1E90FF] ring-2 ring-blue-200 shadow-sm' : 'border-gray-300 hover:border-[#1E90FF]'
                           }`}
                           style={{ backgroundColor: colorValue }}
                           title={`${colorKey}: ${colorValue}`}
@@ -392,7 +392,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                               key={customColor.name}
                               onClick={() => updateOption(['color'], customColor.name)}
                               className={`relative aspect-square rounded-lg border-2 transition-all ${
-                                isSelected ? 'border-violet-600 ring-2 ring-violet-200' : 'border-gray-300 hover:border-violet-400'
+                                isSelected ? 'border-[#1E90FF] ring-2 ring-blue-200 shadow-sm' : 'border-gray-300 hover:border-[#1E90FF]'
                               }`}
                               style={{ backgroundColor: customColor.value }}
                               title={`${customColor.name}: ${customColor.value}`}
@@ -429,7 +429,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                     type="text"
                     value={(selectedSection.content.options as any)?.color ?? '#000000'}
                     onChange={(e) => updateOption(['color'], e.target.value)}
-                    className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 font-mono focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 font-mono focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                     placeholder="#000000"
                   />
                 </div>
@@ -451,8 +451,8 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                         onClick={() => updateOption(['textStyle', 'align'], align)}
                         className={`px-2 py-1.5 text-xs rounded border transition-all ${
                           ((selectedSection.content.options as any)?.textStyle?.align ?? 'left') === align
-                            ? 'bg-violet-600 text-white border-violet-600'
-                            : 'bg-white text-gray-700 border-gray-300 hover:border-violet-400'
+                            ? 'bg-[#1E90FF] text-white border-[#1E90FF] shadow-sm'
+                            : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E90FF]'
                         }`}
                       >
                         {align === 'left' && 'Left'}
@@ -473,7 +473,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                     step="0.1"
                     value={(selectedSection.content.options as any)?.textStyle?.lineHeight ?? 1.6}
                     onChange={(e) => updateOption(['textStyle', 'lineHeight'], parseFloat(e.target.value) || 1.6)}
-                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                   />
                 </div>
 
@@ -486,7 +486,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                     step="0.5"
                     value={(selectedSection.content.options as any)?.textStyle?.letterSpacing ?? 0}
                     onChange={(e) => updateOption(['textStyle', 'letterSpacing'], parseFloat(e.target.value) || 0)}
-                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                   />
                 </div>
               </div>
@@ -497,7 +497,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               <textarea
                 value={(selectedSection.content.options as any)?.customCSS ?? ''}
                 onChange={(e) => updateOption(['customCSS'], e.target.value)}
-                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-mono"
+                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] font-mono"
                 rows={4}
                 placeholder="color: #333; font-size: 16px;"
               />
@@ -568,7 +568,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
             }
           }}
           disabled={exporting}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 transition-all disabled:opacity-50 disabled:cursor-wait text-sm font-medium"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#1E90FF] text-white rounded-lg shadow-md hover:bg-[#0066CC] hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-wait text-sm font-medium"
         >
           {exporting ? (
             <>

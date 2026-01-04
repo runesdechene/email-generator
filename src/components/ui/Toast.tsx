@@ -26,13 +26,13 @@ export function ToastItem({ toast, onClose }: ToastItemProps) {
   const icons = {
     success: <CheckCircle size={24} className="text-green-500" />,
     error: <AlertCircle size={24} className="text-red-500" />,
-    info: <Info size={24} className="text-blue-500" />,
+    info: <Info size={24} className="text-[#1E90FF]" />,
   };
 
   const bgColors = {
     success: 'bg-green-50 border-green-200',
     error: 'bg-red-50 border-red-200',
-    info: 'bg-blue-50 border-blue-200',
+    info: 'bg-blue-50 border-[#1E90FF]',
   };
 
   return (

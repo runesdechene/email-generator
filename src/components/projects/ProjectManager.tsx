@@ -58,6 +58,7 @@ export function ProjectManager() {
       try {
         setSaving(true);
         const newProjectId = await createProject({
+          user_id: '', // Sera remplacé automatiquement par le hook
           name: projectName,
           description: projectDescription,
           templateId: currentTemplateId || '',
@@ -189,7 +190,7 @@ export function ProjectManager() {
             setShowSaveDialog(true);
           }
         }}
-        className="flex items-center gap-2 px-3 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-all text-sm font-medium"
+        className="flex items-center gap-2 px-3 py-2 bg-[#1E90FF] text-white rounded-lg shadow-md hover:bg-[#0066CC] hover:shadow-lg transition-all text-sm font-medium"
         title={currentProjectId ? "Sauvegarder les modifications" : sections.length > 0 ? "Sauvegarder le projet" : "Créer un nouveau projet"}
       >
         {currentProjectId ? (
@@ -234,7 +235,7 @@ export function ProjectManager() {
               setShowEditDialog(true);
             }
           }}
-          className="p-1.5 text-gray-400 hover:text-violet-600 transition-all rounded-lg hover:bg-violet-50"
+          className="p-1.5 text-gray-400 hover:text-[#1E90FF] transition-all rounded-lg hover:bg-blue-50"
           title="Modifier le nom du projet"
         >
           <Pencil size={16} />
@@ -262,7 +263,7 @@ export function ProjectManager() {
                   type="text"
                   value={editingProjectName}
                   onChange={(e) => setEditingProjectName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                   placeholder="Mon email marketing"
                   autoFocus
                 />
@@ -273,7 +274,7 @@ export function ProjectManager() {
               <button
                 onClick={handleEditProjectName}
                 disabled={saving}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[#1E90FF] text-white rounded-lg shadow-md hover:bg-[#0066CC] hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? (
                   <>
@@ -319,7 +320,7 @@ export function ProjectManager() {
                   type="text"
                   value={projectName}
                   onChange={(e) => setProjectName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
                   placeholder="Mon email marketing"
                   autoFocus
                 />
@@ -332,7 +333,7 @@ export function ProjectManager() {
                 <textarea
                   value={projectDescription}
                   onChange={(e) => setProjectDescription(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] resize-none"
                   rows={3}
                   placeholder="Description du projet..."
                 />
@@ -343,7 +344,7 @@ export function ProjectManager() {
               <button
                 onClick={handleSaveProject}
                 disabled={saving}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[#1E90FF] text-white rounded-lg shadow-md hover:bg-[#0066CC] hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? (
                   <>
@@ -376,7 +377,7 @@ export function ProjectManager() {
             
             {loading ? (
               <div className="flex items-center justify-center py-12">
-                <Loader2 size={32} className="animate-spin text-violet-600" />
+                <Loader2 size={32} className="animate-spin text-[#1E90FF]" />
               </div>
             ) : projects.length === 0 ? (
               <div className="text-center py-12">
@@ -388,7 +389,7 @@ export function ProjectManager() {
                 {projects.map((project) => (
                   <div
                     key={project.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:border-violet-300 transition-all group"
+                    className="border border-gray-200 rounded-lg p-4 hover:border-[#1E90FF] hover:shadow-md transition-all group"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -405,7 +406,7 @@ export function ProjectManager() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleLoadProject(project)}
-                          className="px-3 py-1.5 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-all text-sm"
+                          className="px-3 py-1.5 bg-[#1E90FF] text-white rounded-lg shadow-sm hover:bg-[#0066CC] hover:shadow-md transition-all text-sm"
                         >
                           Charger
                         </button>
