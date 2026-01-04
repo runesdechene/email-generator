@@ -24,9 +24,9 @@ export function ToastItem({ toast, onClose }: ToastItemProps) {
   }, [toast.id, onClose]);
 
   const icons = {
-    success: <CheckCircle size={20} className="text-green-500" />,
-    error: <AlertCircle size={20} className="text-red-500" />,
-    info: <Info size={20} className="text-blue-500" />,
+    success: <CheckCircle size={24} className="text-green-500" />,
+    error: <AlertCircle size={24} className="text-red-500" />,
+    info: <Info size={24} className="text-blue-500" />,
   };
 
   const bgColors = {
@@ -37,16 +37,16 @@ export function ToastItem({ toast, onClose }: ToastItemProps) {
 
   return (
     <div
-      className={`flex items-start gap-3 p-4 rounded-lg border shadow-lg ${bgColors[toast.type]} animate-slide-in-right`}
-      style={{ minWidth: '300px', maxWidth: '400px' }}
+      className={`flex items-start gap-4 p-5 rounded-lg border shadow-lg ${bgColors[toast.type]} animate-slide-in-right`}
+      style={{ minWidth: '400px', maxWidth: '500px' }}
     >
       {icons[toast.type]}
-      <p className="flex-1 text-sm text-gray-800">{toast.message}</p>
+      <p className="flex-1 text-base text-gray-800 font-medium">{toast.message}</p>
       <button
         onClick={() => onClose(toast.id)}
         className="text-gray-400 hover:text-gray-600 transition-colors"
       >
-        <X size={16} />
+        <X size={20} />
       </button>
     </div>
   );

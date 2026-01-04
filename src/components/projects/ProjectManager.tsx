@@ -190,9 +190,14 @@ export function ProjectManager() {
           }
         }}
         className="flex items-center gap-2 px-3 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-all text-sm font-medium"
-        title={currentProjectId ? "Sauvegarder les modifications" : "Créer un nouveau projet"}
+        title={currentProjectId ? "Sauvegarder les modifications" : sections.length > 0 ? "Sauvegarder le projet" : "Créer un nouveau projet"}
       >
         {currentProjectId ? (
+          <>
+            <Save size={16} />
+            Sauvegarder
+          </>
+        ) : sections.length > 0 ? (
           <>
             <Save size={16} />
             Sauvegarder

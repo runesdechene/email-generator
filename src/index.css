@@ -4,6 +4,9 @@
   --navbar-width: 64px;
   --sidebar-width: 280px;
   --options-width: 320px;
+  
+  /* Augmentation globale de la taille des polices */
+  font-size: 20px; /* Au lieu de 16px par défaut */
 }
 
 * {
@@ -11,7 +14,7 @@
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Lato', system-ui, -apple-system, sans-serif;
   background-color: #f5f5f5;
   color: #1a1a1a;
   min-height: 100vh;

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Save, Loader2, Upload, X } from 'lucide-react';
 import { SupabaseStorageService } from '../../services/supabase-storage.service';
+import { useToast } from '../../hooks/useToast';
 import type { GlobalStyleTemplate } from '../../types/supabase';
 import { GOOGLE_FONTS, loadGoogleFont, getFontFamily } from '../../utils/googleFonts';
 import './TemplateEditor.css';
@@ -12,6 +13,7 @@ interface TemplateEditorProps {
 }
 
 export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps) {
+  const toast = useToast();
   const [formData, setFormData] = useState({
     name: template.name,
     description: template.description || '',
@@ -45,10 +47,10 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
       console.log('Données à sauvegarder:', formData);
       console.log('backgroundSize:', formData.backgroundSize);
       await onSave(formData);
-      alert('Template mis à jour avec succès !');
+      toast.success('Template mis à jour avec succès !');
     } catch (error) {
       console.error('Error saving template:', error);
-      alert('Erreur lors de la sauvegarde');
+      toast.error('Erreur lors de la sauvegarde');
     } finally {
       setSaving(false);
     }
@@ -159,7 +161,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                               const url = await SupabaseStorageService.uploadTemplateBackground(file, template.id);
                               setFormData({ ...formData, backgroundImage: url });
                             } catch (error) {
-                              alert('Erreur lors de l\'upload de l\'image');
+                              toast.error('Erreur lors de l\'upload de l\'image');
                             } finally {
                               setUploading(false);
                             }

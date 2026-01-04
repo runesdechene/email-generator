@@ -9,13 +9,17 @@ import { EditorNavbar } from './components/editor/EditorNavbar';
 import { FontLoader } from './components/editor/FontLoader';
 import { TemplateList } from './components/settings/TemplateList';
 import { TemplateEditor } from './components/settings/TemplateEditor';
+import { AuthProvider } from './contexts/AuthContext';
+import { AuthGuard } from './components/auth/AuthGuard';
 import { useTemplates, useSectionTemplates } from './hooks/useSupabase';
 import { useEmailStore } from './store/emailStore';
 import { exportMultipleSections } from './utils/exportMultipleSections';
+import { useToast } from './hooks/useToast';
+import { ToastContainer } from './components/ui/Toast';
 import type { GlobalStyleTemplate, SectionTemplate } from './types/supabase';
 import type { EmailSection } from './types';
 
-function App() {
+function AppContent() {
   const [currentPage, setCurrentPage] = useState<'editor' | 'settings'>('editor');
   const [editingTemplate, setEditingTemplate] = useState<GlobalStyleTemplate | null>(null);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
@@ -25,6 +29,7 @@ function App() {
   const [selectionStart, setSelectionStart] = useState<{ x: number; y: number } | null>(null);
   const [selectionEnd, setSelectionEnd] = useState<{ x: number; y: number } | null>(null);
   const sectionsRef = useRef<Map<string, HTMLDivElement>>(new Map());
+  const toast = useToast();
   
   const { updateTemplate } = useTemplates();
   const { templates } = useTemplates();
@@ -146,10 +151,10 @@ function App() {
       // Resélectionner les sections
       setSelectedSectionsForExport(savedSelection);
       
-      alert(`✅ ${savedSelection.size} section(s) exportée(s) avec succès !`);
+      toast.success(`${savedSelection.size} section(s) exportée(s) avec succès !`);
     } catch (error) {
       console.error('Erreur export multi-sections:', error);
-      alert('❌ Erreur lors de l\'export des sections');
+      toast.error('Erreur lors de l\'export des sections');
       // Réinitialiser la sélection en cas d'erreur
       setSelectedSectionsForExport(new Set());
     } finally {
@@ -222,10 +227,10 @@ function App() {
       // Resélectionner les sections
       setSelectedSectionsForExport(savedSelection);
       
-      alert(`✅ ${savedSelection.size} section(s) exportée(s) individuellement avec succès !`);
+      toast.success(`${savedSelection.size} section(s) exportée(s) individuellement avec succès !`);
     } catch (error) {
       console.error('Erreur export sections séparées:', error);
-      alert('❌ Erreur lors de l\'export des sections');
+      toast.error('Erreur lors de l\'export des sections');
       // Réinitialiser la sélection en cas d'erreur
       setSelectedSectionsForExport(new Set());
     } finally {
@@ -247,12 +252,14 @@ function App() {
   };
 
   return (
-    <div className="w-screen h-screen flex bg-gray-100 overflow-hidden">
-      {/* 1. Navbar gauche - largeur fixe */}
-      <Navbar
-        currentPage={currentPage}
-        onPageChange={setCurrentPage}
-      />
+    <>
+      <ToastContainer toasts={toast.toasts} onClose={toast.closeToast} />
+      <div className="w-screen h-screen flex bg-gray-100 overflow-hidden">
+        {/* 1. Navbar gauche - largeur fixe */}
+        <Navbar
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        />
 
       {currentPage === 'editor' ? (
         <>
@@ -383,7 +390,18 @@ function App() {
           )}
         </div>
       )}
-    </div>
+      </div>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AuthGuard>
+        <AppContent />
+      </AuthGuard>
+    </AuthProvider>
   );
 }
 

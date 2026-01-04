@@ -1,5 +1,6 @@
 export interface EmailProject {
   id: string;
+  user_id: string;
   name: string;
   description?: string;
   templateId: string;
@@ -26,6 +27,7 @@ export interface SectionTemplate {
 
 export interface GlobalStyleTemplate {
   id: string;
+  user_id: string;
   name: string;
   description?: string;
   backgroundImage?: string;

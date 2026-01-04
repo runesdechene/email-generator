@@ -2,6 +2,7 @@ import { supabase } from '../config/supabase';
 
 export interface TemplateData {
   id: string;
+  user_id: string;
   name: string;
   description: string | null;
   background_image: string | null;
@@ -47,6 +48,7 @@ export interface SectionTemplateData {
 
 export interface ProjectData {
   id: string;
+  user_id: string;
   name: string;
   description: string | null;
   template_id: string | null;

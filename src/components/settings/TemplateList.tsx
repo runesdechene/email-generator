@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, Trash2, Loader2, ChevronRight } from 'lucide-react';
 import { useTemplates } from '../../hooks/useSupabase';
+import { useToast } from '../../hooks/useToast';
 import type { GlobalStyleTemplate } from '../../types/supabase';
 
 interface TemplateListProps {
@@ -9,19 +10,21 @@ interface TemplateListProps {
 
 export function TemplateList({ onSelectTemplate }: TemplateListProps) {
   const { templates, loading, createTemplate, deleteTemplate } = useTemplates();
+  const toast = useToast();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [templateName, setTemplateName] = useState('');
   const [creating, setCreating] = useState(false);
 
   const handleCreate = async () => {
     if (!templateName.trim()) {
-      alert('Veuillez entrer un nom de template');
+      toast.error('Veuillez entrer un nom de template');
       return;
     }
 
     try {
       setCreating(true);
       await createTemplate({
+        user_id: '', // Sera remplacé automatiquement par le hook
         name: templateName,
         description: '',
         backgroundImage: '',
@@ -51,10 +54,10 @@ export function TemplateList({ onSelectTemplate }: TemplateListProps) {
       });
       setShowCreateDialog(false);
       setTemplateName('');
-      alert('Template créé avec succès ! Cliquez dessus pour le configurer.');
+      toast.success('Template créé avec succès ! Cliquez dessus pour le configurer.');
     } catch (error) {
       console.error('Error creating template:', error);
-      alert('Erreur lors de la création du template');
+      toast.error('Erreur lors de la création du template');
     } finally {
       setCreating(false);
     }
@@ -68,10 +71,10 @@ export function TemplateList({ onSelectTemplate }: TemplateListProps) {
 
     try {
       await deleteTemplate(id);
-      alert('Template supprimé avec succès !');
+      toast.success('Template supprimé avec succès !');
     } catch (error) {
       console.error('Error deleting template:', error);
-      alert('Erreur lors de la suppression du template');
+      toast.error('Erreur lors de la suppression du template');
     }
   };
 

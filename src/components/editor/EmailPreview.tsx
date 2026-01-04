@@ -18,9 +18,9 @@ export function EmailPreview({ sectionsRef, selectedSections }: EmailPreviewProp
   const backgroundSize = currentTemplate?.backgroundSize || 'cover';
 
   return (
-    <div className="w-full max-w-2xl">
+    <div className="w-full max-w-2xl p-1">
       <div 
-        className={`bg-white rounded-lg shadow-2xl overflow-hidden ${backgroundImage ? 'email-preview-container' : ''}`}
+        className={`bg-white rounded-lg shadow-2xl ${backgroundImage ? 'email-preview-container' : ''}`}
         style={backgroundImage ? {
           backgroundImage: `url(${backgroundImage})`,
           backgroundSize: backgroundSize === 'cover' ? 'cover' : '100% auto',
@@ -48,10 +48,10 @@ export function EmailPreview({ sectionsRef, selectedSections }: EmailPreviewProp
               onClick={() => selectSection(section.id)}
               className={`cursor-pointer transition-all ${
                 selectedSections.has(section.id)
-                  ? 'ring-4 ring-emerald-500 ring-inset'
+                  ? 'ring-4 ring-emerald-500'
                   : selectedSectionId === section.id
-                  ? 'ring-2 ring-violet-500 ring-inset'
-                  : 'hover:ring-2 hover:ring-violet-300 hover:ring-inset'
+                  ? 'ring-2 ring-violet-500'
+                  : 'hover:ring-2 hover:ring-violet-300'
               }`}
             >
               <SectionRenderer section={section} />

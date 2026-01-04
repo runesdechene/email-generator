@@ -3,6 +3,7 @@ import { Download, Loader2, X } from 'lucide-react';
 import { useEmailStore } from '../../store/emailStore';
 import { useTemplates, useSectionTemplates } from '../../hooks/useSupabase';
 import { exportSectionWithBackground } from '../../utils/exportWithBackground';
+import { useToast } from '../../hooks/useToast';
 
 interface OptionsPanelProps {
   sectionsRef: React.RefObject<Map<string, HTMLDivElement>>;
@@ -12,6 +13,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
   const { selectedSectionId, sections, currentTemplateId, selectSection, updateSection } = useEmailStore();
   const { templates } = useTemplates();
   const { sectionTemplates } = useSectionTemplates();
+  const toast = useToast();
   const [exporting, setExporting] = useState(false);
   
   const selectedSection = sections.find((s) => s.id === selectedSectionId);
@@ -521,7 +523,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
             
             const element = sectionsRef.current?.get(selectedSection.id);
             if (!element) {
-              alert('Impossible de trouver la section à exporter');
+              toast.error('Impossible de trouver la section à exporter');
               return;
             }
 
@@ -553,10 +555,10 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               // Resélectionner la section après l'export
               selectSection(currentSelectedId);
               
-              alert('✅ Section exportée avec succès !');
+              toast.success('Section exportée avec succès !');
             } catch (error) {
               console.error('Erreur export section:', error);
-              alert('❌ Erreur lors de l\'export de la section');
+              toast.error('Erreur lors de l\'export de la section');
               // Resélectionner la section même en cas d'erreur
               if (selectedSection) {
                 selectSection(selectedSection.id);

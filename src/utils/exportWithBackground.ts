@@ -82,7 +82,6 @@ export async function exportSectionWithBackground({
     console.log('Export terminé avec succès !');
   } catch (error) {
     console.error('Erreur lors de l\'export avec background:', error);
-    alert(`Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
     // Fallback : export sans background
     const dataUrl = await toJpeg(element, {
       quality: 0.95,

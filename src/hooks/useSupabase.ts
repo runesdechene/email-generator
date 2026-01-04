@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { supabase } from '../config/supabase';
 import { SupabaseService } from '../services/supabase.service';
 import type { TemplateData, ProjectData, SectionTemplateData } from '../services/supabase.service';
 import type { GlobalStyleTemplate, EmailProject, SectionTemplate } from '../types/supabase';
@@ -7,6 +8,7 @@ import type { GlobalStyleTemplate, EmailProject, SectionTemplate } from '../type
 function templateFromSupabase(data: TemplateData): GlobalStyleTemplate {
   return {
     id: data.id,
+    user_id: data.user_id,
     name: data.name,
     description: data.description || undefined,
     backgroundImage: data.background_image || undefined,
@@ -22,8 +24,9 @@ function templateFromSupabase(data: TemplateData): GlobalStyleTemplate {
   };
 }
 
-function templateToSupabase(template: Omit<GlobalStyleTemplate, 'id' | 'createdAt' | 'updatedAt'>): Omit<TemplateData, 'id' | 'created_at' | 'updated_at'> {
+function templateToSupabase(template: Omit<GlobalStyleTemplate, 'id' | 'createdAt' | 'updatedAt'>, userId: string): Omit<TemplateData, 'id' | 'created_at' | 'updated_at'> {
   return {
+    user_id: userId,
     name: template.name,
     description: template.description || null,
     background_image: template.backgroundImage || null,
@@ -61,6 +64,7 @@ function sectionTemplateToSupabase(template: Omit<SectionTemplate, 'id' | 'creat
 function projectFromSupabase(data: ProjectData): EmailProject {
   return {
     id: data.id,
+    user_id: data.user_id,
     name: data.name,
     description: data.description || undefined,
     templateId: data.template_id || '',
@@ -70,8 +74,9 @@ function projectFromSupabase(data: ProjectData): EmailProject {
   };
 }
 
-function projectToSupabase(project: Omit<EmailProject, 'id' | 'createdAt' | 'updatedAt'>): Omit<ProjectData, 'id' | 'created_at' | 'updated_at'> {
+function projectToSupabase(project: Omit<EmailProject, 'id' | 'createdAt' | 'updatedAt'>, userId: string): Omit<ProjectData, 'id' | 'created_at' | 'updated_at'> {
   return {
+    user_id: userId,
     name: project.name,
     description: project.description || null,
     template_id: project.templateId || null,
@@ -104,7 +109,11 @@ export function useTemplates() {
 
   const createTemplate = async (template: Omit<GlobalStyleTemplate, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
-      const id = await SupabaseService.createTemplate(templateToSupabase(template));
+      // Récupérer l'utilisateur actuel
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Utilisateur non connecté');
+
+      const id = await SupabaseService.createTemplate(templateToSupabase(template, user.id));
       await loadTemplates();
       return id;
     } catch (err) {
@@ -255,7 +264,11 @@ export function useProjects() {
 
   const createProject = async (project: Omit<EmailProject, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
-      const id = await SupabaseService.createProject(projectToSupabase(project));
+      // Récupérer l'utilisateur actuel
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Utilisateur non connecté');
+
+      const id = await SupabaseService.createProject(projectToSupabase(project, user.id));
       await loadProjects();
       return id;
     } catch (err) {
