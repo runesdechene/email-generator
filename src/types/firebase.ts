@@ -14,6 +14,16 @@ export interface EmailProject {
   updatedAt: Date;
 }
 
+export interface SectionTemplate {
+  id: string;
+  name: string;
+  description: string;
+  thumbnail?: string;
+  defaultContent: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface GlobalStyleTemplate {
   id: string;
   name: string;

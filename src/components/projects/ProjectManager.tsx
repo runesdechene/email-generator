@@ -3,6 +3,9 @@ import { Save, FolderOpen, Loader2, Trash2, Pencil } from 'lucide-react';
 import { useProjects } from '../../hooks/useSupabase';
 import { useEmailStore } from '../../store/emailStore';
 import type { EmailProject } from '../../types/firebase';
+import { useToast } from '../../hooks/useToast';
+import { ToastContainer } from '../ui/Toast';
+import { ConfirmDialog } from '../ui/ConfirmDialog';
 
 export function ProjectManager() {
   const { projects, loading, createProject, updateProject, deleteProject } = useProjects();
@@ -14,6 +17,14 @@ export function ProjectManager() {
   const [saving, setSaving] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editingProjectName, setEditingProjectName] = useState('');
+  const [confirmDialog, setConfirmDialog] = useState<{
+    show: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+    variant?: 'danger' | 'warning' | 'info';
+  }>({ show: false, title: '', message: '', onConfirm: () => {} });
+  const toast = useToast();
 
   const handleSaveProject = async () => {
     const currentProject = projects.find(p => p.id === currentProjectId);
@@ -31,16 +42,16 @@ export function ProjectManager() {
             order: s.order,
           })),
         });
-        alert('Projet mis à jour avec succès !');
+        toast.success('Projet mis à jour avec succès !');
       } catch (error) {
         console.error('Error updating project:', error);
-        alert('Erreur lors de la mise à jour du projet');
+        toast.error('Erreur lors de la mise à jour du projet');
       } finally {
         setSaving(false);
       }
     } else {
       if (!projectName.trim()) {
-        alert('Veuillez entrer un nom de projet');
+        toast.error('Veuillez entrer un nom de projet');
         return;
       }
 
@@ -65,10 +76,10 @@ export function ProjectManager() {
         setShowSaveDialog(false);
         setProjectName('');
         setProjectDescription('');
-        alert('Projet créé et chargé avec succès !');
+        toast.success('Projet créé et chargé avec succès !');
       } catch (error) {
         console.error('Error saving project:', error);
-        alert('Erreur lors de la sauvegarde du projet');
+        toast.error('Erreur lors de la sauvegarde du projet');
       } finally {
         setSaving(false);
       }
@@ -79,11 +90,23 @@ export function ProjectManager() {
     console.log('🔄 Chargement du projet:', project);
     
     if (sections.length > 0 && currentProjectId !== project.id) {
-      if (!confirm('Charger ce projet remplacera votre travail actuel. Continuer ?')) {
-        console.log('❌ Chargement annulé par l\'utilisateur');
-        return;
-      }
+      setConfirmDialog({
+        show: true,
+        title: 'Charger ce projet ?',
+        message: 'Charger ce projet remplacera votre travail actuel. Voulez-vous continuer ?',
+        variant: 'warning',
+        onConfirm: () => {
+          setConfirmDialog({ ...confirmDialog, show: false });
+          loadProject(project);
+        },
+      });
+      return;
     }
+    
+    loadProject(project);
+  };
+
+  const loadProject = (project: EmailProject) => {
 
     try {
       // Récupérer les fonctions du store
@@ -102,30 +125,35 @@ export function ProjectManager() {
       // Fermer la modal
       setShowLoadDialog(false);
       
-      alert('Projet chargé avec succès !');
+      toast.success('Projet chargé avec succès !');
     } catch (error) {
       console.error('❌ Erreur lors du chargement:', error);
-      alert('Erreur lors du chargement du projet');
+      toast.error('Erreur lors du chargement du projet');
     }
   };
 
-  const handleDeleteProject = async (id: string, name: string) => {
-    if (!confirm(`Supprimer le projet "${name}" ?`)) {
-      return;
-    }
-
-    try {
-      await deleteProject(id);
-      alert('Projet supprimé avec succès !');
-    } catch (error) {
-      console.error('Error deleting project:', error);
-      alert('Erreur lors de la suppression du projet');
-    }
+  const handleDeleteProject = (id: string, name: string) => {
+    setConfirmDialog({
+      show: true,
+      title: 'Supprimer le projet ?',
+      message: `Êtes-vous sûr de vouloir supprimer le projet "${name}" ? Cette action est irréversible.`,
+      variant: 'danger',
+      onConfirm: async () => {
+        setConfirmDialog({ ...confirmDialog, show: false });
+        try {
+          await deleteProject(id);
+          toast.success('Projet supprimé avec succès !');
+        } catch (error) {
+          console.error('Error deleting project:', error);
+          toast.error('Erreur lors de la suppression du projet');
+        }
+      },
+    });
   };
 
   const handleEditProjectName = async () => {
     if (!editingProjectName.trim()) {
-      alert('Veuillez entrer un nom de projet');
+      toast.error('Veuillez entrer un nom de projet');
       return;
     }
 
@@ -140,10 +168,10 @@ export function ProjectManager() {
       });
       setShowEditDialog(false);
       setEditingProjectName('');
-      alert('Nom du projet mis à jour avec succès !');
+      toast.success('Nom du projet mis à jour avec succès !');
     } catch (error) {
       console.error('Error updating project name:', error);
-      alert('Erreur lors de la mise à jour du nom du projet');
+      toast.error('Erreur lors de la mise à jour du nom du projet');
     } finally {
       setSaving(false);
     }
@@ -399,6 +427,18 @@ export function ProjectManager() {
             </div>
           </div>
         </div>
+      )}
+
+      <ToastContainer toasts={toast.toasts} onClose={toast.closeToast} />
+      
+      {confirmDialog.show && (
+        <ConfirmDialog
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          variant={confirmDialog.variant}
+          onConfirm={confirmDialog.onConfirm}
+          onCancel={() => setConfirmDialog({ ...confirmDialog, show: false })}
+        />
       )}
   </>
   );

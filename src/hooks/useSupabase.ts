@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { SupabaseService, type TemplateData, type ProjectData } from '../services/supabase.service';
-import type { GlobalStyleTemplate, EmailProject } from '../types/firebase';
+import { SupabaseService } from '../services/supabase.service';
+import type { TemplateData, ProjectData, SectionTemplateData } from '../services/supabase.service';
+import type { GlobalStyleTemplate, EmailProject, SectionTemplate } from '../types/firebase';
 
 // Convertir les données Supabase vers le format de l'app
 function templateFromSupabase(data: TemplateData): GlobalStyleTemplate {
@@ -27,6 +28,27 @@ function templateToSupabase(template: Omit<GlobalStyleTemplate, 'id' | 'createdA
     fonts: template.fonts,
     colors: template.colors,
     button_style: template.buttonStyle,
+  };
+}
+
+function sectionTemplateFromSupabase(data: SectionTemplateData): SectionTemplate {
+  return {
+    id: data.id,
+    name: data.name,
+    description: data.description || '',
+    thumbnail: data.thumbnail || undefined,
+    defaultContent: data.default_content,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+  };
+}
+
+function sectionTemplateToSupabase(template: Omit<SectionTemplate, 'id' | 'createdAt' | 'updatedAt'>): Omit<SectionTemplateData, 'id' | 'created_at' | 'updated_at'> {
+  return {
+    name: template.name,
+    description: template.description || null,
+    thumbnail: template.thumbnail || null,
+    default_content: template.defaultContent,
   };
 }
 
@@ -124,6 +146,78 @@ export function useTemplates() {
     updateTemplate,
     deleteTemplate,
     refresh: loadTemplates,
+  };
+}
+
+export function useSectionTemplates() {
+  const [sectionTemplates, setSectionTemplates] = useState<SectionTemplate[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadSectionTemplates = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await SupabaseService.getSectionTemplates();
+      setSectionTemplates(data.map(sectionTemplateFromSupabase));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors du chargement des templates de sections');
+      console.error('Error loading section templates:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadSectionTemplates();
+  }, []);
+
+  const createSectionTemplate = async (template: Omit<SectionTemplate, 'id' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      const id = await SupabaseService.createSectionTemplate(sectionTemplateToSupabase(template));
+      await loadSectionTemplates();
+      return id;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors de la création du template de section');
+      throw err;
+    }
+  };
+
+  const updateSectionTemplate = async (id: string, updates: Partial<Omit<SectionTemplate, 'id' | 'createdAt'>>) => {
+    try {
+      const supabaseUpdates: Partial<Omit<SectionTemplateData, 'id' | 'created_at'>> = {};
+      
+      if (updates.name !== undefined) supabaseUpdates.name = updates.name;
+      if (updates.description !== undefined) supabaseUpdates.description = updates.description || null;
+      if (updates.thumbnail !== undefined) supabaseUpdates.thumbnail = updates.thumbnail || null;
+      if (updates.defaultContent !== undefined) supabaseUpdates.default_content = updates.defaultContent;
+
+      await SupabaseService.updateSectionTemplate(id, supabaseUpdates);
+      await loadSectionTemplates();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors de la mise à jour du template de section');
+      throw err;
+    }
+  };
+
+  const deleteSectionTemplate = async (id: string) => {
+    try {
+      await SupabaseService.deleteSectionTemplate(id);
+      await loadSectionTemplates();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors de la suppression du template de section');
+      throw err;
+    }
+  };
+
+  return {
+    sectionTemplates,
+    loading,
+    error,
+    createSectionTemplate,
+    updateSectionTemplate,
+    deleteSectionTemplate,
+    refresh: loadSectionTemplates,
   };
 }
 

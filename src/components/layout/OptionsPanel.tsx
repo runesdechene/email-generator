@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Download, Loader2, X } from 'lucide-react';
 import { useEmailStore } from '../../store/emailStore';
-import { useTemplates } from '../../hooks/useSupabase';
+import { useTemplates, useSectionTemplates } from '../../hooks/useSupabase';
 import { exportSectionWithBackground } from '../../utils/exportWithBackground';
 
 interface OptionsPanelProps {
@@ -11,6 +11,7 @@ interface OptionsPanelProps {
 export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
   const { selectedSectionId, sections, currentTemplateId, selectSection, updateSection } = useEmailStore();
   const { templates } = useTemplates();
+  const { sectionTemplates, loading: templatesLoading } = useSectionTemplates();
   const [exporting, setExporting] = useState(false);
   
   const selectedSection = sections.find((s) => s.id === selectedSectionId);
@@ -52,13 +53,16 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
             value={selectedSection.templateId}
             onChange={(e) => updateSection(selectedSection.id, { templateId: e.target.value })}
             className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+            disabled={templatesLoading}
           >
-            <option value="hero">Hero Banner</option>
-            <option value="text">Bloc Texte</option>
-            <option value="image">Image</option>
-            <option value="cta">Call to Action</option>
-            <option value="product">Produit</option>
-            <option value="footer">Footer</option>
+            <option value="">
+              {templatesLoading ? 'Chargement...' : 'Sélectionner un template'}
+            </option>
+            {sectionTemplates.map((template) => (
+              <option key={template.id} value={template.id}>
+                {template.name}
+              </option>
+            ))}
           </select>
         </div>
 

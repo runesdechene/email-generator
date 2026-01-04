@@ -28,6 +28,16 @@ export interface TemplateData {
   updated_at: string;
 }
 
+export interface SectionTemplateData {
+  id: string;
+  name: string;
+  description: string | null;
+  thumbnail: string | null;
+  default_content: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface ProjectData {
   id: string;
   name: string;
@@ -80,6 +90,47 @@ export class SupabaseService {
   static async deleteTemplate(id: string): Promise<void> {
     const { error } = await supabase
       .from('templates')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  // ============ SECTION TEMPLATES ============
+
+  static async getSectionTemplates(): Promise<SectionTemplateData[]> {
+    const { data, error } = await supabase
+      .from('section_templates')
+      .select('*')
+      .order('name', { ascending: true });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  static async createSectionTemplate(template: Omit<SectionTemplateData, 'id' | 'created_at' | 'updated_at'>): Promise<string> {
+    const { data, error } = await supabase
+      .from('section_templates')
+      .insert(template)
+      .select('id')
+      .single();
+
+    if (error) throw error;
+    return data.id;
+  }
+
+  static async updateSectionTemplate(id: string, updates: Partial<Omit<SectionTemplateData, 'id' | 'created_at'>>): Promise<void> {
+    const { error } = await supabase
+      .from('section_templates')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  static async deleteSectionTemplate(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('section_templates')
       .delete()
       .eq('id', id);
 

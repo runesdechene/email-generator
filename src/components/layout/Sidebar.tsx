@@ -1,6 +1,6 @@
 import { Plus, GripVertical, Trash2 } from 'lucide-react';
 import { ProjectManager } from '../projects/ProjectManager';
-import { useTemplates } from '../../hooks/useSupabase';
+import { useTemplates, useSectionTemplates } from '../../hooks/useSupabase';
 import {
   DndContext,
   closestCenter,
@@ -28,7 +28,7 @@ interface SortableSectionItemProps {
   onDelete: () => void;
 }
 
-function SortableSectionItem({ section, isSelected, onSelect, onDelete }: SortableSectionItemProps) {
+function SortableSectionItem({ section, isSelected, onSelect, onDelete, templateName }: SortableSectionItemProps & { templateName?: string }) {
   const {
     attributes,
     listeners,
@@ -63,7 +63,9 @@ function SortableSectionItem({ section, isSelected, onSelect, onDelete }: Sortab
       
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-gray-900 truncate">{section.name}</p>
-        <p className="text-xs text-gray-500">Template: {section.templateId}</p>
+        {templateName && (
+          <p className="text-xs text-gray-500">Template: {templateName}</p>
+        )}
       </div>
 
       <button
@@ -92,6 +94,7 @@ export function Sidebar() {
   } = useEmailStore();
 
   const { templates, loading: templatesLoading } = useTemplates();
+  const { sectionTemplates } = useSectionTemplates();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -115,14 +118,17 @@ export function Sidebar() {
   };
 
   const handleAddSection = () => {
+    const defaultTemplate = sectionTemplates[0];
+    if (!defaultTemplate) {
+      alert('Aucun template de section disponible');
+      return;
+    }
+
     const newSection: EmailSection = {
       id: `section-${Date.now()}`,
-      templateId: 'paragraph',
+      templateId: defaultTemplate.id,
       name: `Section ${sections.length + 1}`,
-      content: {
-        title: 'Titre de section',
-        subtitle: 'Sous-titre ou description',
-      },
+      content: defaultTemplate.defaultContent,
       order: sections.length,
     };
     addSection(newSection);
@@ -177,15 +183,19 @@ export function Sidebar() {
             strategy={verticalListSortingStrategy}
           >
             <div className="space-y-2">
-              {sections.map((section) => (
-                <SortableSectionItem
-                  key={section.id}
-                  section={section}
-                  isSelected={selectedSectionId === section.id}
-                  onSelect={() => selectSection(section.id)}
-                  onDelete={() => removeSection(section.id)}
-                />
-              ))}
+              {sections.map((section) => {
+                const template = sectionTemplates.find(t => t.id === section.templateId);
+                return (
+                  <SortableSectionItem
+                    key={section.id}
+                    section={section}
+                    isSelected={selectedSectionId === section.id}
+                    onSelect={() => selectSection(section.id)}
+                    onDelete={() => removeSection(section.id)}
+                    templateName={template?.name}
+                  />
+                );
+              })}
             </div>
           </SortableContext>
         </DndContext>
