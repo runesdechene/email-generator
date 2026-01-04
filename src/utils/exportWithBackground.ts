@@ -3,6 +3,7 @@ import { toJpeg } from 'html-to-image';
 interface ExportOptions {
   element: HTMLElement;
   backgroundImageUrl?: string;
+  backgroundSize?: 'cover' | 'repeat';
   fileName: string;
 }
 
@@ -26,11 +27,10 @@ function loadImage(url: string): Promise<HTMLImageElement> {
 export async function exportSectionWithBackground({
   element,
   backgroundImageUrl,
+  backgroundSize = 'cover',
   fileName,
 }: ExportOptions): Promise<void> {
   const pixelRatio = 2;
-  const width = element.offsetWidth;
-  const height = element.offsetHeight;
 
   if (!backgroundImageUrl) {
     // Pas de background, export normal
@@ -72,7 +72,7 @@ export async function exportSectionWithBackground({
     element.style.transition = 'none';
     element.style.backgroundImage = `url(${backgroundImageUrl})`;
     element.style.backgroundRepeat = 'repeat-y';
-    element.style.backgroundSize = 'cover';
+    element.style.backgroundSize = backgroundSize === 'cover' ? 'cover' : '100% auto';
     element.style.backgroundPosition = `center -${offsetY}px`;
     
     // 4. Attendre que le background soit chargé

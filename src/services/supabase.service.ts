@@ -5,6 +5,7 @@ export interface TemplateData {
   name: string;
   description: string | null;
   background_image: string | null;
+  background_size: string | null;
   fonts: {
     title: string;
     paragraph: string;

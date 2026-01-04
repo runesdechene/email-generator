@@ -9,6 +9,7 @@ function templateFromSupabase(data: TemplateData): GlobalStyleTemplate {
     name: data.name,
     description: data.description || undefined,
     backgroundImage: data.background_image || undefined,
+    backgroundSize: (data.background_size as 'cover' | 'repeat') || undefined,
     fonts: data.fonts,
     colors: data.colors,
     buttonStyle: data.button_style,
@@ -22,6 +23,7 @@ function templateToSupabase(template: Omit<GlobalStyleTemplate, 'id' | 'createdA
     name: template.name,
     description: template.description || null,
     background_image: template.backgroundImage || null,
+    background_size: template.backgroundSize || null,
     fonts: template.fonts,
     colors: template.colors,
     button_style: template.buttonStyle,
@@ -90,10 +92,12 @@ export function useTemplates() {
       if (updates.name !== undefined) supabaseUpdates.name = updates.name;
       if (updates.description !== undefined) supabaseUpdates.description = updates.description || null;
       if (updates.backgroundImage !== undefined) supabaseUpdates.background_image = updates.backgroundImage || null;
+      if (updates.backgroundSize !== undefined) supabaseUpdates.background_size = updates.backgroundSize || null;
       if (updates.fonts !== undefined) supabaseUpdates.fonts = updates.fonts;
       if (updates.colors !== undefined) supabaseUpdates.colors = updates.colors;
       if (updates.buttonStyle !== undefined) supabaseUpdates.button_style = updates.buttonStyle;
 
+      console.log('Mise à jour Supabase:', supabaseUpdates);
       await SupabaseService.updateTemplate(id, supabaseUpdates);
       await loadTemplates();
     } catch (err) {

@@ -19,6 +19,7 @@ export interface GlobalStyleTemplate {
   name: string;
   description?: string;
   backgroundImage?: string;
+  backgroundSize?: 'cover' | 'repeat';
   fonts: {
     title: string;
     paragraph: string;

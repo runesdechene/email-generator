@@ -86,12 +86,14 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               
               const currentTemplate = templates.find(t => t.id === currentTemplateId);
               const backgroundImageUrl = currentTemplate?.backgroundImage;
+              const backgroundSize = currentTemplate?.backgroundSize || 'cover';
               
               const fileName = `${selectedSection.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()}-section-${selectedSection.order + 1}.jpg`;
               
               await exportSectionWithBackground({
                 element,
                 backgroundImageUrl,
+                backgroundSize,
                 fileName,
               });
               

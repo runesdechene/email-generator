@@ -14,6 +14,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
     name: template.name,
     description: template.description || '',
     backgroundImage: template.backgroundImage || '',
+    backgroundSize: template.backgroundSize || 'cover',
     fonts: template.fonts,
     colors: template.colors,
     buttonStyle: template.buttonStyle,
@@ -24,6 +25,8 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
   const handleSave = async () => {
     try {
       setSaving(true);
+      console.log('Données à sauvegarder:', formData);
+      console.log('backgroundSize:', formData.backgroundSize);
       await onSave(formData);
       alert('Template mis à jour avec succès !');
     } catch (error) {
@@ -108,91 +111,113 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Image de fond</h3>
             <div className="space-y-4">
-              {/* Upload de fichier */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Uploader une image
-                </label>
-                <div className="flex gap-3">
-                  <label className="flex-1 cursor-pointer">
-                    <div className="flex items-center justify-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-violet-400 transition-all">
-                      <Upload size={18} className="text-gray-400" />
-                      <span className="text-sm text-gray-600">
-                        {uploading ? 'Upload en cours...' : 'Choisir une image'}
-                      </span>
-                    </div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      disabled={uploading}
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
+              {/* Upload et aperçu côte à côte */}
+              <div className="flex gap-4">
+                {/* Colonne gauche : Upload */}
+                <div className="flex-1 space-y-4">
+                  {/* Upload de fichier */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Uploader une image
+                    </label>
+                    <div className="flex gap-3">
+                      <label className="flex-1 cursor-pointer">
+                        <div className="flex items-center justify-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-violet-400 transition-all">
+                          <Upload size={18} className="text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {uploading ? 'Upload en cours...' : 'Choisir une image'}
+                          </span>
+                        </div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          disabled={uploading}
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
 
-                        try {
-                          setUploading(true);
-                          const url = await SupabaseStorageService.uploadTemplateBackground(file, template.id);
-                          setFormData({ ...formData, backgroundImage: url });
-                        } catch (error) {
-                          alert('Erreur lors de l\'upload de l\'image');
-                        } finally {
-                          setUploading(false);
-                        }
+                            try {
+                              setUploading(true);
+                              const url = await SupabaseStorageService.uploadTemplateBackground(file, template.id);
+                              setFormData({ ...formData, backgroundImage: url });
+                            } catch (error) {
+                              alert('Erreur lors de l\'upload de l\'image');
+                            } finally {
+                              setUploading(false);
+                            }
+                          }}
+                        />
+                      </label>
+                      {formData.backgroundImage && (
+                        <button
+                          onClick={() => setFormData({ ...formData, backgroundImage: '' })}
+                          className="px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all flex items-center gap-2"
+                          title="Supprimer l'image"
+                        >
+                          <X size={18} />
+                          Supprimer
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* OU séparateur */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 border-t border-gray-200" />
+                    <span className="text-xs text-gray-400">OU</span>
+                    <div className="flex-1 border-t border-gray-200" />
+                  </div>
+
+                  {/* URL manuelle */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      URL de l'image (optionnel)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.backgroundImage}
+                      onChange={(e) => setFormData({ ...formData, backgroundImage: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                      placeholder="https://exemple.com/parchemin.jpg"
+                    />
+                  </div>
+
+                  {/* Mode d'affichage */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Mode d'affichage
+                    </label>
+                    <select
+                      value={formData.backgroundSize}
+                      onChange={(e) => setFormData({ ...formData, backgroundSize: e.target.value as 'cover' | 'repeat' })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    >
+                      <option value="cover">Cover (étire pour remplir)</option>
+                      <option value="repeat">Répétition (100% auto)</option>
+                    </select>
+                    <p className="text-xs text-gray-500 mt-2">
+                      L'image sera affichée en arrière-plan de toutes les sections (repeat-y, {formData.backgroundSize === 'cover' ? 'contain' : '100% auto'})
+                    </p>
+                  </div>
+                </div>
+
+                {/* Colonne droite : Aperçu carré */}
+                {formData.backgroundImage && (
+                  <div className="w-48 h-48 flex-shrink-0">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Aperçu</p>
+                    <div 
+                      className="w-full h-full rounded border border-gray-300"
+                      style={{
+                        backgroundImage: `url(${formData.backgroundImage})`,
+                        backgroundRepeat: 'repeat-y',
+                        backgroundSize: formData.backgroundSize === 'cover' ? 'cover' : '100% auto',
+                        backgroundPosition: 'center top',
                       }}
                     />
-                  </label>
-                  {formData.backgroundImage && (
-                    <button
-                      onClick={() => setFormData({ ...formData, backgroundImage: '' })}
-                      className="px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all flex items-center gap-2"
-                      title="Supprimer l'image"
-                    >
-                      <X size={18} />
-                      Supprimer
-                    </button>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
-
-              {/* OU séparateur */}
-              <div className="flex items-center gap-3">
-                <div className="flex-1 border-t border-gray-200" />
-                <span className="text-xs text-gray-400">OU</span>
-                <div className="flex-1 border-t border-gray-200" />
-              </div>
-
-              {/* URL manuelle */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  URL de l'image (optionnel)
-                </label>
-                <input
-                  type="text"
-                  value={formData.backgroundImage}
-                  onChange={(e) => setFormData({ ...formData, backgroundImage: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
-                  placeholder="https://exemple.com/parchemin.jpg"
-                />
-                <p className="text-xs text-gray-500 mt-2">
-                  L'image sera affichée en arrière-plan de toutes les sections (repeat-y, contain)
-                </p>
-              </div>
-
-              {/* Aperçu */}
-              {formData.backgroundImage && (
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm font-medium text-gray-700 mb-2">Aperçu</p>
-                  <div 
-                    className="w-full h-32 rounded border border-gray-300"
-                    style={{
-                      backgroundImage: `url(${formData.backgroundImage})`,
-                      backgroundRepeat: 'repeat-y',
-                      backgroundSize: 'contain',
-                    }}
-                  />
-                </div>
-              )}
             </div>
           </div>
 

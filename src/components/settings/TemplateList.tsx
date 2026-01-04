@@ -25,6 +25,7 @@ export function TemplateList({ onSelectTemplate }: TemplateListProps) {
         name: templateName,
         description: '',
         backgroundImage: '',
+        backgroundSize: 'cover',
         fonts: {
           title: 'Arial, sans-serif',
           paragraph: 'Arial, sans-serif',

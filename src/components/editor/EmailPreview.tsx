@@ -14,6 +14,7 @@ export function EmailPreview({ sectionsRef }: EmailPreviewProps) {
   const sortedSections = [...sections].sort((a, b) => a.order - b.order);
   const currentTemplate = templates.find(t => t.id === currentTemplateId);
   const backgroundImage = currentTemplate?.backgroundImage || '';
+  const backgroundSize = currentTemplate?.backgroundSize || 'cover';
 
   return (
     <div className="w-full max-w-2xl">
@@ -21,6 +22,7 @@ export function EmailPreview({ sectionsRef }: EmailPreviewProps) {
         className={`bg-white rounded-lg shadow-2xl overflow-hidden ${backgroundImage ? 'email-preview-container' : ''}`}
         style={backgroundImage ? {
           backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: backgroundSize === 'cover' ? 'cover' : '100% auto',
         } : undefined}
       >
         {sortedSections.length === 0 ? (
