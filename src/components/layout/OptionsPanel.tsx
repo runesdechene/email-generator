@@ -31,7 +31,8 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
   };
 
   const updateOption = (path: string[], value: any) => {
-    const options = { ...(selectedSection.content.options as any) || {} };
+    // Copie profonde des options pour éviter les mutations
+    const options = JSON.parse(JSON.stringify((selectedSection.content.options as any) || {}));
     let current = options;
     
     for (let i = 0; i < path.length - 1; i++) {
