@@ -4,6 +4,7 @@ import { Sidebar } from './components/layout/Sidebar';
 import { OptionsPanel } from './components/layout/OptionsPanel';
 import { EmailPreview } from './components/editor/EmailPreview';
 import { EditorNavbar } from './components/editor/EditorNavbar';
+import { FontLoader } from './components/editor/FontLoader';
 import { TemplateList } from './components/settings/TemplateList';
 import { TemplateEditor } from './components/settings/TemplateEditor';
 import { useTemplates } from './hooks/useSupabase';
@@ -26,6 +27,9 @@ function App() {
 
       {currentPage === 'editor' ? (
         <>
+          {/* Charger les Google Fonts du template actuel */}
+          <FontLoader />
+          
           {/* 2. Sidebar sections - largeur fixe */}
           <Sidebar />
           

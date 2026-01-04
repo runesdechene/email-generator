@@ -1,0 +1,25 @@
+/* Cacher les flèches du datalist */
+input[list]::-webkit-calendar-picker-indicator {
+  display: none !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+}
+
+input[list]::-webkit-list-button {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+/* Pour Firefox */
+input[list]::-moz-list-button {
+  display: none !important;
+}
+
+/* Approche alternative */
+input[type="text"][list] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}

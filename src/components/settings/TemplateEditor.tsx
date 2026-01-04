@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Save, Loader2, Upload, X } from 'lucide-react';
 import { SupabaseStorageService } from '../../services/supabase-storage.service';
 import type { GlobalStyleTemplate } from '../../types/firebase';
+import { GOOGLE_FONTS, loadGoogleFont, getFontFamily } from '../../utils/googleFonts';
+import './TemplateEditor.css';
 
 interface TemplateEditorProps {
   template: GlobalStyleTemplate;
@@ -21,6 +23,16 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
   });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+
+  // Charger les fonts Google sélectionnées
+  useEffect(() => {
+    if (formData.fonts.title) {
+      loadGoogleFont(formData.fonts.title);
+    }
+    if (formData.fonts.paragraph) {
+      loadGoogleFont(formData.fonts.paragraph);
+    }
+  }, [formData.fonts.title, formData.fonts.paragraph]);
 
   const handleSave = async () => {
     try {
@@ -227,27 +239,59 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Police des titres
+                  Police des titres (Google Fonts & locales)
                 </label>
                 <input
                   type="text"
+                  list="title-fonts"
                   value={formData.fonts.title}
                   onChange={(e) => setFormData({ ...formData, fonts: { ...formData.fonts, title: e.target.value } })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
-                  placeholder="Arial, sans-serif"
+                  placeholder="Ex: Roboto, Arial, Helvetica..."
+                  style={{ fontFamily: getFontFamily(formData.fonts.title) }}
                 />
+                <datalist id="title-fonts">
+                  {GOOGLE_FONTS.map((font) => (
+                    <option key={font} value={font} />
+                  ))}
+                  <option value="Arial" />
+                  <option value="Helvetica" />
+                  <option value="Times New Roman" />
+                  <option value="Georgia" />
+                  <option value="Verdana" />
+                  <option value="Courier New" />
+                </datalist>
+                <p className="text-xs text-gray-500 mt-1" style={{ fontFamily: getFontFamily(formData.fonts.title) }}>
+                  Aperçu : The quick brown fox jumps over the lazy dog
+                </p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Police des paragraphes
+                  Police des paragraphes (Google Fonts & locales)
                 </label>
                 <input
                   type="text"
+                  list="paragraph-fonts"
                   value={formData.fonts.paragraph}
                   onChange={(e) => setFormData({ ...formData, fonts: { ...formData.fonts, paragraph: e.target.value } })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
-                  placeholder="Arial, sans-serif"
+                  placeholder="Ex: Open Sans, Arial, Verdana..."
+                  style={{ fontFamily: getFontFamily(formData.fonts.paragraph) }}
                 />
+                <datalist id="paragraph-fonts">
+                  {GOOGLE_FONTS.map((font) => (
+                    <option key={font} value={font} />
+                  ))}
+                  <option value="Arial" />
+                  <option value="Helvetica" />
+                  <option value="Times New Roman" />
+                  <option value="Georgia" />
+                  <option value="Verdana" />
+                  <option value="Courier New" />
+                </datalist>
+                <p className="text-xs text-gray-500 mt-1" style={{ fontFamily: getFontFamily(formData.fonts.paragraph) }}>
+                  Aperçu : The quick brown fox jumps over the lazy dog
+                </p>
               </div>
             </div>
           </div>
