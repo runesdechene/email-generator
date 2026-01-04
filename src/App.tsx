@@ -156,6 +156,82 @@ function App() {
       setExportingMultiple(false);
     }
   };
+  
+  const handleExportSeparateSections = async () => {
+    if (selectedSectionsForExport.size === 0 || !sectionsRef.current) return;
+    
+    try {
+      setExportingMultiple(true);
+      
+      // Trier les sections par ordre
+      const sortedSectionIds = Array.from(selectedSectionsForExport).sort((a, b) => {
+        const sectionA = sections.find(s => s.id === a);
+        const sectionB = sections.find(s => s.id === b);
+        return (sectionA?.order ?? 0) - (sectionB?.order ?? 0);
+      });
+      
+      const currentTemplate = templates.find(t => t.id === currentTemplateId);
+      const backgroundImageUrl = currentTemplate?.backgroundImage;
+      const backgroundSize = currentTemplate?.backgroundSize || 'cover';
+      
+      // Sauvegarder la sélection actuelle
+      const savedSelection = new Set(selectedSectionsForExport);
+      
+      // Désélectionner temporairement pour retirer les bordures vertes
+      setSelectedSectionsForExport(new Set());
+      
+      // Attendre que le DOM se mette à jour
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      console.log(`Début export de ${sortedSectionIds.length} sections séparées`);
+      
+      // Importer la fonction d'export individuel
+      const { exportSectionWithBackground } = await import('./utils/exportWithBackground');
+      
+      // Exporter chaque section individuellement
+      for (let i = 0; i < sortedSectionIds.length; i++) {
+        const sectionId = sortedSectionIds[i];
+        const element = sectionsRef.current.get(sectionId);
+        
+        if (element) {
+          console.log(`Export section ${i + 1}/${sortedSectionIds.length}`);
+          
+          const section = sections.find(s => s.id === sectionId);
+          const fileName = `section-${i + 1}-${section?.name || 'sans-nom'}-${Date.now() + i}.jpg`;
+          
+          try {
+            await exportSectionWithBackground({
+              element,
+              backgroundImageUrl,
+              backgroundSize,
+              fileName,
+            });
+            
+            console.log(`Section ${i + 1} exportée avec succès`);
+          } catch (error) {
+            console.error(`Erreur export section ${i + 1}:`, error);
+          }
+          
+          // Attendre entre chaque export pour laisser le temps au navigateur
+          await new Promise(resolve => setTimeout(resolve, 300));
+        }
+      }
+      
+      console.log('Export terminé');
+      
+      // Resélectionner les sections
+      setSelectedSectionsForExport(savedSelection);
+      
+      alert(`✅ ${savedSelection.size} section(s) exportée(s) individuellement avec succès !`);
+    } catch (error) {
+      console.error('Erreur export sections séparées:', error);
+      alert('❌ Erreur lors de l\'export des sections');
+      // Réinitialiser la sélection en cas d'erreur
+      setSelectedSectionsForExport(new Set());
+    } finally {
+      setExportingMultiple(false);
+    }
+  };
 
   const handleSelectSectionType = (sectionType: SectionTemplate) => {
     const newSection: EmailSection = {
@@ -217,30 +293,55 @@ function App() {
                   </button>
                 )}
                 
-                {/* Bouton d'export multi-sections */}
+                {/* Boutons d'export multi-sections */}
                 {selectedSectionsForExport.size > 1 && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleExportSelectedSections();
-                    }}
-                    onMouseDown={(e) => e.stopPropagation()}
-                    disabled={exportingMultiple}
-                    className="flex items-center gap-2 px-3 py-2 bg-emerald-600 text-white rounded-lg shadow-sm hover:bg-emerald-500 transition-all disabled:opacity-50 disabled:cursor-wait"
-                    title={`Exporter ${selectedSectionsForExport.size} sections en JPG`}
-                  >
-                    {exportingMultiple ? (
-                      <>
-                        <Loader2 size={16} className="animate-spin" />
-                        <span className="text-xs font-medium">Export...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Download size={16} />
-                        <span className="text-xs font-medium">Exporter {selectedSectionsForExport.size} sections</span>
-                      </>
-                    )}
-                  </button>
+                  <>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleExportSelectedSections();
+                      }}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      disabled={exportingMultiple}
+                      className="flex items-center gap-2 px-3 py-2 bg-emerald-600 text-white rounded-lg shadow-sm hover:bg-emerald-500 transition-all disabled:opacity-50 disabled:cursor-wait"
+                      title={`Exporter ${selectedSectionsForExport.size} sections en 1 JPG`}
+                    >
+                      {exportingMultiple ? (
+                        <>
+                          <Loader2 size={16} className="animate-spin" />
+                          <span className="text-xs font-medium">Export...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Download size={16} />
+                          <span className="text-xs font-medium">Exporter en 1 image</span>
+                        </>
+                      )}
+                    </button>
+                    
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleExportSeparateSections();
+                      }}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      disabled={exportingMultiple}
+                      className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-500 transition-all disabled:opacity-50 disabled:cursor-wait"
+                      title={`Exporter ${selectedSectionsForExport.size} sections en ${selectedSectionsForExport.size} JPG`}
+                    >
+                      {exportingMultiple ? (
+                        <>
+                          <Loader2 size={16} className="animate-spin" />
+                          <span className="text-xs font-medium">Export...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Download size={16} />
+                          <span className="text-xs font-medium">Exporter en {selectedSectionsForExport.size} images</span>
+                        </>
+                      )}
+                    </button>
+                  </>
                 )}
               </div>
               
