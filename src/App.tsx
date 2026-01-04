@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Eye, Download, Loader2 } from 'lucide-react';
+import { Eye, Download, Loader2, CheckSquare } from 'lucide-react';
 import { Navbar } from './components/layout/Navbar';
 import { Sidebar } from './components/layout/Sidebar';
 import { OptionsPanel } from './components/layout/OptionsPanel';
@@ -28,6 +28,8 @@ function AppContent() {
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectionStart, setSelectionStart] = useState<{ x: number; y: number } | null>(null);
   const [selectionEnd, setSelectionEnd] = useState<{ x: number; y: number } | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
   const sectionsRef = useRef<Map<string, HTMLDivElement>>(new Map());
   const toast = useToast();
   
@@ -38,6 +40,8 @@ function AppContent() {
   
   // Gérer le début de la sélection
   const handleMouseDown = (e: React.MouseEvent) => {
+    // N'activer la sélection que si le mode multi-sélection est activé
+    if (!multiSelectMode) return;
     if (e.button !== 0 || e.ctrlKey || e.shiftKey || e.metaKey) return;
     
     e.preventDefault();
@@ -52,6 +56,13 @@ function AppContent() {
   // Gérer le mouvement de la souris
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isSelecting || !selectionStart) return;
+    
+    // Détecter si c'est un vrai drag (mouvement > 5px)
+    const deltaX = Math.abs(e.clientX - selectionStart.x);
+    const deltaY = Math.abs(e.clientY - selectionStart.y);
+    if (deltaX > 5 || deltaY > 5) {
+      setIsDragging(true);
+    }
     
     e.preventDefault();
     setSelectionEnd({ x: e.clientX, y: e.clientY });
@@ -85,14 +96,23 @@ function AppContent() {
   
   // Gérer la fin de la sélection
   const handleMouseUp = () => {
+    // Si ce n'était pas un drag (juste un clic), ne pas garder la sélection orange
+    if (!isDragging) {
+      setSelectedSectionsForExport(new Set());
+    }
+    
     setIsSelecting(false);
     setSelectionStart(null);
     setSelectionEnd(null);
+    setIsDragging(false);
+    
+    // Ne PAS désactiver le mode multi-sélection automatiquement
+    // L'utilisateur doit cliquer sur le bouton pour le désactiver
   };
   
   // Calculer le style du cadre de sélection
   const getSelectionBoxStyle = (): React.CSSProperties => {
-    if (!selectionStart || !selectionEnd) return { display: 'none' };
+    if (!selectionStart || !selectionEnd || !isDragging) return { display: 'none' };
     
     const left = Math.min(selectionStart.x, selectionEnd.x);
     const top = Math.min(selectionStart.y, selectionEnd.y);
@@ -105,8 +125,8 @@ function AppContent() {
       top: `${top}px`,
       width: `${width}px`,
       height: `${height}px`,
-      border: '2px dashed #8b5cf6',
-      backgroundColor: 'rgba(139, 92, 246, 0.1)',
+      border: '2px dashed #FFA500',
+      backgroundColor: 'rgba(255, 165, 0, 0.1)',
       pointerEvents: 'none',
       zIndex: 1000,
     };
@@ -274,11 +294,13 @@ function AppContent() {
             <EditorNavbar />
             <main 
               className="flex-1 flex justify-center items-center overflow-y-auto p-8 relative"
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-              style={{ userSelect: 'none' }}
+              {...(multiSelectMode ? {
+                onMouseDown: handleMouseDown,
+                onMouseMove: handleMouseMove,
+                onMouseUp: handleMouseUp,
+                onMouseLeave: handleMouseUp,
+                style: { userSelect: 'none' }
+              } : {})}
             >
               {/* Cadre de sélection visuel */}
               {isSelecting && <div style={getSelectionBoxStyle()} />}
@@ -297,6 +319,36 @@ function AppContent() {
                   >
                     <Eye size={16} className="text-gray-600" />
                     <span className="text-xs font-medium text-gray-700">Visualiser</span>
+                  </button>
+                )}
+                
+                {/* Bouton de sélection multiple */}
+                {sections.length > 1 && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMultiSelectMode(!multiSelectMode);
+                      if (multiSelectMode) {
+                        // Si on désactive le mode, nettoyer TOUS les états de sélection
+                        setSelectedSectionsForExport(new Set());
+                        setIsSelecting(false);
+                        setSelectionStart(null);
+                        setSelectionEnd(null);
+                        setIsDragging(false);
+                      }
+                    }}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg shadow-sm transition-all ${
+                      multiSelectMode
+                        ? 'bg-[#FFA500] text-white border border-[#FFA500] hover:bg-[#FF8C00]'
+                        : 'bg-white text-gray-700 border border-gray-300 hover:bg-blue-50 hover:border-[#1E90FF]'
+                    }`}
+                    title={multiSelectMode ? "Désactiver la sélection multiple" : "Activer la sélection multiple"}
+                  >
+                    <CheckSquare size={16} />
+                    <span className="text-xs font-medium">
+                      {multiSelectMode ? 'Sélection active' : 'Sélectionner plusieurs'}
+                    </span>
                   </button>
                 )}
                 
