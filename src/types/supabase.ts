@@ -53,6 +53,8 @@ export interface GlobalStyleTemplate {
     s: number;
     xs: number;
   };
+  paddingInline: number;
+  paddingBlock: number;
   createdAt: Date;
   updatedAt: Date;
 }

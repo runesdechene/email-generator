@@ -6,9 +6,14 @@ interface ParagraphSectionProps {
     content: string;
   };
   options?: {
-    padding?: number;
+    paddingTop?: number;
+    paddingRight?: number;
+    paddingBottom?: number;
+    paddingLeft?: number;
+    useTemplatePaddingInline?: boolean;
+    useTemplatePaddingBlock?: boolean;
     fontFamily?: 'heading' | 'paragraph';
-    fontSize?: number;
+    fontSize?: number | string;
     color?: string;
     textStyle?: {
       align?: 'left' | 'center' | 'right' | 'justify';
@@ -23,7 +28,12 @@ export function ParagraphSection({ data, options = {} }: ParagraphSectionProps) 
   const { currentTemplateId } = useEmailStore();
   const { templates } = useTemplates();
   
-  const padding = options.padding ?? 32;
+  const paddingTop = options.paddingTop ?? 32;
+  const paddingRight = options.paddingRight ?? 32;
+  const paddingBottom = options.paddingBottom ?? 32;
+  const paddingLeft = options.paddingLeft ?? 32;
+  const useTemplatePaddingInline = options.useTemplatePaddingInline ?? false;
+  const useTemplatePaddingBlock = options.useTemplatePaddingBlock ?? false;
   const fontFamily = options.fontFamily ?? 'paragraph';
   const fontSizeOption = options.fontSize ?? 16;
   const colorOption = options.color ?? '#000000';
@@ -64,9 +74,18 @@ export function ParagraphSection({ data, options = {} }: ParagraphSectionProps) 
     }
   }
 
+  // Calculer les paddings finaux en fonction des toggles
+  const finalPaddingTop = useTemplatePaddingBlock && currentTemplate ? currentTemplate.paddingBlock : paddingTop;
+  const finalPaddingBottom = useTemplatePaddingBlock && currentTemplate ? currentTemplate.paddingBlock : paddingBottom;
+  const finalPaddingLeft = useTemplatePaddingInline && currentTemplate ? currentTemplate.paddingInline : paddingLeft;
+  const finalPaddingRight = useTemplatePaddingInline && currentTemplate ? currentTemplate.paddingInline : paddingRight;
+
   // Styles de base
   const baseStyle: React.CSSProperties = {
-    padding: `${padding}px`,
+    paddingTop: `${finalPaddingTop}px`,
+    paddingRight: `${finalPaddingRight}px`,
+    paddingBottom: `${finalPaddingBottom}px`,
+    paddingLeft: `${finalPaddingLeft}px`,
     backgroundColor: 'transparent',
     textAlign,
     lineHeight,

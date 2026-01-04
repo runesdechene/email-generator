@@ -1,4 +1,4 @@
-import { Plus, GripVertical, Trash2 } from 'lucide-react';
+import { Plus, GripVertical, Trash2, Copy } from 'lucide-react';
 import { ProjectManager } from '../projects/ProjectManager';
 import { useTemplates, useSectionTemplates } from '../../hooks/useSupabase';
 import {
@@ -26,9 +26,10 @@ interface SortableSectionItemProps {
   isSelected: boolean;
   onSelect: () => void;
   onDelete: () => void;
+  onDuplicate: () => void;
 }
 
-function SortableSectionItem({ section, isSelected, onSelect, onDelete, templateName }: SortableSectionItemProps & { templateName?: string }) {
+function SortableSectionItem({ section, isSelected, onSelect, onDelete, onDuplicate, templateName }: SortableSectionItemProps & { templateName?: string }) {
   const {
     attributes,
     listeners,
@@ -68,15 +69,28 @@ function SortableSectionItem({ section, isSelected, onSelect, onDelete, template
         )}
       </div>
 
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete();
-        }}
-        className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all"
-      >
-        <Trash2 size={16} />
-      </button>
+      <div className="flex items-center gap-1">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDuplicate();
+          }}
+          className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-violet-600 transition-all p-1 rounded hover:bg-violet-50"
+          title="Dupliquer la section"
+        >
+          <Copy size={14} />
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all p-1 rounded hover:bg-red-50"
+          title="Supprimer la section"
+        >
+          <Trash2 size={14} />
+        </button>
+      </div>
     </div>
   );
 }
@@ -92,6 +106,7 @@ export function Sidebar({ onOpenTemplateSelector }: SidebarProps) {
     currentTemplateId,
     selectSection, 
     removeSection, 
+    duplicateSection,
     reorderSections,
     setCurrentTemplate,
   } = useEmailStore();
@@ -181,6 +196,7 @@ export function Sidebar({ onOpenTemplateSelector }: SidebarProps) {
                     isSelected={selectedSectionId === section.id}
                     onSelect={() => selectSection(section.id)}
                     onDelete={() => removeSection(section.id)}
+                    onDuplicate={() => duplicateSection(section.id)}
                     templateName={template?.name}
                   />
                 );

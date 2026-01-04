@@ -29,6 +29,8 @@ export interface TemplateData {
     s: number;
     xs: number;
   };
+  padding_inline: number;
+  padding_block: number;
   created_at: string;
   updated_at: string;
 }

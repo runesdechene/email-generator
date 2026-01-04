@@ -46,6 +46,8 @@ export function TemplateList({ onSelectTemplate }: TemplateListProps) {
           s: 14,
           xs: 12,
         },
+        paddingInline: 32,
+        paddingBlock: 32,
       });
       setShowCreateDialog(false);
       setTemplateName('');

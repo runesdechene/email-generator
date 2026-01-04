@@ -50,7 +50,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
   };
 
   return (
-    <aside className="w-80 h-full bg-white border-l border-gray-200 flex flex-col flex-shrink-0">
+    <aside className="w-100 h-full bg-white border-l border-gray-200 flex flex-col flex-shrink-0">
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
         <h2 className="text-sm font-semibold text-gray-900">Options de la section</h2>
         <button
@@ -98,14 +98,84 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
 
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-2">
-                Padding (px)
+                Padding
               </label>
-              <input
-                type="number"
-                value={(selectedSection.content.options as any)?.padding ?? 32}
-                onChange={(e) => updateOption(['padding'], parseInt(e.target.value) || 0)}
-                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
-              />
+              
+              {/* Toggles pour utiliser les paddings du template */}
+              <div className="flex gap-2 mb-3">
+                <button
+                  onClick={() => updateOption(['useTemplatePaddingInline'], !(selectedSection.content.options as any)?.useTemplatePaddingInline)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs rounded border transition-all ${
+                    (selectedSection.content.options as any)?.useTemplatePaddingInline
+                      ? 'bg-violet-600 text-white border-violet-600'
+                      : 'bg-white text-gray-700 border-gray-300 hover:border-violet-400'
+                  }`}
+                  title="Utiliser le padding inline du template (gauche/droite)"
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V8m10 8V8M5 12h14" />
+                  </svg>
+                  Inline
+                </button>
+                <button
+                  onClick={() => updateOption(['useTemplatePaddingBlock'], !(selectedSection.content.options as any)?.useTemplatePaddingBlock)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs rounded border transition-all ${
+                    (selectedSection.content.options as any)?.useTemplatePaddingBlock
+                      ? 'bg-violet-600 text-white border-violet-600'
+                      : 'bg-white text-gray-700 border-gray-300 hover:border-violet-400'
+                  }`}
+                  title="Utiliser le padding block du template (haut/bas)"
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V5m8 2V5M12 5v14m-4 2h8M7 12h10" />
+                  </svg>
+                  Block
+                </button>
+              </div>
+
+              {/* Paddings 4 directions */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Haut</label>
+                  <input
+                    type="number"
+                    value={(selectedSection.content.options as any)?.paddingTop ?? 32}
+                    onChange={(e) => updateOption(['paddingTop'], parseInt(e.target.value) || 0)}
+                    disabled={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Bas</label>
+                  <input
+                    type="number"
+                    value={(selectedSection.content.options as any)?.paddingBottom ?? 32}
+                    onChange={(e) => updateOption(['paddingBottom'], parseInt(e.target.value) || 0)}
+                    disabled={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Gauche</label>
+                  <input
+                    type="number"
+                    value={(selectedSection.content.options as any)?.paddingLeft ?? 32}
+                    onChange={(e) => updateOption(['paddingLeft'], parseInt(e.target.value) || 0)}
+                    disabled={(selectedSection.content.options as any)?.useTemplatePaddingInline}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Droite</label>
+                  <input
+                    type="number"
+                    value={(selectedSection.content.options as any)?.paddingRight ?? 32}
+                    onChange={(e) => updateOption(['paddingRight'], parseInt(e.target.value) || 0)}
+                    disabled={(selectedSection.content.options as any)?.useTemplatePaddingInline}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                </div>
+              </div>
             </div>
 
             <div>
