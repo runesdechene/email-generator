@@ -5,9 +5,10 @@ import './EmailPreview.css';
 
 interface EmailPreviewProps {
   sectionsRef: React.RefObject<Map<string, HTMLDivElement> | null>;
+  selectedSections: Set<string>;
 }
 
-export function EmailPreview({ sectionsRef }: EmailPreviewProps) {
+export function EmailPreview({ sectionsRef, selectedSections }: EmailPreviewProps) {
   const { sections, selectedSectionId, selectSection, currentTemplateId } = useEmailStore();
   const { templates } = useTemplates();
 
@@ -38,6 +39,7 @@ export function EmailPreview({ sectionsRef }: EmailPreviewProps) {
           sortedSections.map((section) => (
             <div
               key={section.id}
+              data-section-id={section.id}
               ref={(el) => {
                 if (el && sectionsRef.current) {
                   sectionsRef.current.set(section.id, el);
@@ -45,7 +47,9 @@ export function EmailPreview({ sectionsRef }: EmailPreviewProps) {
               }}
               onClick={() => selectSection(section.id)}
               className={`cursor-pointer transition-all ${
-                selectedSectionId === section.id
+                selectedSections.has(section.id)
+                  ? 'ring-4 ring-emerald-500 ring-inset'
+                  : selectedSectionId === section.id
                   ? 'ring-2 ring-violet-500 ring-inset'
                   : 'hover:ring-2 hover:ring-violet-300 hover:ring-inset'
               }`}

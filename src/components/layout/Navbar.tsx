@@ -7,7 +7,7 @@ interface NavbarProps {
 
 export function Navbar({ currentPage, onPageChange }: NavbarProps) {
   return (
-    <nav className="w-16 h-full bg-white border-r border-gray-200 flex flex-col items-center py-6 flex-shrink-0">
+    <nav className="w-16 h-full bg-white border-r border-gray-200 flex flex-col items-center py-4 flex-shrink-0">
       <div className="flex-1 flex flex-col items-center gap-2">
         <button
           onClick={() => onPageChange('editor')}

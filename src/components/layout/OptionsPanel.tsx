@@ -528,6 +528,15 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
             try {
               setExporting(true);
               
+              // Sauvegarder l'ID de la section sélectionnée
+              const currentSelectedId = selectedSection.id;
+              
+              // Désélectionner temporairement pour retirer la bordure violette
+              selectSection(null);
+              
+              // Attendre que le DOM se mette à jour (retrait de la bordure)
+              await new Promise(resolve => setTimeout(resolve, 100));
+              
               const currentTemplate = templates.find(t => t.id === currentTemplateId);
               const backgroundImageUrl = currentTemplate?.backgroundImage;
               const backgroundSize = currentTemplate?.backgroundSize || 'cover';
@@ -541,10 +550,17 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                 fileName,
               });
               
+              // Resélectionner la section après l'export
+              selectSection(currentSelectedId);
+              
               alert('✅ Section exportée avec succès !');
             } catch (error) {
               console.error('Erreur export section:', error);
               alert('❌ Erreur lors de l\'export de la section');
+              // Resélectionner la section même en cas d'erreur
+              if (selectedSection) {
+                selectSection(selectedSection.id);
+              }
             } finally {
               setExporting(false);
             }

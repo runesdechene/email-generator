@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
+import { Eye, Download, Loader2 } from 'lucide-react';
 import { Navbar } from './components/layout/Navbar';
 import { Sidebar } from './components/layout/Sidebar';
 import { OptionsPanel } from './components/layout/OptionsPanel';
@@ -10,17 +11,138 @@ import { TemplateList } from './components/settings/TemplateList';
 import { TemplateEditor } from './components/settings/TemplateEditor';
 import { useTemplates, useSectionTemplates } from './hooks/useSupabase';
 import { useEmailStore } from './store/emailStore';
-import type { GlobalStyleTemplate, SectionTemplate } from './types/firebase';
+import { exportMultipleSections } from './utils/exportMultipleSections';
+import type { GlobalStyleTemplate, SectionTemplate } from './types/supabase';
 import type { EmailSection } from './types';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<'editor' | 'settings'>('editor');
   const [editingTemplate, setEditingTemplate] = useState<GlobalStyleTemplate | null>(null);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [selectedSectionsForExport, setSelectedSectionsForExport] = useState<Set<string>>(new Set());
+  const [exportingMultiple, setExportingMultiple] = useState(false);
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [selectionStart, setSelectionStart] = useState<{ x: number; y: number } | null>(null);
+  const [selectionEnd, setSelectionEnd] = useState<{ x: number; y: number } | null>(null);
   const sectionsRef = useRef<Map<string, HTMLDivElement>>(new Map());
+  
   const { updateTemplate } = useTemplates();
+  const { templates } = useTemplates();
   const { sectionTemplates } = useSectionTemplates();
-  const { sections, addSection, selectSection } = useEmailStore();
+  const { sections, selectedSectionId, currentTemplateId, addSection, selectSection } = useEmailStore();
+  
+  // Gérer le début de la sélection
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button !== 0 || e.ctrlKey || e.shiftKey || e.metaKey) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setIsSelecting(true);
+    setSelectionStart({ x: e.clientX, y: e.clientY });
+    setSelectionEnd({ x: e.clientX, y: e.clientY });
+    setSelectedSectionsForExport(new Set());
+  }, []);
+  
+  // Gérer le mouvement de la souris
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isSelecting || !selectionStart) return;
+    
+    e.preventDefault();
+    setSelectionEnd({ x: e.clientX, y: e.clientY });
+    
+    // Détecter les sections dans le cadre de sélection
+    const selectionRect = {
+      left: Math.min(selectionStart.x, e.clientX),
+      right: Math.max(selectionStart.x, e.clientX),
+      top: Math.min(selectionStart.y, e.clientY),
+      bottom: Math.max(selectionStart.y, e.clientY),
+    };
+    
+    const newSelectedSections = new Set<string>();
+    sections.forEach(section => {
+      const element = sectionsRef.current?.get(section.id);
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        if (
+          rect.left < selectionRect.right &&
+          rect.right > selectionRect.left &&
+          rect.top < selectionRect.bottom &&
+          rect.bottom > selectionRect.top
+        ) {
+          newSelectedSections.add(section.id);
+        }
+      }
+    });
+    
+    setSelectedSectionsForExport(newSelectedSections);
+  }, [isSelecting, selectionStart, sections]);
+  
+  // Gérer la fin de la sélection
+  const handleMouseUp = useCallback(() => {
+    setIsSelecting(false);
+    setSelectionStart(null);
+    setSelectionEnd(null);
+  }, []);
+  
+  // Calculer le style du cadre de sélection
+  const getSelectionBoxStyle = (): React.CSSProperties => {
+    if (!selectionStart || !selectionEnd) return { display: 'none' };
+    
+    const left = Math.min(selectionStart.x, selectionEnd.x);
+    const top = Math.min(selectionStart.y, selectionEnd.y);
+    const width = Math.abs(selectionEnd.x - selectionStart.x);
+    const height = Math.abs(selectionEnd.y - selectionStart.y);
+    
+    return {
+      position: 'fixed',
+      left: `${left}px`,
+      top: `${top}px`,
+      width: `${width}px`,
+      height: `${height}px`,
+      border: '2px dashed #8b5cf6',
+      backgroundColor: 'rgba(139, 92, 246, 0.1)',
+      pointerEvents: 'none',
+      zIndex: 1000,
+    };
+  };
+
+  const handleExportSelectedSections = async () => {
+    if (selectedSectionsForExport.size === 0 || !sectionsRef.current) return;
+    
+    try {
+      setExportingMultiple(true);
+      
+      // Trier les sections par ordre
+      const sortedSectionIds = Array.from(selectedSectionsForExport).sort((a, b) => {
+        const sectionA = sections.find(s => s.id === a);
+        const sectionB = sections.find(s => s.id === b);
+        return (sectionA?.order ?? 0) - (sectionB?.order ?? 0);
+      });
+      
+      const currentTemplate = templates.find(t => t.id === currentTemplateId);
+      const backgroundImageUrl = currentTemplate?.backgroundImage;
+      const backgroundSize = currentTemplate?.backgroundSize || 'cover';
+      
+      const fileName = `export-${selectedSectionsForExport.size}-sections-${Date.now()}.jpg`;
+      
+      await exportMultipleSections({
+        sectionIds: sortedSectionIds,
+        sectionsRef: sectionsRef.current,
+        backgroundImageUrl,
+        backgroundSize,
+        fileName,
+      });
+      
+      alert(`✅ ${selectedSectionsForExport.size} section(s) exportée(s) avec succès !`);
+      setSelectedSectionsForExport(new Set()); // Réinitialiser la sélection
+    } catch (error) {
+      console.error('Erreur export multi-sections:', error);
+      alert('❌ Erreur lors de l\'export des sections');
+    } finally {
+      setExportingMultiple(false);
+    }
+  };
 
   const handleSelectSectionType = (sectionType: SectionTemplate) => {
     const newSection: EmailSection = {
@@ -34,7 +156,6 @@ function App() {
     selectSection(newSection.id);
     setShowTemplateSelector(false);
   };
-
 
   return (
     <div className="w-screen h-screen flex bg-gray-100 overflow-hidden">
@@ -55,8 +176,57 @@ function App() {
           {/* 3. Zone centrale - flex 1, avec navbar en haut */}
           <div className="flex-1 flex flex-col bg-gray-50">
             <EditorNavbar />
-            <main className="flex-1 flex justify-center items-center overflow-y-auto p-8">
-              <EmailPreview sectionsRef={sectionsRef} />
+            <main 
+              className="flex-1 flex justify-center items-center overflow-y-auto p-8 relative"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              style={{ userSelect: 'none' }}
+            >
+              {/* Cadre de sélection visuel */}
+              {isSelecting && <div style={getSelectionBoxStyle()} />}
+              {/* Boutons en haut à gauche */}
+              <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
+                {/* Bouton de visualisation */}
+                {selectedSectionId && (
+                  <button
+                    onClick={() => selectSection(null)}
+                    className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 hover:border-violet-400 transition-all"
+                    title="Mode visualisation (désélectionner la section)"
+                  >
+                    <Eye size={16} className="text-gray-600" />
+                    <span className="text-xs font-medium text-gray-700">Visualiser</span>
+                  </button>
+                )}
+                
+                {/* Bouton d'export multi-sections */}
+                {selectedSectionsForExport.size > 1 && (
+                  <button
+                    onClick={handleExportSelectedSections}
+                    disabled={exportingMultiple}
+                    className="flex items-center gap-2 px-3 py-2 bg-emerald-600 text-white rounded-lg shadow-sm hover:bg-emerald-500 transition-all disabled:opacity-50 disabled:cursor-wait"
+                    title={`Exporter ${selectedSectionsForExport.size} sections en JPG`}
+                  >
+                    {exportingMultiple ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        <span className="text-xs font-medium">Export...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Download size={16} />
+                        <span className="text-xs font-medium">Exporter {selectedSectionsForExport.size} sections</span>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+              
+              <EmailPreview 
+                sectionsRef={sectionsRef}
+                selectedSections={selectedSectionsForExport}
+              />
             </main>
           </div>
 
