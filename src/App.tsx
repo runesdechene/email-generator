@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef } from 'react';
 import { Eye, Download, Loader2 } from 'lucide-react';
 import { Navbar } from './components/layout/Navbar';
 import { Sidebar } from './components/layout/Sidebar';
@@ -32,7 +32,7 @@ function App() {
   const { sections, selectedSectionId, currentTemplateId, addSection, selectSection } = useEmailStore();
   
   // Gérer le début de la sélection
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+  const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0 || e.ctrlKey || e.shiftKey || e.metaKey) return;
     
     e.preventDefault();
@@ -42,10 +42,10 @@ function App() {
     setSelectionStart({ x: e.clientX, y: e.clientY });
     setSelectionEnd({ x: e.clientX, y: e.clientY });
     setSelectedSectionsForExport(new Set());
-  }, []);
+  };
   
   // Gérer le mouvement de la souris
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+  const handleMouseMove = (e: React.MouseEvent) => {
     if (!isSelecting || !selectionStart) return;
     
     e.preventDefault();
@@ -76,14 +76,14 @@ function App() {
     });
     
     setSelectedSectionsForExport(newSelectedSections);
-  }, [isSelecting, selectionStart, sections]);
+  };
   
   // Gérer la fin de la sélection
-  const handleMouseUp = useCallback(() => {
+  const handleMouseUp = () => {
     setIsSelecting(false);
     setSelectionStart(null);
     setSelectionEnd(null);
-  }, []);
+  };
   
   // Calculer le style du cadre de sélection
   const getSelectionBoxStyle = (): React.CSSProperties => {
@@ -126,6 +126,15 @@ function App() {
       
       const fileName = `export-${selectedSectionsForExport.size}-sections-${Date.now()}.jpg`;
       
+      // Sauvegarder la sélection actuelle
+      const savedSelection = new Set(selectedSectionsForExport);
+      
+      // Désélectionner temporairement pour retirer les bordures vertes
+      setSelectedSectionsForExport(new Set());
+      
+      // Attendre que le DOM se mette à jour
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       await exportMultipleSections({
         sectionIds: sortedSectionIds,
         sectionsRef: sectionsRef.current,
@@ -134,11 +143,15 @@ function App() {
         fileName,
       });
       
-      alert(`✅ ${selectedSectionsForExport.size} section(s) exportée(s) avec succès !`);
-      setSelectedSectionsForExport(new Set()); // Réinitialiser la sélection
+      // Resélectionner les sections
+      setSelectedSectionsForExport(savedSelection);
+      
+      alert(`✅ ${savedSelection.size} section(s) exportée(s) avec succès !`);
     } catch (error) {
       console.error('Erreur export multi-sections:', error);
       alert('❌ Erreur lors de l\'export des sections');
+      // Réinitialiser la sélection en cas d'erreur
+      setSelectedSectionsForExport(new Set());
     } finally {
       setExportingMultiple(false);
     }
@@ -191,7 +204,11 @@ function App() {
                 {/* Bouton de visualisation */}
                 {selectedSectionId && (
                   <button
-                    onClick={() => selectSection(null)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      selectSection(null);
+                    }}
+                    onMouseDown={(e) => e.stopPropagation()}
                     className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 hover:border-violet-400 transition-all"
                     title="Mode visualisation (désélectionner la section)"
                   >
@@ -203,7 +220,11 @@ function App() {
                 {/* Bouton d'export multi-sections */}
                 {selectedSectionsForExport.size > 1 && (
                   <button
-                    onClick={handleExportSelectedSections}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleExportSelectedSections();
+                    }}
+                    onMouseDown={(e) => e.stopPropagation()}
                     disabled={exportingMultiple}
                     className="flex items-center gap-2 px-3 py-2 bg-emerald-600 text-white rounded-lg shadow-sm hover:bg-emerald-500 transition-all disabled:opacity-50 disabled:cursor-wait"
                     title={`Exporter ${selectedSectionsForExport.size} sections en JPG`}
