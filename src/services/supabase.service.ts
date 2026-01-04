@@ -109,7 +109,7 @@ export class SupabaseService {
 
   static async getSectionTemplates(): Promise<SectionTemplateData[]> {
     const { data, error } = await supabase
-      .from('section_templates')
+      .from('sections')
       .select('*')
       .order('name', { ascending: true });
 
@@ -119,7 +119,7 @@ export class SupabaseService {
 
   static async createSectionTemplate(template: Omit<SectionTemplateData, 'id' | 'created_at' | 'updated_at'>): Promise<string> {
     const { data, error } = await supabase
-      .from('section_templates')
+      .from('sections')
       .insert(template)
       .select('id')
       .single();
@@ -130,7 +130,7 @@ export class SupabaseService {
 
   static async updateSectionTemplate(id: string, updates: Partial<Omit<SectionTemplateData, 'id' | 'created_at'>>): Promise<void> {
     const { error } = await supabase
-      .from('section_templates')
+      .from('sections')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id);
 
@@ -139,7 +139,7 @@ export class SupabaseService {
 
   static async deleteSectionTemplate(id: string): Promise<void> {
     const { error } = await supabase
-      .from('section_templates')
+      .from('sections')
       .delete()
       .eq('id', id);
 
