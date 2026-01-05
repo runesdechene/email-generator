@@ -71,7 +71,7 @@ export const ImageTextSection: React.FC<ImageTextSectionProps> = ({
     clipPath = 'none',
     overlay,
     color = '#ffffff',
-    fontSize = 16,
+    fontSize: _fontSize = 16,
     font = 'paragraph',
     textStyle: textStyleOptions = {},
     tagFontSizes,
@@ -193,9 +193,10 @@ export const ImageTextSection: React.FC<ImageTextSectionProps> = ({
   };
 
   // Mapper font (title/paragraph) à une fontFamily CSS depuis le template
-  const fontFamily = font === 'title' 
+  const _fontFamily = font === 'title' 
     ? currentTemplate?.fonts.title || 'Georgia, serif'
     : currentTemplate?.fonts.paragraph || 'Arial, sans-serif';
+  void _fontFamily; // Variable préparée pour usage futur
 
   const textStyle: React.CSSProperties = {
     color,

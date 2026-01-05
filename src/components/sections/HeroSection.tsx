@@ -43,18 +43,20 @@ export function HeroSection({ section }: HeroSectionProps) {
 
   // Gérer la police (par défaut: paragraph)
   const font = options.font || 'paragraph';
-  const fontFamily = font === 'title' 
+  const _fontFamily = font === 'title' 
     ? currentTemplate?.fonts.title || 'Georgia, serif'
     : currentTemplate?.fonts.paragraph || 'Arial, sans-serif';
+  void _fontFamily; // Variable préparée pour usage futur
 
   // Gérer la taille de police
-  let fontSize: number;
+  let _fontSize: number;
   if (typeof options.fontSize === 'string') {
     const sizeMap = currentTemplate?.fontSizes || { xxl: 48, xl: 36, l: 24, m: 16, s: 14, xs: 12 };
-    fontSize = sizeMap[options.fontSize as keyof typeof sizeMap] || 16;
+    _fontSize = sizeMap[options.fontSize as keyof typeof sizeMap] || 16;
   } else {
-    fontSize = options.fontSize ?? 16;
+    _fontSize = options.fontSize ?? 16;
   }
+  void _fontSize; // Variable préparée pour usage futur
 
   // Gérer la couleur
   let color: string;

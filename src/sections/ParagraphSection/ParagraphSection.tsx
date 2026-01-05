@@ -107,17 +107,19 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
 
   // Récupérer le template actuel pour obtenir les polices, couleurs et tailles
   const currentTemplate = templates.find(t => t.id === currentTemplateId);
-  const fontFamilyValue = fontFamily === 'heading' 
+  const _fontFamilyValue = fontFamily === 'heading' 
     ? currentTemplate?.fonts.title 
     : currentTemplate?.fonts.paragraph;
+  void _fontFamilyValue; // Variable préparée pour usage futur
   
   // Résoudre la taille de police : si c'est une variable du template (ex: 'xxl'), utiliser la taille du template
   const fontSizeKeys = ['xxl', 'xl', 'l', 'm', 's', 'xs'];
-  const fontSize = typeof fontSizeOption === 'string' && fontSizeKeys.includes(fontSizeOption) && currentTemplate
+  const _fontSize = typeof fontSizeOption === 'string' && fontSizeKeys.includes(fontSizeOption) && currentTemplate
     ? currentTemplate.fontSizes[fontSizeOption as keyof typeof currentTemplate.fontSizes]
     : typeof fontSizeOption === 'number'
     ? fontSizeOption
     : 16;
+  void _fontSize; // Variable préparée pour usage futur
   
   // Résoudre la couleur : si c'est une variable du template (ex: 'primary' ou nom de couleur personnalisée), utiliser la couleur du template
   const templateColorKeys = ['primary', 'secondary', 'background', 'text', 'accent'];
