@@ -10,11 +10,12 @@ interface TagFontSizeControlProps {
     h5?: number;
   };
   currentTemplate?: GlobalStyleTemplate;
+  tagsToShow?: string[];
   onUpdate: (path: string[], value: any) => void;
 }
 
-export function TagFontSizeControl({ tagFontSizes = {}, currentTemplate, onUpdate }: TagFontSizeControlProps) {
-  const tags = [
+export function TagFontSizeControl({ tagFontSizes = {}, currentTemplate, tagsToShow, onUpdate }: TagFontSizeControlProps) {
+  const allTags = [
     { key: 'p', label: 'Paragraphe (P)' },
     { key: 'h1', label: 'Titre 1 (H1)' },
     { key: 'h2', label: 'Titre 2 (H2)' },
@@ -22,6 +23,10 @@ export function TagFontSizeControl({ tagFontSizes = {}, currentTemplate, onUpdat
     { key: 'h4', label: 'Titre 4 (H4)' },
     { key: 'h5', label: 'Titre 5 (H5)' },
   ];
+
+  const tags = tagsToShow 
+    ? allTags.filter(tag => tagsToShow.includes(tag.key))
+    : allTags;
 
   const handleChange = (tag: string, value: number | undefined) => {
     const newTagFontSizes = { ...tagFontSizes, [tag]: value };

@@ -290,6 +290,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               <TagFontSizeControl
                 tagFontSizes={(selectedSection.content.options as any)?.tagFontSizes}
                 currentTemplate={templates.find(t => t.id === currentTemplateId)}
+                tagsToShow={['p']}
                 onUpdate={updateOption}
               />
             </AccordionSection>
@@ -298,6 +299,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               <TagColorControl
                 tagColors={(selectedSection.content.options as any)?.tagColors}
                 currentTemplate={templates.find(t => t.id === currentTemplateId)}
+                tagsToShow={['p']}
                 onUpdate={updateOption}
               />
             </AccordionSection>
