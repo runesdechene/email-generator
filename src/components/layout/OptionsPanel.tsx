@@ -8,6 +8,7 @@ import { useToast } from '../../hooks/useToast';
 import { SavePresetDialog } from '../presets/SavePresetDialog';
 import { LoadPresetDialog } from '../presets/LoadPresetDialog';
 import { ImagePicker } from '../ui/ImagePicker';
+import { AccordionSection } from '../ui/AccordionSection';
 import { 
   PaddingControl, 
   FontControl, 
@@ -156,8 +157,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
 
         {sectionType?.name === 'Texte' && (
           <>
-            <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-xs font-semibold text-gray-700 mb-2">Contenu</h3>
+            <AccordionSection title="Contenu" defaultOpen={true}>
               <textarea
                 value={(selectedSection.content.content as string) || ''}
                 onChange={(e) => updateContent('content', e.target.value)}
@@ -166,132 +166,145 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                 placeholder="<p>Votre contenu HTML ici...</p>"
               />
               <p className="text-xs text-gray-400 mt-1">Supporte le HTML</p>
-            </div>
+            </AccordionSection>
 
-            <BackgroundImageControl
-              backgroundImageUrl={(selectedSection.content.options as any)?.backgroundImageUrl}
-              backgroundSize={(selectedSection.content.options as any)?.backgroundSize}
-              backgroundPosition={(selectedSection.content.options as any)?.backgroundPosition}
-              backgroundRepeat={(selectedSection.content.options as any)?.backgroundRepeat}
-              sectionId={selectedSection.id}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="Image de fond">
+              <BackgroundImageControl
+                backgroundImageUrl={(selectedSection.content.options as any)?.backgroundImageUrl}
+                backgroundSize={(selectedSection.content.options as any)?.backgroundSize}
+                backgroundPosition={(selectedSection.content.options as any)?.backgroundPosition}
+                backgroundRepeat={(selectedSection.content.options as any)?.backgroundRepeat}
+                sectionId={selectedSection.id}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
 
-            <OverlayControl
-              value={(selectedSection.content.options as any)?.overlay || {}}
-              onChange={(value) => updateOption(['overlay'], value)}
-              label="Overlay sur l'image de fond"
-            />
+            <AccordionSection title="Overlay">
+              <OverlayControl
+                value={(selectedSection.content.options as any)?.overlay || {}}
+                onChange={(value) => updateOption(['overlay'], value)}
+                label="Overlay sur l'image de fond"
+              />
+            </AccordionSection>
 
-            <PaddingControl
-              paddingTop={(selectedSection.content.options as any)?.paddingTop}
-              paddingBottom={(selectedSection.content.options as any)?.paddingBottom}
-              paddingLeft={(selectedSection.content.options as any)?.paddingLeft}
-              paddingRight={(selectedSection.content.options as any)?.paddingRight}
-              useTemplatePaddingInline={(selectedSection.content.options as any)?.useTemplatePaddingInline}
-              useTemplatePaddingBlock={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="Padding">
+              <PaddingControl
+                paddingTop={(selectedSection.content.options as any)?.paddingTop}
+                paddingBottom={(selectedSection.content.options as any)?.paddingBottom}
+                paddingLeft={(selectedSection.content.options as any)?.paddingLeft}
+                paddingRight={(selectedSection.content.options as any)?.paddingRight}
+                useTemplatePaddingInline={(selectedSection.content.options as any)?.useTemplatePaddingInline}
+                useTemplatePaddingBlock={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
 
-            <FontControl
-              font={(selectedSection.content.options as any)?.fontFamily}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="Police">
+              <FontControl
+                font={(selectedSection.content.options as any)?.fontFamily}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
 
-            <FontSizeControl
-              fontSize={(selectedSection.content.options as any)?.fontSize}
-              currentTemplate={templates.find(t => t.id === currentTemplateId)}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="Taille de police">
+              <FontSizeControl
+                fontSize={(selectedSection.content.options as any)?.fontSize}
+                currentTemplate={templates.find(t => t.id === currentTemplateId)}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
 
-            <ColorControl
-              color={(selectedSection.content.options as any)?.color}
-              currentTemplate={templates.find(t => t.id === currentTemplateId)}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="Couleur">
+              <ColorControl
+                color={(selectedSection.content.options as any)?.color}
+                currentTemplate={templates.find(t => t.id === currentTemplateId)}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
 
-            <TextStyleControl
-              align={(selectedSection.content.options as any)?.textStyle?.align}
-              bold={(selectedSection.content.options as any)?.textStyle?.bold}
-              italic={(selectedSection.content.options as any)?.textStyle?.italic}
-              underline={(selectedSection.content.options as any)?.textStyle?.underline}
-              lineHeight={(selectedSection.content.options as any)?.textStyle?.lineHeight}
-              letterSpacing={(selectedSection.content.options as any)?.textStyle?.letterSpacing}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="Style de texte">
+              <TextStyleControl
+                align={(selectedSection.content.options as any)?.textStyle?.align}
+                bold={(selectedSection.content.options as any)?.textStyle?.bold}
+                italic={(selectedSection.content.options as any)?.textStyle?.italic}
+                underline={(selectedSection.content.options as any)?.textStyle?.underline}
+                lineHeight={(selectedSection.content.options as any)?.textStyle?.lineHeight}
+                letterSpacing={(selectedSection.content.options as any)?.textStyle?.letterSpacing}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
 
-            <CustomCSSControl
-              customCSS={(selectedSection.content.options as any)?.customCSS}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="CSS personnalisé">
+              <CustomCSSControl
+                customCSS={(selectedSection.content.options as any)?.customCSS}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
 
-            <DividerControl
-              topDividerEnabled={(selectedSection.content.options as any)?.topDividerEnabled}
-              topDividerType={(selectedSection.content.options as any)?.topDividerType}
-              topDividerImageUrl={(selectedSection.content.options as any)?.topDividerImageUrl}
-              topDividerSvgType={(selectedSection.content.options as any)?.topDividerSvgType}
-              topDividerColor={(selectedSection.content.options as any)?.topDividerColor}
-              topDividerHeight={(selectedSection.content.options as any)?.topDividerHeight}
-              topDividerFlip={(selectedSection.content.options as any)?.topDividerFlip}
-              bottomDividerEnabled={(selectedSection.content.options as any)?.bottomDividerEnabled}
-              bottomDividerType={(selectedSection.content.options as any)?.bottomDividerType}
-              bottomDividerImageUrl={(selectedSection.content.options as any)?.bottomDividerImageUrl}
-              bottomDividerSvgType={(selectedSection.content.options as any)?.bottomDividerSvgType}
-              bottomDividerColor={(selectedSection.content.options as any)?.bottomDividerColor}
-              bottomDividerHeight={(selectedSection.content.options as any)?.bottomDividerHeight}
-              bottomDividerFlip={(selectedSection.content.options as any)?.bottomDividerFlip}
-              sectionId={selectedSection.id}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="Diviseurs">
+              <DividerControl
+                topDividerEnabled={(selectedSection.content.options as any)?.topDividerEnabled}
+                topDividerType={(selectedSection.content.options as any)?.topDividerType}
+                topDividerImageUrl={(selectedSection.content.options as any)?.topDividerImageUrl}
+                topDividerSvgType={(selectedSection.content.options as any)?.topDividerSvgType}
+                topDividerColor={(selectedSection.content.options as any)?.topDividerColor}
+                topDividerHeight={(selectedSection.content.options as any)?.topDividerHeight}
+                topDividerFlip={(selectedSection.content.options as any)?.topDividerFlip}
+                bottomDividerEnabled={(selectedSection.content.options as any)?.bottomDividerEnabled}
+                bottomDividerType={(selectedSection.content.options as any)?.bottomDividerType}
+                bottomDividerImageUrl={(selectedSection.content.options as any)?.bottomDividerImageUrl}
+                bottomDividerSvgType={(selectedSection.content.options as any)?.bottomDividerSvgType}
+                bottomDividerColor={(selectedSection.content.options as any)?.bottomDividerColor}
+                bottomDividerHeight={(selectedSection.content.options as any)?.bottomDividerHeight}
+                bottomDividerFlip={(selectedSection.content.options as any)?.bottomDividerFlip}
+                sectionId={selectedSection.id}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
           </>
         )}
 
         {sectionType?.name === 'Hero' && (
           <>
-            {/* Image Picker */}
-            <div className="border-t border-gray-200 pt-6">
+            <AccordionSection title="Image Hero" defaultOpen={true}>
               <ImagePicker
                 value={(selectedSection.content.options as any)?.imageUrl || ''}
                 onChange={(url) => updateOption(['imageUrl'], url)}
                 sectionId={selectedSection.id}
                 label="Image Hero"
               />
-            </div>
-
-            {/* Taille de l'image */}
-            {(selectedSection.content.options as any)?.imageUrl && (
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-2">
-                  Taille de l'image
-                </label>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="range"
-                    min="20"
-                    max="100"
-                    value={(selectedSection.content.options as any)?.imageSize ?? 80}
-                    onChange={(e) => updateOption(['imageSize'], parseInt(e.target.value))}
-                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#1E90FF]"
-                  />
-                  <div className="flex items-center gap-1">
+              {(selectedSection.content.options as any)?.imageUrl && (
+                <div className="mt-4">
+                  <label className="block text-xs font-medium text-gray-500 mb-2">
+                    Taille de l'image
+                  </label>
+                  <div className="flex items-center gap-3">
                     <input
-                      type="number"
+                      type="range"
                       min="20"
                       max="100"
                       value={(selectedSection.content.options as any)?.imageSize ?? 80}
-                      onChange={(e) => updateOption(['imageSize'], parseInt(e.target.value) || 80)}
-                      className="w-16 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
+                      onChange={(e) => updateOption(['imageSize'], parseInt(e.target.value))}
+                      className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#1E90FF]"
                     />
-                    <span className="text-xs text-gray-500">%</span>
+                    <div className="flex items-center gap-1">
+                      <input
+                        type="number"
+                        min="20"
+                        max="100"
+                        value={(selectedSection.content.options as any)?.imageSize ?? 80}
+                        onChange={(e) => updateOption(['imageSize'], parseInt(e.target.value) || 80)}
+                        className="w-16 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
+                      />
+                      <span className="text-xs text-gray-500">%</span>
+                    </div>
                   </div>
+                  <p className="text-xs text-gray-400 mt-1">Largeur de l'image (20% à 100%)</p>
                 </div>
-                <p className="text-xs text-gray-400 mt-1">Largeur de l'image (20% à 100%)</p>
-              </div>
-            )}
+              )}
+            </AccordionSection>
 
-            {/* Contenu */}
-            <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-xs font-semibold text-gray-700 mb-2">Contenu</h3>
+            <AccordionSection title="Contenu" defaultOpen={true}>
               <textarea
                 value={(selectedSection.content.content as string) || ''}
                 onChange={(e) => updateContent('content', e.target.value)}
@@ -300,83 +313,101 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                 placeholder="<h1>Titre principal</h1><p>Votre texte ici...</p>"
               />
               <p className="text-xs text-gray-400 mt-1">Supporte le HTML</p>
-            </div>
+            </AccordionSection>
 
-            <BackgroundImageControl
-              backgroundImageUrl={(selectedSection.content.options as any)?.backgroundImageUrl}
-              backgroundSize={(selectedSection.content.options as any)?.backgroundSize}
-              backgroundPosition={(selectedSection.content.options as any)?.backgroundPosition}
-              backgroundRepeat={(selectedSection.content.options as any)?.backgroundRepeat}
-              sectionId={selectedSection.id}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="Image de fond">
+              <BackgroundImageControl
+                backgroundImageUrl={(selectedSection.content.options as any)?.backgroundImageUrl}
+                backgroundSize={(selectedSection.content.options as any)?.backgroundSize}
+                backgroundPosition={(selectedSection.content.options as any)?.backgroundPosition}
+                backgroundRepeat={(selectedSection.content.options as any)?.backgroundRepeat}
+                sectionId={selectedSection.id}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
 
-            <OverlayControl
-              value={(selectedSection.content.options as any)?.overlay || {}}
-              onChange={(value) => updateOption(['overlay'], value)}
-              label="Overlay sur l'image de fond"
-            />
+            <AccordionSection title="Overlay">
+              <OverlayControl
+                value={(selectedSection.content.options as any)?.overlay || {}}
+                onChange={(value) => updateOption(['overlay'], value)}
+                label="Overlay sur l'image de fond"
+              />
+            </AccordionSection>
 
-            <PaddingControl
-              paddingTop={(selectedSection.content.options as any)?.paddingTop}
-              paddingBottom={(selectedSection.content.options as any)?.paddingBottom}
-              paddingLeft={(selectedSection.content.options as any)?.paddingLeft}
-              paddingRight={(selectedSection.content.options as any)?.paddingRight}
-              useTemplatePaddingInline={(selectedSection.content.options as any)?.useTemplatePaddingInline}
-              useTemplatePaddingBlock={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="Padding">
+              <PaddingControl
+                paddingTop={(selectedSection.content.options as any)?.paddingTop}
+                paddingBottom={(selectedSection.content.options as any)?.paddingBottom}
+                paddingLeft={(selectedSection.content.options as any)?.paddingLeft}
+                paddingRight={(selectedSection.content.options as any)?.paddingRight}
+                useTemplatePaddingInline={(selectedSection.content.options as any)?.useTemplatePaddingInline}
+                useTemplatePaddingBlock={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
 
-            <FontControl
-              font={(selectedSection.content.options as any)?.font}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="Police">
+              <FontControl
+                font={(selectedSection.content.options as any)?.font}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
 
-            <FontSizeControl
-              fontSize={(selectedSection.content.options as any)?.fontSize}
-              currentTemplate={templates.find(t => t.id === currentTemplateId)}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="Taille de police">
+              <FontSizeControl
+                fontSize={(selectedSection.content.options as any)?.fontSize}
+                currentTemplate={templates.find(t => t.id === currentTemplateId)}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
 
-            <ColorControl
-              color={(selectedSection.content.options as any)?.color}
-              currentTemplate={templates.find(t => t.id === currentTemplateId)}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="Couleur">
+              <ColorControl
+                color={(selectedSection.content.options as any)?.color}
+                currentTemplate={templates.find(t => t.id === currentTemplateId)}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
 
-            <TextStyleControl
-              align={(selectedSection.content.options as any)?.textStyle?.align}
-              bold={(selectedSection.content.options as any)?.textStyle?.bold}
-              italic={(selectedSection.content.options as any)?.textStyle?.italic}
-              underline={(selectedSection.content.options as any)?.textStyle?.underline}
-              lineHeight={(selectedSection.content.options as any)?.textStyle?.lineHeight}
-              letterSpacing={(selectedSection.content.options as any)?.textStyle?.letterSpacing}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="Style de texte">
+              <TextStyleControl
+                align={(selectedSection.content.options as any)?.textStyle?.align}
+                bold={(selectedSection.content.options as any)?.textStyle?.bold}
+                italic={(selectedSection.content.options as any)?.textStyle?.italic}
+                underline={(selectedSection.content.options as any)?.textStyle?.underline}
+                lineHeight={(selectedSection.content.options as any)?.textStyle?.lineHeight}
+                letterSpacing={(selectedSection.content.options as any)?.textStyle?.letterSpacing}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
 
-            <CustomCSSControl
-              customCSS={(selectedSection.content.options as any)?.customCSS}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="CSS personnalisé">
+              <CustomCSSControl
+                customCSS={(selectedSection.content.options as any)?.customCSS}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
 
-            <DividerControl
-              topDividerEnabled={(selectedSection.content.options as any)?.topDividerEnabled}
-              topDividerType={(selectedSection.content.options as any)?.topDividerType}
-              topDividerImageUrl={(selectedSection.content.options as any)?.topDividerImageUrl}
-              topDividerSvgType={(selectedSection.content.options as any)?.topDividerSvgType}
-              topDividerColor={(selectedSection.content.options as any)?.topDividerColor}
-              topDividerHeight={(selectedSection.content.options as any)?.topDividerHeight}
-              topDividerFlip={(selectedSection.content.options as any)?.topDividerFlip}
-              bottomDividerEnabled={(selectedSection.content.options as any)?.bottomDividerEnabled}
-              bottomDividerType={(selectedSection.content.options as any)?.bottomDividerType}
-              bottomDividerImageUrl={(selectedSection.content.options as any)?.bottomDividerImageUrl}
-              bottomDividerSvgType={(selectedSection.content.options as any)?.bottomDividerSvgType}
-              bottomDividerColor={(selectedSection.content.options as any)?.bottomDividerColor}
-              bottomDividerHeight={(selectedSection.content.options as any)?.bottomDividerHeight}
-              bottomDividerFlip={(selectedSection.content.options as any)?.bottomDividerFlip}
-              sectionId={selectedSection.id}
-              onUpdate={updateOption}
-            />
+            <AccordionSection title="Diviseurs">
+              <DividerControl
+                topDividerEnabled={(selectedSection.content.options as any)?.topDividerEnabled}
+                topDividerType={(selectedSection.content.options as any)?.topDividerType}
+                topDividerImageUrl={(selectedSection.content.options as any)?.topDividerImageUrl}
+                topDividerSvgType={(selectedSection.content.options as any)?.topDividerSvgType}
+                topDividerColor={(selectedSection.content.options as any)?.topDividerColor}
+                topDividerHeight={(selectedSection.content.options as any)?.topDividerHeight}
+                topDividerFlip={(selectedSection.content.options as any)?.topDividerFlip}
+                bottomDividerEnabled={(selectedSection.content.options as any)?.bottomDividerEnabled}
+                bottomDividerType={(selectedSection.content.options as any)?.bottomDividerType}
+                bottomDividerImageUrl={(selectedSection.content.options as any)?.bottomDividerImageUrl}
+                bottomDividerSvgType={(selectedSection.content.options as any)?.bottomDividerSvgType}
+                bottomDividerColor={(selectedSection.content.options as any)?.bottomDividerColor}
+                bottomDividerHeight={(selectedSection.content.options as any)?.bottomDividerHeight}
+                bottomDividerFlip={(selectedSection.content.options as any)?.bottomDividerFlip}
+                sectionId={selectedSection.id}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
           </>
         )}
       </div>
