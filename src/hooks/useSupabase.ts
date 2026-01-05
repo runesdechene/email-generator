@@ -17,6 +17,8 @@ function templateFromSupabase(data: TemplateData): GlobalStyleTemplate {
     colors: data.colors,
     customColors: data.custom_colors || undefined,
     fontSizes: data.font_sizes,
+    tagFontSizes: data.tag_font_sizes || undefined,
+    tagColors: data.tag_colors || undefined,
     paddingInline: data.padding_inline,
     paddingBlock: data.padding_block,
     createdAt: new Date(data.created_at),
@@ -35,6 +37,8 @@ function templateToSupabase(template: Omit<GlobalStyleTemplate, 'id' | 'createdA
     colors: template.colors,
     custom_colors: template.customColors || null,
     font_sizes: template.fontSizes,
+    tag_font_sizes: template.tagFontSizes || null,
+    tag_colors: template.tagColors || null,
     padding_inline: template.paddingInline,
     padding_block: template.paddingBlock,
   };
@@ -134,6 +138,8 @@ export function useTemplates() {
       if (updates.colors !== undefined) supabaseUpdates.colors = updates.colors;
       if (updates.customColors !== undefined) supabaseUpdates.custom_colors = updates.customColors || null;
       if (updates.fontSizes !== undefined) supabaseUpdates.font_sizes = updates.fontSizes;
+      if (updates.tagFontSizes !== undefined) supabaseUpdates.tag_font_sizes = updates.tagFontSizes;
+      if (updates.tagColors !== undefined) supabaseUpdates.tag_colors = updates.tagColors;
       if (updates.paddingInline !== undefined) supabaseUpdates.padding_inline = updates.paddingInline;
       if (updates.paddingBlock !== undefined) supabaseUpdates.padding_block = updates.paddingBlock;
 

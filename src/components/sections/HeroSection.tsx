@@ -101,6 +101,17 @@ export function HeroSection({ section }: HeroSectionProps) {
     ${tagFontSizes.h5 ? `[data-section-id="${sectionId}"] h5 { font-size: ${tagFontSizes.h5}px !important; }` : ''}
   ` : '';
 
+  // Générer le CSS pour les couleurs personnalisées par balise
+  const tagColors = (options as any).tagColors;
+  const tagColorsCSS = tagColors ? `
+    ${tagColors.p ? `[data-section-id="${sectionId}"] p { color: ${tagColors.p} !important; }` : ''}
+    ${tagColors.h1 ? `[data-section-id="${sectionId}"] h1 { color: ${tagColors.h1} !important; }` : ''}
+    ${tagColors.h2 ? `[data-section-id="${sectionId}"] h2 { color: ${tagColors.h2} !important; }` : ''}
+    ${tagColors.h3 ? `[data-section-id="${sectionId}"] h3 { color: ${tagColors.h3} !important; }` : ''}
+    ${tagColors.h4 ? `[data-section-id="${sectionId}"] h4 { color: ${tagColors.h4} !important; }` : ''}
+    ${tagColors.h5 ? `[data-section-id="${sectionId}"] h5 { color: ${tagColors.h5} !important; }` : ''}
+  ` : '';
+
   // Générer le filtre blur si activé
   const blurValue = options.overlay?.blur || 0;
   const blurFilter = generateBackgroundBlur(blurValue);
@@ -184,6 +195,9 @@ export function HeroSection({ section }: HeroSectionProps) {
         )}
         {tagFontSizesCSS && (
           <style dangerouslySetInnerHTML={{ __html: tagFontSizesCSS }} />
+        )}
+        {tagColorsCSS && (
+          <style dangerouslySetInnerHTML={{ __html: tagColorsCSS }} />
         )}
         <div className="section-hero section-container" style={{ ...style, position: 'relative', overflow: 'hidden' }} data-section-id={sectionId}>
           {/* Image de fond avec blur si activé */}
@@ -342,6 +356,9 @@ export function HeroSection({ section }: HeroSectionProps) {
       )}
       {tagFontSizesCSS && (
         <style dangerouslySetInnerHTML={{ __html: tagFontSizesCSS }} />
+      )}
+      {tagColorsCSS && (
+        <style dangerouslySetInnerHTML={{ __html: tagColorsCSS }} />
       )}
       <div 
         className="section-hero section-container"

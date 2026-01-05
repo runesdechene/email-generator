@@ -1,3 +1,5 @@
+import type { GlobalStyleTemplate } from '../../../types/supabase';
+
 interface TagFontSizeControlProps {
   tagFontSizes?: {
     p?: number;
@@ -7,22 +9,28 @@ interface TagFontSizeControlProps {
     h4?: number;
     h5?: number;
   };
+  currentTemplate?: GlobalStyleTemplate;
   onUpdate: (path: string[], value: any) => void;
 }
 
-export function TagFontSizeControl({ tagFontSizes = {}, onUpdate }: TagFontSizeControlProps) {
+export function TagFontSizeControl({ tagFontSizes = {}, currentTemplate, onUpdate }: TagFontSizeControlProps) {
   const tags = [
-    { key: 'p', label: 'Paragraphe (P)', defaultSize: 16 },
-    { key: 'h1', label: 'Titre 1 (H1)', defaultSize: 32 },
-    { key: 'h2', label: 'Titre 2 (H2)', defaultSize: 24 },
-    { key: 'h3', label: 'Titre 3 (H3)', defaultSize: 20 },
-    { key: 'h4', label: 'Titre 4 (H4)', defaultSize: 18 },
-    { key: 'h5', label: 'Titre 5 (H5)', defaultSize: 16 },
+    { key: 'p', label: 'Paragraphe (P)' },
+    { key: 'h1', label: 'Titre 1 (H1)' },
+    { key: 'h2', label: 'Titre 2 (H2)' },
+    { key: 'h3', label: 'Titre 3 (H3)' },
+    { key: 'h4', label: 'Titre 4 (H4)' },
+    { key: 'h5', label: 'Titre 5 (H5)' },
   ];
 
   const handleChange = (tag: string, value: number | undefined) => {
     const newTagFontSizes = { ...tagFontSizes, [tag]: value };
     onUpdate(['tagFontSizes'], newTagFontSizes);
+  };
+
+  const getPlaceholder = (key: string) => {
+    const templateSize = currentTemplate?.tagFontSizes?.[key as keyof typeof currentTemplate.tagFontSizes];
+    return templateSize ? `${templateSize}px` : `${key === 'p' ? 16 : key === 'h1' ? 32 : key === 'h2' ? 24 : key === 'h3' ? 20 : key === 'h4' ? 18 : 16}px`;
   };
 
   return (
@@ -35,7 +43,7 @@ export function TagFontSizeControl({ tagFontSizes = {}, onUpdate }: TagFontSizeC
       </p>
       
       <div className="space-y-2">
-        {tags.map(({ key, label, defaultSize }) => (
+        {tags.map(({ key, label }) => (
           <div key={key} className="flex items-center gap-2">
             <label className="text-xs text-gray-600 w-32 flex-shrink-0">
               {label}
@@ -49,7 +57,7 @@ export function TagFontSizeControl({ tagFontSizes = {}, onUpdate }: TagFontSizeC
                 const value = e.target.value === '' ? undefined : parseInt(e.target.value);
                 handleChange(key, value);
               }}
-              placeholder={`${defaultSize}px`}
+              placeholder={getPlaceholder(key)}
               className="w-20 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
             />
             <span className="text-xs text-gray-500">px</span>

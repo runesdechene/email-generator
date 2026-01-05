@@ -60,6 +60,14 @@ interface ParagraphSectionProps {
       h4?: number;
       h5?: number;
     };
+    tagColors?: {
+      p?: string;
+      h1?: string;
+      h2?: string;
+      h3?: string;
+      h4?: string;
+      h5?: string;
+    };
     customCSS?: string;
   };
 }
@@ -81,6 +89,7 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
   const lineHeight = options.textStyle?.lineHeight ?? 1.6;
   const letterSpacing = options.textStyle?.letterSpacing ?? 0;
   const tagFontSizes = options.tagFontSizes;
+  const tagColors = options.tagColors;
   const customCSS = options.customCSS ?? '';
 
   // Récupérer le template actuel pour obtenir les polices, couleurs et tailles
@@ -180,6 +189,16 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
     ${tagFontSizes.h5 ? `[data-section-id="${sectionId}"] h5 { font-size: ${tagFontSizes.h5}px !important; }` : ''}
   ` : '';
 
+  // Générer le CSS pour les couleurs personnalisées par balise
+  const tagColorsCSS = tagColors ? `
+    ${tagColors.p ? `[data-section-id="${sectionId}"] p { color: ${tagColors.p} !important; }` : ''}
+    ${tagColors.h1 ? `[data-section-id="${sectionId}"] h1 { color: ${tagColors.h1} !important; }` : ''}
+    ${tagColors.h2 ? `[data-section-id="${sectionId}"] h2 { color: ${tagColors.h2} !important; }` : ''}
+    ${tagColors.h3 ? `[data-section-id="${sectionId}"] h3 { color: ${tagColors.h3} !important; }` : ''}
+    ${tagColors.h4 ? `[data-section-id="${sectionId}"] h4 { color: ${tagColors.h4} !important; }` : ''}
+    ${tagColors.h5 ? `[data-section-id="${sectionId}"] h5 { color: ${tagColors.h5} !important; }` : ''}
+  ` : '';
+
   // Calculer le style de l'overlay
   const overlayGradientDirection = options.overlay?.gradientDirection || 'to bottom';
   const overlayGradientStart = options.overlay?.gradientStart || '#000000';
@@ -217,6 +236,9 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
       )}
       {tagFontSizesCSS && (
         <style dangerouslySetInnerHTML={{ __html: tagFontSizesCSS }} />
+      )}
+      {tagColorsCSS && (
+        <style dangerouslySetInnerHTML={{ __html: tagColorsCSS }} />
       )}
       <div
         className="section-texte section-container"

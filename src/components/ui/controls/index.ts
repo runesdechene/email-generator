@@ -1,6 +1,7 @@
 export { PaddingControl } from './PaddingControl';
 export { FontSizeControl } from './FontSizeControl';
 export { TagFontSizeControl } from './TagFontSizeControl';
+export { TagColorControl } from './TagColorControl';
 export { ColorControl } from './ColorControl';
 export { TextStyleControl } from './TextStyleControl';
 export { CustomCSSControl } from './CustomCSSControl';

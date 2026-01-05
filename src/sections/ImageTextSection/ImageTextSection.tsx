@@ -41,6 +41,14 @@ interface ImageTextSectionProps {
       h4?: number;
       h5?: number;
     };
+    tagColors?: {
+      p?: string;
+      h1?: string;
+      h2?: string;
+      h3?: string;
+      h4?: string;
+      h5?: string;
+    };
     customCSS?: string;
     paddingTop?: number;
     paddingBottom?: number;
@@ -67,6 +75,7 @@ export const ImageTextSection: React.FC<ImageTextSectionProps> = ({
     font = 'paragraph',
     textStyle: textStyleOptions = {},
     tagFontSizes,
+    tagColors,
     customCSS = '',
     paddingTop = 40,
     paddingBottom = 40,
@@ -85,6 +94,16 @@ export const ImageTextSection: React.FC<ImageTextSectionProps> = ({
     ${tagFontSizes.h3 ? `[data-section-id="${sectionId}"] h3 { font-size: ${tagFontSizes.h3}px !important; }` : ''}
     ${tagFontSizes.h4 ? `[data-section-id="${sectionId}"] h4 { font-size: ${tagFontSizes.h4}px !important; }` : ''}
     ${tagFontSizes.h5 ? `[data-section-id="${sectionId}"] h5 { font-size: ${tagFontSizes.h5}px !important; }` : ''}
+  ` : '';
+
+  // Générer le CSS pour les couleurs personnalisées par balise
+  const tagColorsCSS = tagColors ? `
+    ${tagColors.p ? `[data-section-id="${sectionId}"] p { color: ${tagColors.p} !important; }` : ''}
+    ${tagColors.h1 ? `[data-section-id="${sectionId}"] h1 { color: ${tagColors.h1} !important; }` : ''}
+    ${tagColors.h2 ? `[data-section-id="${sectionId}"] h2 { color: ${tagColors.h2} !important; }` : ''}
+    ${tagColors.h3 ? `[data-section-id="${sectionId}"] h3 { color: ${tagColors.h3} !important; }` : ''}
+    ${tagColors.h4 ? `[data-section-id="${sectionId}"] h4 { color: ${tagColors.h4} !important; }` : ''}
+    ${tagColors.h5 ? `[data-section-id="${sectionId}"] h5 { color: ${tagColors.h5} !important; }` : ''}
   ` : '';
 
   const {
@@ -198,6 +217,9 @@ export const ImageTextSection: React.FC<ImageTextSectionProps> = ({
         {tagFontSizesCSS && (
           <style dangerouslySetInnerHTML={{ __html: tagFontSizesCSS }} />
         )}
+        {tagColorsCSS && (
+          <style dangerouslySetInnerHTML={{ __html: tagColorsCSS }} />
+        )}
         <div
           className="section-image-text section-container"
           data-section-id={sectionId}
@@ -221,6 +243,9 @@ export const ImageTextSection: React.FC<ImageTextSectionProps> = ({
       )}
       {tagFontSizesCSS && (
         <style dangerouslySetInnerHTML={{ __html: tagFontSizesCSS }} />
+      )}
+      {tagColorsCSS && (
+        <style dangerouslySetInnerHTML={{ __html: tagColorsCSS }} />
       )}
       <div
         className="section-image-text section-container"

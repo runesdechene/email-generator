@@ -23,6 +23,8 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
     colors: template.colors,
     customColors: template.customColors || [],
     fontSizes: template.fontSizes,
+    tagFontSizes: template.tagFontSizes || { p: 16, h1: 32, h2: 24, h3: 20, h4: 18, h5: 16 },
+    tagColors: template.tagColors || { p: '', h1: '', h2: '', h3: '', h4: '', h5: '' },
     paddingInline: template.paddingInline,
     paddingBlock: template.paddingBlock,
   });
@@ -347,7 +349,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Couleur d'accent
+                  Couleur accent
                 </label>
                 <div className="flex gap-2">
                   <input
@@ -360,44 +362,6 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                     type="text"
                     value={formData.colors.accent}
                     onChange={(e) => setFormData({ ...formData, colors: { ...formData.colors, accent: e.target.value } })}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] font-mono text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Couleur de fond
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="color"
-                    value={formData.colors.background}
-                    onChange={(e) => setFormData({ ...formData, colors: { ...formData.colors, background: e.target.value } })}
-                    className="w-16 h-10 rounded border border-gray-300 cursor-pointer"
-                  />
-                  <input
-                    type="text"
-                    value={formData.colors.background}
-                    onChange={(e) => setFormData({ ...formData, colors: { ...formData.colors, background: e.target.value } })}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] font-mono text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Couleur du texte
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="color"
-                    value={formData.colors.text}
-                    onChange={(e) => setFormData({ ...formData, colors: { ...formData.colors, text: e.target.value } })}
-                    className="w-16 h-10 rounded border border-gray-300 cursor-pointer"
-                  />
-                  <input
-                    type="text"
-                    value={formData.colors.text}
-                    onChange={(e) => setFormData({ ...formData, colors: { ...formData.colors, text: e.target.value } })}
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] font-mono text-sm"
                   />
                 </div>
@@ -517,77 +481,87 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
             </div>
           </div>
 
-          {/* Tailles de texte */}
+          {/* Tailles de police par balise */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Tailles de texte</h3>
-            <p className="text-sm text-gray-600 mb-4">Définissez les tailles de texte par défaut pour vos sections.</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">XXL</label>
-                <input
-                  type="number"
-                  value={formData.fontSizes.xxl}
-                  onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, xxl: parseInt(e.target.value) || 48 } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
-                  min="8"
-                  max="100"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">XL</label>
-                <input
-                  type="number"
-                  value={formData.fontSizes.xl}
-                  onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, xl: parseInt(e.target.value) || 36 } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
-                  min="8"
-                  max="100"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">L</label>
-                <input
-                  type="number"
-                  value={formData.fontSizes.l}
-                  onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, l: parseInt(e.target.value) || 24 } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
-                  min="8"
-                  max="100"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">M</label>
-                <input
-                  type="number"
-                  value={formData.fontSizes.m}
-                  onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, m: parseInt(e.target.value) || 16 } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
-                  min="8"
-                  max="100"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">S</label>
-                <input
-                  type="number"
-                  value={formData.fontSizes.s}
-                  onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, s: parseInt(e.target.value) || 14 } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
-                  min="8"
-                  max="100"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">XS</label>
-                <input
-                  type="number"
-                  value={formData.fontSizes.xs}
-                  onChange={(e) => setFormData({ ...formData, fontSizes: { ...formData.fontSizes, xs: parseInt(e.target.value) || 12 } })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
-                  min="8"
-                  max="100"
-                />
-              </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Tailles de police par balise</h3>
+            <p className="text-sm text-gray-600 mb-4">Définissez les tailles de police par défaut pour chaque balise HTML.</p>
+            <div className="space-y-3">
+              {[
+                { key: 'p', label: 'Paragraphe (P)', defaultSize: 16 },
+                { key: 'h1', label: 'Titre 1 (H1)', defaultSize: 32 },
+                { key: 'h2', label: 'Titre 2 (H2)', defaultSize: 24 },
+                { key: 'h3', label: 'Titre 3 (H3)', defaultSize: 20 },
+                { key: 'h4', label: 'Titre 4 (H4)', defaultSize: 18 },
+                { key: 'h5', label: 'Titre 5 (H5)', defaultSize: 16 },
+              ].map(({ key, label, defaultSize }) => (
+                <div key={key} className="flex items-center gap-4">
+                  <label className="text-sm font-medium text-gray-700 w-40 flex-shrink-0">
+                    {label}
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.tagFontSizes[key as keyof typeof formData.tagFontSizes]}
+                    onChange={(e) => setFormData({ 
+                      ...formData, 
+                      tagFontSizes: { 
+                        ...formData.tagFontSizes, 
+                        [key]: parseInt(e.target.value) || defaultSize 
+                      } 
+                    })}
+                    className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
+                    min="8"
+                    max="72"
+                  />
+                  <span className="text-sm text-gray-500">px</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Couleurs par balise */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Couleurs par balise</h3>
+            <p className="text-sm text-gray-600 mb-4">Définissez les couleurs par défaut pour chaque balise HTML.</p>
+            <div className="space-y-3">
+              {[
+                { key: 'p', label: 'Paragraphe (P)' },
+                { key: 'h1', label: 'Titre 1 (H1)' },
+                { key: 'h2', label: 'Titre 2 (H2)' },
+                { key: 'h3', label: 'Titre 3 (H3)' },
+                { key: 'h4', label: 'Titre 4 (H4)' },
+                { key: 'h5', label: 'Titre 5 (H5)' },
+              ].map(({ key, label }) => (
+                <div key={key} className="flex items-center gap-4">
+                  <label className="text-sm font-medium text-gray-700 w-40 flex-shrink-0">
+                    {label}
+                  </label>
+                  <input
+                    type="color"
+                    value={formData.tagColors[key as keyof typeof formData.tagColors] || '#000000'}
+                    onChange={(e) => setFormData({ 
+                      ...formData, 
+                      tagColors: { 
+                        ...formData.tagColors, 
+                        [key]: e.target.value 
+                      } 
+                    })}
+                    className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={formData.tagColors[key as keyof typeof formData.tagColors] || ''}
+                    onChange={(e) => setFormData({ 
+                      ...formData, 
+                      tagColors: { 
+                        ...formData.tagColors, 
+                        [key]: e.target.value 
+                      } 
+                    })}
+                    placeholder="#000000"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
+                  />
+                </div>
+              ))}
             </div>
           </div>
 

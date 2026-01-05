@@ -26,13 +26,27 @@ export function SectionRenderer({ section }: SectionRendererProps) {
   // Trouver le type de section correspondant
   const sectionType = sectionTemplates.find(t => t.id === section.templateId);
   
-  // Si le type de section est "Texte" (par nom, pas par ID)
-  if (sectionType?.name === 'Texte') {
+  // Si le type de section est "Texte HTML" (par nom, pas par ID)
+  if (sectionType?.name === 'Texte HTML') {
     return (
       <ParagraphSection
         sectionId={section.id}
         data={{
           content: (section.content.content as string) || '<p>Votre contenu ici...</p>',
+        }}
+        options={section.content.options as any}
+      />
+    );
+  }
+
+  // Si le type de section est "Texte" (simple, sans HTML)
+  if (sectionType?.name === 'Texte') {
+    const textContent = (section.content.content as string) || 'Votre texte ici...';
+    return (
+      <ParagraphSection
+        sectionId={section.id}
+        data={{
+          content: `<p>${textContent}</p>`,
         }}
         options={section.content.options as any}
       />

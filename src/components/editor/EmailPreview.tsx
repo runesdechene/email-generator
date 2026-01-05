@@ -17,31 +17,37 @@ export function EmailPreview({ sectionsRef, selectedSections }: EmailPreviewProp
   const backgroundImage = currentTemplate?.backgroundImage || '';
   const backgroundSize = currentTemplate?.backgroundSize || 'cover';
 
-  // Générer le CSS global pour les polices et tailles du template
+  // Générer le CSS global pour les polices, tailles et couleurs du template
   const globalFontCSS = currentTemplate ? `
     .email-preview-container p {
       font-family: ${currentTemplate.fonts.paragraph} !important;
       font-size: ${currentTemplate.tagFontSizes?.p || 16}px !important;
+      ${currentTemplate.tagColors?.p ? `color: ${currentTemplate.tagColors.p} !important;` : ''}
     }
     .email-preview-container h1 {
       font-family: ${currentTemplate.fonts.title} !important;
       font-size: ${currentTemplate.tagFontSizes?.h1 || 32}px !important;
+      ${currentTemplate.tagColors?.h1 ? `color: ${currentTemplate.tagColors.h1} !important;` : ''}
     }
     .email-preview-container h2 {
       font-family: ${currentTemplate.fonts.title} !important;
       font-size: ${currentTemplate.tagFontSizes?.h2 || 24}px !important;
+      ${currentTemplate.tagColors?.h2 ? `color: ${currentTemplate.tagColors.h2} !important;` : ''}
     }
     .email-preview-container h3 {
       font-family: ${currentTemplate.fonts.title} !important;
       font-size: ${currentTemplate.tagFontSizes?.h3 || 20}px !important;
+      ${currentTemplate.tagColors?.h3 ? `color: ${currentTemplate.tagColors.h3} !important;` : ''}
     }
     .email-preview-container h4 {
       font-family: ${currentTemplate.fonts.title} !important;
       font-size: ${currentTemplate.tagFontSizes?.h4 || 18}px !important;
+      ${currentTemplate.tagColors?.h4 ? `color: ${currentTemplate.tagColors.h4} !important;` : ''}
     }
     .email-preview-container h5 {
       font-family: ${currentTemplate.fonts.title} !important;
       font-size: ${currentTemplate.tagFontSizes?.h5 || 16}px !important;
+      ${currentTemplate.tagColors?.h5 ? `color: ${currentTemplate.tagColors.h5} !important;` : ''}
     }
   ` : '';
 

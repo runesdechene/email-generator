@@ -30,6 +30,22 @@ export interface TemplateData {
     s: number;
     xs: number;
   };
+  tag_font_sizes?: {
+    p: number;
+    h1: number;
+    h2: number;
+    h3: number;
+    h4: number;
+    h5: number;
+  } | null;
+  tag_colors?: {
+    p: string;
+    h1: string;
+    h2: string;
+    h3: string;
+    h4: string;
+    h5: string;
+  } | null;
   padding_inline: number;
   padding_block: number;
   created_at: string;
