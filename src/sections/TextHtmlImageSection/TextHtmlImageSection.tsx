@@ -9,6 +9,7 @@ interface TextHtmlImageSectionProps {
     imageUrl?: string;
     imagePosition?: 'left' | 'right';
     imageWidth?: number;
+    clipPath?: string;
     backgroundImageUrl?: string;
     backgroundSize?: string;
     backgroundPosition?: string;
@@ -56,6 +57,7 @@ export function TextHtmlImageSection({ sectionId, content, options }: TextHtmlIm
     imageUrl,
     imagePosition = 'right',
     imageWidth = 50,
+    clipPath = 'none',
     backgroundImageUrl,
     backgroundSize = 'cover',
     backgroundPosition = 'center',
@@ -173,7 +175,12 @@ export function TextHtmlImageSection({ sectionId, content, options }: TextHtmlIm
             <img
               src={imageUrl}
               alt="Section"
-              style={{ width: '100%', height: 'auto', display: 'block' }}
+              style={{ 
+                width: '100%', 
+                height: 'auto', 
+                display: 'block',
+                clipPath: clipPath !== 'none' ? clipPath : undefined,
+              }}
             />
           </div>
         </div>

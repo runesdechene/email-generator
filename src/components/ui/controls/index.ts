@@ -3,6 +3,7 @@ export { FontSizeControl } from './FontSizeControl';
 export { TagFontSizeControl } from './TagFontSizeControl';
 export { TagColorControl } from './TagColorControl';
 export { TagTypeControl } from './TagTypeControl';
+export { ClipPathControl } from './ClipPathControl';
 export { ColorControl } from './ColorControl';
 export { TextStyleControl } from './TextStyleControl';
 export { CustomCSSControl } from './CustomCSSControl';

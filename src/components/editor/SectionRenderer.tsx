@@ -97,8 +97,8 @@ export function SectionRenderer({ section }: SectionRendererProps) {
     );
   }
 
-  // Si le type de section est "Texte HTML + image"
-  if (sectionType?.name === 'Texte HTML + image') {
+  // Si le type de section est "HTML + Image"
+  if (sectionType?.name === 'HTML + Image') {
     return (
       <TextHtmlImageSection
         sectionId={section.id}

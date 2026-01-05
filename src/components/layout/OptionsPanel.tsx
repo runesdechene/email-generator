@@ -450,7 +450,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
           </>
         )}
 
-        {sectionType?.name === 'Texte HTML + image' && (
+        {sectionType?.name === 'HTML + Image' && (
           <>
             <AccordionSection title="Contenu" defaultOpen={true}>
               <textarea
@@ -528,6 +528,14 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                   </div>
                 </>
               )}
+            </AccordionSection>
+
+            <AccordionSection title="Forme de l'image">
+              <ShapeControl
+                value={(selectedSection.content.options as any)?.clipPath || 'none'}
+                onChange={(value) => updateOption(['clipPath'], value)}
+                label="Forme de l'image (Clip-path)"
+              />
             </AccordionSection>
 
             <AccordionSection title="Image de fond">
