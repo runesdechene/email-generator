@@ -17,8 +17,27 @@ export function EmailPreview({ sectionsRef, selectedSections }: EmailPreviewProp
   const backgroundImage = currentTemplate?.backgroundImage || '';
   const backgroundSize = currentTemplate?.backgroundSize || 'cover';
 
+  // Générer le CSS global pour les polices du template
+  const globalFontCSS = currentTemplate ? `
+    .email-preview-container *,
+    .email-preview-container p {
+      font-family: ${currentTemplate.fonts.paragraph} !important;
+    }
+    .email-preview-container h1,
+    .email-preview-container h2,
+    .email-preview-container h3,
+    .email-preview-container h4 {
+      font-family: ${currentTemplate.fonts.title} !important;
+    }
+  ` : '';
+
   return (
     <div className="w-full max-w-2xl p-1">
+      {/* Injecter le CSS global pour les polices */}
+      {globalFontCSS && (
+        <style dangerouslySetInnerHTML={{ __html: globalFontCSS }} />
+      )}
+      
       <div 
         className={`bg-white rounded-lg shadow-2xl ${backgroundImage ? 'email-preview-container' : ''}`}
         style={backgroundImage ? {

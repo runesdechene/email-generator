@@ -41,12 +41,11 @@ export function HeroSection({ section }: HeroSectionProps) {
     ? currentTemplate?.paddingInline ?? 32 
     : options.paddingRight ?? 32;
 
-  // Gérer la police
-  const fontFamily = options.font === 'title' 
-    ? currentTemplate?.fonts.title 
-    : options.font === 'paragraph' 
-    ? currentTemplate?.fonts.paragraph 
-    : undefined;
+  // Gérer la police (par défaut: paragraph)
+  const font = options.font || 'paragraph';
+  const fontFamily = font === 'title' 
+    ? currentTemplate?.fonts.title || 'Georgia, serif'
+    : currentTemplate?.fonts.paragraph || 'Arial, sans-serif';
 
   // Gérer la taille de police
   let fontSize: number;

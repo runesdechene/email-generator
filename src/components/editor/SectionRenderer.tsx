@@ -2,6 +2,7 @@ import type { EmailSection } from '../../types';
 import { ParagraphSection } from '../../sections/ParagraphSection';
 import { HeroSection } from '../sections/HeroSection';
 import { ImageSection } from '../../sections/ImageSection/ImageSection';
+import { ImageTextSection } from '../../sections/ImageTextSection/ImageTextSection';
 import { useSectionTemplates } from '../../hooks/useSupabase';
 import { AlertCircle } from 'lucide-react';
 
@@ -48,6 +49,19 @@ export function SectionRenderer({ section }: SectionRendererProps) {
     return (
       <ImageSection
         sectionId={section.id}
+        options={section.content.options as any}
+      />
+    );
+  }
+
+  // Si le type de section est "Image + Texte"
+  if (sectionType?.name === 'Image + Texte') {
+    return (
+      <ImageTextSection
+        sectionId={section.id}
+        content={{
+          content: (section.content.content as string) || '<p>Votre contenu ici...</p>',
+        }}
         options={section.content.options as any}
       />
     );
