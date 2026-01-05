@@ -17,18 +17,24 @@ export function EmailPreview({ sectionsRef, selectedSections }: EmailPreviewProp
   const backgroundImage = currentTemplate?.backgroundImage || '';
   const backgroundSize = currentTemplate?.backgroundSize || 'cover';
 
-  // Générer le CSS global pour les polices du template
+  // Générer le CSS global pour les polices du template (pas les tailles)
   const globalFontCSS = currentTemplate ? `
-    .email-preview-container *,
     .email-preview-container p {
       font-family: ${currentTemplate.fonts.paragraph} !important;
+      ${currentTemplate.tagFontSizes?.p ? `font-size: ${currentTemplate.tagFontSizes.p}px !important;` : ''}
     }
     .email-preview-container h1,
     .email-preview-container h2,
     .email-preview-container h3,
-    .email-preview-container h4 {
+    .email-preview-container h4,
+    .email-preview-container h5 {
       font-family: ${currentTemplate.fonts.title} !important;
     }
+    ${currentTemplate.tagFontSizes?.h1 ? `.email-preview-container h1 { font-size: ${currentTemplate.tagFontSizes.h1}px !important; }` : ''}
+    ${currentTemplate.tagFontSizes?.h2 ? `.email-preview-container h2 { font-size: ${currentTemplate.tagFontSizes.h2}px !important; }` : ''}
+    ${currentTemplate.tagFontSizes?.h3 ? `.email-preview-container h3 { font-size: ${currentTemplate.tagFontSizes.h3}px !important; }` : ''}
+    ${currentTemplate.tagFontSizes?.h4 ? `.email-preview-container h4 { font-size: ${currentTemplate.tagFontSizes.h4}px !important; }` : ''}
+    ${currentTemplate.tagFontSizes?.h5 ? `.email-preview-container h5 { font-size: ${currentTemplate.tagFontSizes.h5}px !important; }` : ''}
   ` : '';
 
   return (

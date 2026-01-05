@@ -33,6 +33,14 @@ interface ImageTextSectionProps {
       lineHeight?: number;
       letterSpacing?: number;
     };
+    tagFontSizes?: {
+      p?: number;
+      h1?: number;
+      h2?: number;
+      h3?: number;
+      h4?: number;
+      h5?: number;
+    };
     customCSS?: string;
     paddingTop?: number;
     paddingBottom?: number;
@@ -58,6 +66,7 @@ export const ImageTextSection: React.FC<ImageTextSectionProps> = ({
     fontSize = 16,
     font = 'paragraph',
     textStyle: textStyleOptions = {},
+    tagFontSizes,
     customCSS = '',
     paddingTop = 40,
     paddingBottom = 40,
@@ -67,6 +76,16 @@ export const ImageTextSection: React.FC<ImageTextSectionProps> = ({
 
   // Récupérer le template actuel pour obtenir les polices
   const currentTemplate = templates.find(t => t.id === currentTemplateId);
+
+  // Générer le CSS pour les tailles personnalisées par balise
+  const tagFontSizesCSS = tagFontSizes ? `
+    ${tagFontSizes.p ? `[data-section-id="${sectionId}"] p { font-size: ${tagFontSizes.p}px !important; }` : ''}
+    ${tagFontSizes.h1 ? `[data-section-id="${sectionId}"] h1 { font-size: ${tagFontSizes.h1}px !important; }` : ''}
+    ${tagFontSizes.h2 ? `[data-section-id="${sectionId}"] h2 { font-size: ${tagFontSizes.h2}px !important; }` : ''}
+    ${tagFontSizes.h3 ? `[data-section-id="${sectionId}"] h3 { font-size: ${tagFontSizes.h3}px !important; }` : ''}
+    ${tagFontSizes.h4 ? `[data-section-id="${sectionId}"] h4 { font-size: ${tagFontSizes.h4}px !important; }` : ''}
+    ${tagFontSizes.h5 ? `[data-section-id="${sectionId}"] h5 { font-size: ${tagFontSizes.h5}px !important; }` : ''}
+  ` : '';
 
   const {
     align = 'left',
@@ -161,8 +180,6 @@ export const ImageTextSection: React.FC<ImageTextSectionProps> = ({
 
   const textStyle: React.CSSProperties = {
     color,
-    fontSize: `${fontSize}px`,
-    fontFamily,
     fontWeight: bold ? 'bold' : 'normal',
     fontStyle: italic ? 'italic' : 'normal',
     textDecoration: underline ? 'underline' : 'none',
@@ -177,6 +194,9 @@ export const ImageTextSection: React.FC<ImageTextSectionProps> = ({
       <>
         {scopedCSS && (
           <style dangerouslySetInnerHTML={{ __html: scopedCSS }} />
+        )}
+        {tagFontSizesCSS && (
+          <style dangerouslySetInnerHTML={{ __html: tagFontSizesCSS }} />
         )}
         <div
           className="section-image-text section-container"
@@ -198,6 +218,9 @@ export const ImageTextSection: React.FC<ImageTextSectionProps> = ({
     <>
       {scopedCSS && (
         <style dangerouslySetInnerHTML={{ __html: scopedCSS }} />
+      )}
+      {tagFontSizesCSS && (
+        <style dangerouslySetInnerHTML={{ __html: tagFontSizesCSS }} />
       )}
       <div
         className="section-image-text section-container"

@@ -52,6 +52,14 @@ interface ParagraphSectionProps {
       lineHeight?: number;
       letterSpacing?: number;
     };
+    tagFontSizes?: {
+      p?: number;
+      h1?: number;
+      h2?: number;
+      h3?: number;
+      h4?: number;
+      h5?: number;
+    };
     customCSS?: string;
   };
 }
@@ -72,6 +80,7 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
   const textAlign = options.textStyle?.align ?? 'left';
   const lineHeight = options.textStyle?.lineHeight ?? 1.6;
   const letterSpacing = options.textStyle?.letterSpacing ?? 0;
+  const tagFontSizes = options.tagFontSizes;
   const customCSS = options.customCSS ?? '';
 
   // Récupérer le template actuel pour obtenir les polices, couleurs et tailles
@@ -126,8 +135,6 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
     textAlign,
     lineHeight,
     letterSpacing: `${letterSpacing}px`,
-    fontFamily: fontFamilyValue ? `'${fontFamilyValue}', sans-serif` : undefined,
-    fontSize: `${fontSize}px`,
     color: color || '#000000',
     // N'appliquer l'image de fond que si pas de blur
     ...(options.backgroundImageUrl && blurValue === 0 && {
@@ -163,6 +170,16 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
   // Scoper le CSS personnalisé à cette section uniquement
   const scopedCSS = customCSS ? scopeCSS(customCSS, sectionId) : '';
 
+  // Générer le CSS pour les tailles personnalisées par balise
+  const tagFontSizesCSS = tagFontSizes ? `
+    ${tagFontSizes.p ? `[data-section-id="${sectionId}"] p { font-size: ${tagFontSizes.p}px !important; }` : ''}
+    ${tagFontSizes.h1 ? `[data-section-id="${sectionId}"] h1 { font-size: ${tagFontSizes.h1}px !important; }` : ''}
+    ${tagFontSizes.h2 ? `[data-section-id="${sectionId}"] h2 { font-size: ${tagFontSizes.h2}px !important; }` : ''}
+    ${tagFontSizes.h3 ? `[data-section-id="${sectionId}"] h3 { font-size: ${tagFontSizes.h3}px !important; }` : ''}
+    ${tagFontSizes.h4 ? `[data-section-id="${sectionId}"] h4 { font-size: ${tagFontSizes.h4}px !important; }` : ''}
+    ${tagFontSizes.h5 ? `[data-section-id="${sectionId}"] h5 { font-size: ${tagFontSizes.h5}px !important; }` : ''}
+  ` : '';
+
   // Calculer le style de l'overlay
   const overlayGradientDirection = options.overlay?.gradientDirection || 'to bottom';
   const overlayGradientStart = options.overlay?.gradientStart || '#000000';
@@ -197,6 +214,9 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
     <>
       {scopedCSS && (
         <style dangerouslySetInnerHTML={{ __html: scopedCSS }} />
+      )}
+      {tagFontSizesCSS && (
+        <style dangerouslySetInnerHTML={{ __html: tagFontSizesCSS }} />
       )}
       <div
         className="section-texte section-container"

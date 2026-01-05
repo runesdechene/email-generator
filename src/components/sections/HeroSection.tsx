@@ -90,6 +90,17 @@ export function HeroSection({ section }: HeroSectionProps) {
   const customCSS = options.customCSS || '';
   const scopedCSS = customCSS ? scopeCSS(customCSS, sectionId) : '';
 
+  // Générer le CSS pour les tailles personnalisées par balise
+  const tagFontSizes = (options as any).tagFontSizes;
+  const tagFontSizesCSS = tagFontSizes ? `
+    ${tagFontSizes.p ? `[data-section-id="${sectionId}"] p { font-size: ${tagFontSizes.p}px !important; }` : ''}
+    ${tagFontSizes.h1 ? `[data-section-id="${sectionId}"] h1 { font-size: ${tagFontSizes.h1}px !important; }` : ''}
+    ${tagFontSizes.h2 ? `[data-section-id="${sectionId}"] h2 { font-size: ${tagFontSizes.h2}px !important; }` : ''}
+    ${tagFontSizes.h3 ? `[data-section-id="${sectionId}"] h3 { font-size: ${tagFontSizes.h3}px !important; }` : ''}
+    ${tagFontSizes.h4 ? `[data-section-id="${sectionId}"] h4 { font-size: ${tagFontSizes.h4}px !important; }` : ''}
+    ${tagFontSizes.h5 ? `[data-section-id="${sectionId}"] h5 { font-size: ${tagFontSizes.h5}px !important; }` : ''}
+  ` : '';
+
   // Générer le filtre blur si activé
   const blurValue = options.overlay?.blur || 0;
   const blurFilter = generateBackgroundBlur(blurValue);
@@ -99,8 +110,6 @@ export function HeroSection({ section }: HeroSectionProps) {
     paddingBottom: `${paddingBottom}px`,
     paddingLeft: `${paddingLeft}px`,
     paddingRight: `${paddingRight}px`,
-    fontFamily,
-    fontSize: `${fontSize}px`,
     color,
     textAlign: textAlign as any,
     fontWeight,
@@ -108,7 +117,7 @@ export function HeroSection({ section }: HeroSectionProps) {
     textDecoration,
     lineHeight,
     position: 'relative',
-    // N'appliquer l'image de fond que si pas de blur
+    // Appliquer l'image de fond directement si pas de blur
     ...(backgroundImageUrl && blurValue === 0 && {
       backgroundImage: `url(${backgroundImageUrl})`,
       backgroundSize,
@@ -172,6 +181,9 @@ export function HeroSection({ section }: HeroSectionProps) {
       <>
         {scopedCSS && (
           <style dangerouslySetInnerHTML={{ __html: scopedCSS }} />
+        )}
+        {tagFontSizesCSS && (
+          <style dangerouslySetInnerHTML={{ __html: tagFontSizesCSS }} />
         )}
         <div className="section-hero section-container" style={{ ...style, position: 'relative', overflow: 'hidden' }} data-section-id={sectionId}>
           {/* Image de fond avec blur si activé */}
@@ -327,6 +339,9 @@ export function HeroSection({ section }: HeroSectionProps) {
     <>
       {scopedCSS && (
         <style dangerouslySetInnerHTML={{ __html: scopedCSS }} />
+      )}
+      {tagFontSizesCSS && (
+        <style dangerouslySetInnerHTML={{ __html: tagFontSizesCSS }} />
       )}
       <div 
         className="section-hero section-container"

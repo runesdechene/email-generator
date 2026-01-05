@@ -55,6 +55,14 @@ export interface GlobalStyleTemplate {
     s: number;
     xs: number;
   };
+  tagFontSizes?: {
+    p: number;
+    h1: number;
+    h2: number;
+    h3: number;
+    h4: number;
+    h5: number;
+  };
   paddingInline: number;
   paddingBlock: number;
   createdAt: Date;

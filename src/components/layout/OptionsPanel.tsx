@@ -11,7 +11,7 @@ import { ImagePicker } from '../ui/ImagePicker';
 import { AccordionSection } from '../ui/AccordionSection';
 import { 
   PaddingControl, 
-  FontSizeControl, 
+  TagFontSizeControl,
   ColorControl, 
   TextStyleControl, 
   CustomCSSControl,
@@ -200,9 +200,8 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
             </AccordionSection>
 
             <AccordionSection title="Taille de police">
-              <FontSizeControl
-                fontSize={(selectedSection.content.options as any)?.fontSize}
-                currentTemplate={templates.find(t => t.id === currentTemplateId)}
+              <TagFontSizeControl
+                tagFontSizes={(selectedSection.content.options as any)?.tagFontSizes}
                 onUpdate={updateOption}
               />
             </AccordionSection>
@@ -340,9 +339,8 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
             </AccordionSection>
 
             <AccordionSection title="Taille de police">
-              <FontSizeControl
-                fontSize={(selectedSection.content.options as any)?.fontSize}
-                currentTemplate={templates.find(t => t.id === currentTemplateId)}
+              <TagFontSizeControl
+                tagFontSizes={(selectedSection.content.options as any)?.tagFontSizes}
                 onUpdate={updateOption}
               />
             </AccordionSection>
@@ -542,9 +540,8 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
             </AccordionSection>
 
             <AccordionSection title="Taille de police">
-              <FontSizeControl
-                fontSize={(selectedSection.content.options as any)?.fontSize}
-                currentTemplate={templates.find(t => t.id === currentTemplateId)}
+              <TagFontSizeControl
+                tagFontSizes={(selectedSection.content.options as any)?.tagFontSizes}
                 onUpdate={updateOption}
               />
             </AccordionSection>
