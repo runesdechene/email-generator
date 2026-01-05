@@ -1,4 +1,6 @@
-import { Plus, GripVertical, Trash2, Copy } from 'lucide-react';
+import { useState } from 'react';
+import { Plus, GripVertical, Trash2, Copy, Image } from 'lucide-react';
+import { ImageLibraryModal } from '../ui/ImageLibraryModal';
 import { ProjectManager } from '../projects/ProjectManager';
 import { useTemplates, useSectionTemplates } from '../../hooks/useSupabase';
 import {
@@ -135,6 +137,8 @@ export function Sidebar({ onOpenTemplateSelector }: SidebarProps) {
     }
   };
 
+  const [showImageLibrary, setShowImageLibrary] = useState(false);
+
   const handleAddSection = () => {
     onOpenTemplateSelector();
   };
@@ -166,8 +170,27 @@ export function Sidebar({ onOpenTemplateSelector }: SidebarProps) {
         </select>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="flex items-center justify-between mb-4">
+      {/* Bouton Bibliothèque d'images */}
+      <div className="p-4 border-b border-gray-200">
+        <button
+          onClick={() => setShowImageLibrary(true)}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-all"
+        >
+          <Image size={18} />
+          <span className="text-sm font-medium">Bibliothèque d'images</span>
+        </button>
+      </div>
+
+      {/* Modal Bibliothèque d'images */}
+      <ImageLibraryModal
+        isOpen={showImageLibrary}
+        onClose={() => setShowImageLibrary(false)}
+        onSelect={() => setShowImageLibrary(false)}
+      />
+
+      {/* Header Sections - Fixe */}
+      <div className="p-4 border-b border-gray-200">
+        <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-gray-700">Sections</h2>
           <button
             onClick={handleAddSection}
@@ -176,7 +199,10 @@ export function Sidebar({ onOpenTemplateSelector }: SidebarProps) {
             <Plus size={18} />
           </button>
         </div>
+      </div>
 
+      {/* Liste des sections - Scrollable */}
+      <div className="flex-1 overflow-y-auto p-6">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
