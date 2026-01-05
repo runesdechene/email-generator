@@ -23,6 +23,14 @@ interface IconsTextSectionProps {
     useTemplatePaddingInline?: boolean;
     useTemplatePaddingBlock?: boolean;
     textAlign?: 'left' | 'center' | 'right';
+    textStyle?: {
+      align?: 'left' | 'center' | 'right';
+      bold?: boolean;
+      italic?: boolean;
+      underline?: boolean;
+      lineHeight?: number;
+      letterSpacing?: number;
+    };
     backgroundEnabled?: boolean;
     backgroundType?: 'color' | 'gradient' | 'image';
     backgroundColor?: string;
@@ -70,6 +78,7 @@ export function IconsTextSection({ sectionId, blocks, options }: IconsTextSectio
     useTemplatePaddingInline = false,
     useTemplatePaddingBlock = false,
     textAlign = 'center',
+    textStyle = {},
     backgroundEnabled = false,
     backgroundType = 'color',
     backgroundColor = '#ffffff',
@@ -90,6 +99,16 @@ export function IconsTextSection({ sectionId, blocks, options }: IconsTextSectio
   const finalPaddingBottom = useTemplatePaddingBlock && currentTemplate ? currentTemplate.paddingBlock : paddingBottom;
   const finalPaddingLeft = useTemplatePaddingInline && currentTemplate ? currentTemplate.paddingInline : paddingLeft;
   const finalPaddingRight = useTemplatePaddingInline && currentTemplate ? currentTemplate.paddingInline : paddingRight;
+
+  // Extraire les styles de texte
+  const {
+    align = textAlign,
+    bold = false,
+    italic = false,
+    underline = false,
+    lineHeight = 1.5,
+    letterSpacing = 0,
+  } = textStyle;
 
   // Générer le style de fond
   let backgroundStyle: React.CSSProperties = {};
@@ -134,8 +153,13 @@ export function IconsTextSection({ sectionId, blocks, options }: IconsTextSectio
   const blockStyle: React.CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: textAlign === 'center' ? 'center' : textAlign === 'right' ? 'flex-end' : 'flex-start',
-    textAlign,
+    alignItems: align === 'center' ? 'center' : align === 'right' ? 'flex-end' : 'flex-start',
+    textAlign: align,
+    fontWeight: bold ? 'bold' : 'normal',
+    fontStyle: italic ? 'italic' : 'normal',
+    textDecoration: underline ? 'underline' : 'none',
+    lineHeight,
+    letterSpacing: `${letterSpacing}px`,
   };
 
   // CSS personnalisé scopé

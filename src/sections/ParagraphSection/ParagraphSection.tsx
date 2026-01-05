@@ -56,6 +56,9 @@ interface ParagraphSectionProps {
     color?: string;
     textStyle?: {
       align?: 'left' | 'center' | 'right' | 'justify';
+      bold?: boolean;
+      italic?: boolean;
+      underline?: boolean;
       lineHeight?: number;
       letterSpacing?: number;
     };
@@ -93,6 +96,9 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
   const fontSizeOption = options.fontSize ?? 16;
   const colorOption = options.color ?? '#000000';
   const textAlign = options.textStyle?.align ?? 'left';
+  const bold = options.textStyle?.bold ?? false;
+  const italic = options.textStyle?.italic ?? false;
+  const underline = options.textStyle?.underline ?? false;
   const lineHeight = options.textStyle?.lineHeight ?? 1.6;
   const letterSpacing = options.textStyle?.letterSpacing ?? 0;
   const tagFontSizes = options.tagFontSizes;
@@ -179,6 +185,9 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
     lineHeight,
     letterSpacing: `${letterSpacing}px`,
     color: color || '#000000',
+    fontWeight: bold ? 'bold' : 'normal',
+    fontStyle: italic ? 'italic' : 'normal',
+    textDecoration: underline ? 'underline' : 'none',
     ...backgroundStyleBase,
     ...(options.backgroundClipPath && options.backgroundClipPath !== 'none' && {
       clipPath: options.backgroundClipPath,
