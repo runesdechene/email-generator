@@ -193,11 +193,6 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
     zIndex: 2,
   } : null;
 
-  // Debug
-  if (overlayStyle) {
-    console.log('Overlay gradient style:', overlayStyle);
-  }
-
   return (
     <>
       {scopedCSS && (

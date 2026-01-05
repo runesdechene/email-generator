@@ -43,7 +43,23 @@ export const OverlayControl: React.FC<OverlayControlProps> = ({
           <input
             type="checkbox"
             checked={enabled}
-            onChange={(e) => handleChange({ enabled: e.target.checked })}
+            onChange={(e) => {
+              if (e.target.checked) {
+                // Initialiser toutes les valeurs quand on active l'overlay
+                handleChange({ 
+                  enabled: true,
+                  type: type || 'color',
+                  color: color || '#000000',
+                  gradientStart: gradientStart || '#000000',
+                  gradientEnd: gradientEnd || '#ffffff',
+                  gradientDirection: gradientDirection || 'to bottom',
+                  opacity: opacity ?? 50,
+                  blur: blur ?? 0
+                });
+              } else {
+                handleChange({ enabled: false });
+              }
+            }}
             className="mr-2"
           />
           <span className="text-sm text-gray-600">Activer</span>

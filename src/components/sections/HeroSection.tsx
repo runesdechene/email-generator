@@ -133,6 +133,36 @@ export function HeroSection({ section }: HeroSectionProps) {
     zIndex: 0,
   } : undefined;
 
+  // Calculer le style de l'overlay
+  const overlayGradientDirection = options.overlay?.gradientDirection || 'to bottom';
+  const overlayGradientStart = options.overlay?.gradientStart || '#000000';
+  const overlayGradientEnd = options.overlay?.gradientEnd || '#ffffff';
+  const overlayOpacity = (options.overlay?.opacity ?? 50) / 100;
+  
+  const overlayStyle: React.CSSProperties | null = options.overlay?.enabled && options.overlay.type !== 'color' ? {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    background: `linear-gradient(${overlayGradientDirection}, ${overlayGradientStart}, ${overlayGradientEnd})`,
+    opacity: overlayOpacity,
+    pointerEvents: 'none',
+    zIndex: 2,
+  } : null;
+
+  const overlayColorStyle: React.CSSProperties | null = options.overlay?.enabled && options.overlay.type === 'color' ? {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: options.overlay.color || '#000000',
+    opacity: overlayOpacity,
+    pointerEvents: 'none',
+    zIndex: 2,
+  } : null;
+
   // Si une image est présente, utiliser un layout avec image
   if (options.imageUrl) {
     // Gérer la taille de l'image (pourcentage de 0 à 100)
@@ -151,37 +181,26 @@ export function HeroSection({ section }: HeroSectionProps) {
           )}
 
           {/* Overlay */}
-          {options.overlay?.enabled && options.overlay.type !== 'color' && (
-            <div 
-              className="section-overlay" 
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                background: `linear-gradient(${options.overlay.gradientDirection || 'to-bottom'}, ${options.overlay.gradientStart || '#000000'}, ${options.overlay.gradientEnd || '#ffffff'})`,
-                opacity: (options.overlay.opacity ?? 50) / 100,
-                pointerEvents: 'none',
-                zIndex: 2,
-              }}
-            />
+          {overlayStyle && options.overlay && (
+            <>
+              <style dangerouslySetInnerHTML={{ __html: `
+                [data-section-id="${sectionId}"] .section-overlay-gradient {
+                  position: absolute !important;
+                  top: 0 !important;
+                  left: 0 !important;
+                  width: 100% !important;
+                  height: 100% !important;
+                  background: linear-gradient(${overlayGradientDirection}, ${overlayGradientStart}, ${overlayGradientEnd}) !important;
+                  opacity: ${overlayOpacity} !important;
+                  pointer-events: none !important;
+                  z-index: 10 !important;
+                }
+              ` }} />
+              <div className="section-overlay section-overlay-gradient" />
+            </>
           )}
-          {options.overlay?.enabled && options.overlay.type === 'color' && (
-            <div 
-              className="section-overlay" 
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                backgroundColor: options.overlay.color || '#000000',
-                opacity: (options.overlay.opacity ?? 50) / 100,
-                pointerEvents: 'none',
-                zIndex: 2,
-              }}
-            />
+          {overlayColorStyle && (
+            <div className="section-overlay" style={overlayColorStyle} />
           )}
 
           {/* Top Divider */}
@@ -321,37 +340,26 @@ export function HeroSection({ section }: HeroSectionProps) {
         )}
 
         {/* Overlay */}
-        {options.overlay?.enabled && options.overlay.type !== 'color' && (
-          <div 
-            className="section-overlay" 
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              background: `linear-gradient(${options.overlay.gradientDirection || 'to-bottom'}, ${options.overlay.gradientStart || '#000000'}, ${options.overlay.gradientEnd || '#ffffff'})`,
-              opacity: (options.overlay.opacity ?? 50) / 100,
-              pointerEvents: 'none',
-              zIndex: 2,
-            }}
-          />
+        {overlayStyle && options.overlay && (
+          <>
+            <style dangerouslySetInnerHTML={{ __html: `
+              [data-section-id="${sectionId}"] .section-overlay-gradient {
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                background: linear-gradient(${overlayGradientDirection}, ${overlayGradientStart}, ${overlayGradientEnd}) !important;
+                opacity: ${overlayOpacity} !important;
+                pointer-events: none !important;
+                z-index: 10 !important;
+              }
+            ` }} />
+            <div className="section-overlay section-overlay-gradient" />
+          </>
         )}
-        {options.overlay?.enabled && options.overlay.type === 'color' && (
-          <div 
-            className="section-overlay" 
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              backgroundColor: options.overlay.color || '#000000',
-              opacity: (options.overlay.opacity ?? 50) / 100,
-              pointerEvents: 'none',
-              zIndex: 2,
-            }}
-          />
+        {overlayColorStyle && (
+          <div className="section-overlay" style={overlayColorStyle} />
         )}
 
         {/* Top Divider */}
