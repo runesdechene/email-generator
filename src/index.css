@@ -6,7 +6,7 @@
   --options-width: 320px;
   
   /* Augmentation globale de la taille des polices */
-  font-size: 20px; /* Au lieu de 16px par défaut */
+  font-size: 16px; /* Au lieu de 16px par défaut */
   
   /* Charte graphique Email Image Generator */
   --primary-blue: #1E90FF;

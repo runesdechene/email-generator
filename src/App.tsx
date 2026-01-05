@@ -96,18 +96,13 @@ function AppContent() {
   
   // Gérer la fin de la sélection
   const handleMouseUp = () => {
-    // Si ce n'était pas un drag (juste un clic), ne pas garder la sélection orange
-    if (!isDragging) {
-      setSelectedSectionsForExport(new Set());
-    }
+    // Ne jamais vider la sélection automatiquement
+    // L'utilisateur doit désactiver le mode multi-sélection pour vider la sélection
     
     setIsSelecting(false);
     setSelectionStart(null);
     setSelectionEnd(null);
     setIsDragging(false);
-    
-    // Ne PAS désactiver le mode multi-sélection automatiquement
-    // L'utilisateur doit cliquer sur le bouton pour le désactiver
   };
   
   // Calculer le style du cadre de sélection
@@ -133,7 +128,22 @@ function AppContent() {
   };
 
   const handleExportSelectedSections = async () => {
-    if (selectedSectionsForExport.size === 0 || !sectionsRef.current) return;
+    console.log('=== handleExportSelectedSections appelé ===');
+    console.log('selectedSectionsForExport.size:', selectedSectionsForExport.size);
+    console.log('sectionsRef.current:', sectionsRef.current);
+    console.log('sectionsRef.current?.size:', sectionsRef.current?.size);
+    
+    if (selectedSectionsForExport.size === 0) {
+      console.log('ERREUR: Aucune section sélectionnée');
+      return;
+    }
+    if (!sectionsRef.current) {
+      console.log('ERREUR: sectionsRef.current est null');
+      return;
+    }
+    
+    const sectionsCount = selectedSectionsForExport.size;
+    console.log('Début export de', sectionsCount, 'sections');
     
     try {
       setExportingMultiple(true);
@@ -149,16 +159,7 @@ function AppContent() {
       const backgroundImageUrl = currentTemplate?.backgroundImage;
       const backgroundSize = currentTemplate?.backgroundSize || 'cover';
       
-      const fileName = `export-${selectedSectionsForExport.size}-sections-${Date.now()}.jpg`;
-      
-      // Sauvegarder la sélection actuelle
-      const savedSelection = new Set(selectedSectionsForExport);
-      
-      // Désélectionner temporairement pour retirer les bordures vertes
-      setSelectedSectionsForExport(new Set());
-      
-      // Attendre que le DOM se mette à jour
-      await new Promise(resolve => setTimeout(resolve, 100));
+      const fileName = `export-${sectionsCount}-sections-${Date.now()}.jpg`;
       
       await exportMultipleSections({
         sectionIds: sortedSectionIds,
@@ -168,15 +169,45 @@ function AppContent() {
         fileName,
       });
       
-      // Resélectionner les sections
-      setSelectedSectionsForExport(savedSelection);
-      
-      toast.success(`${savedSelection.size} section(s) exportée(s) avec succès !`);
+      toast.success(`${sectionsCount} section(s) exportée(s) avec succès !`);
     } catch (error) {
       console.error('Erreur export multi-sections:', error);
       toast.error('Erreur lors de l\'export des sections');
-      // Réinitialiser la sélection en cas d'erreur
-      setSelectedSectionsForExport(new Set());
+    } finally {
+      setExportingMultiple(false);
+    }
+  };
+
+  // Exporter TOUTES les sections en une seule image
+  const handleExportAll = async () => {
+    if (sections.length === 0 || !sectionsRef.current) return;
+    
+    try {
+      setExportingMultiple(true);
+      
+      // Toutes les sections triées par ordre
+      const sortedSectionIds = sections
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+        .map(s => s.id);
+      
+      const currentTemplate = templates.find(t => t.id === currentTemplateId);
+      const backgroundImageUrl = currentTemplate?.backgroundImage;
+      const backgroundSize = currentTemplate?.backgroundSize || 'cover';
+      
+      const fileName = `export-all-${sections.length}-sections-${Date.now()}.jpg`;
+      
+      await exportMultipleSections({
+        sectionIds: sortedSectionIds,
+        sectionsRef: sectionsRef.current,
+        backgroundImageUrl,
+        backgroundSize,
+        fileName,
+      });
+      
+      toast.success(`${sections.length} section(s) exportée(s) avec succès !`);
+    } catch (error) {
+      console.error('Erreur export toutes sections:', error);
+      toast.error('Erreur lors de l\'export');
     } finally {
       setExportingMultiple(false);
     }
@@ -184,6 +215,8 @@ function AppContent() {
   
   const handleExportSeparateSections = async () => {
     if (selectedSectionsForExport.size === 0 || !sectionsRef.current) return;
+    
+    const sectionsCount = selectedSectionsForExport.size;
     
     try {
       setExportingMultiple(true);
@@ -198,15 +231,6 @@ function AppContent() {
       const currentTemplate = templates.find(t => t.id === currentTemplateId);
       const backgroundImageUrl = currentTemplate?.backgroundImage;
       const backgroundSize = currentTemplate?.backgroundSize || 'cover';
-      
-      // Sauvegarder la sélection actuelle
-      const savedSelection = new Set(selectedSectionsForExport);
-      
-      // Désélectionner temporairement pour retirer les bordures vertes
-      setSelectedSectionsForExport(new Set());
-      
-      // Attendre que le DOM se mette à jour
-      await new Promise(resolve => setTimeout(resolve, 100));
       
       console.log(`Début export de ${sortedSectionIds.length} sections séparées`);
       
@@ -244,15 +268,10 @@ function AppContent() {
       
       console.log('Export terminé');
       
-      // Resélectionner les sections
-      setSelectedSectionsForExport(savedSelection);
-      
-      toast.success(`${savedSelection.size} section(s) exportée(s) individuellement avec succès !`);
+      toast.success(`${sectionsCount} section(s) exportée(s) individuellement avec succès !`);
     } catch (error) {
       console.error('Erreur export sections séparées:', error);
       toast.error('Erreur lors de l\'export des sections');
-      // Réinitialiser la sélection en cas d'erreur
-      setSelectedSectionsForExport(new Set());
     } finally {
       setExportingMultiple(false);
     }
@@ -305,7 +324,10 @@ function AppContent() {
           <FontLoader />
           
           {/* 2. Sidebar sections - largeur fixe */}
-          <Sidebar onOpenTemplateSelector={() => setShowTemplateSelector(true)} />
+          <Sidebar 
+            onOpenTemplateSelector={() => setShowTemplateSelector(true)} 
+            onExportAll={handleExportAll}
+          />
           
           {/* 3. Zone centrale - flex 1, avec navbar en haut */}
           <div className="flex-1 flex flex-col bg-gray-50">
@@ -371,7 +393,7 @@ function AppContent() {
                 )}
                 
                 {/* Boutons d'export multi-sections */}
-                {selectedSectionsForExport.size > 1 && (
+                {(selectedSectionsForExport.size > 1 || exportingMultiple) && (
                   <>
                     <button
                       onClick={(e) => {
@@ -379,6 +401,7 @@ function AppContent() {
                         handleExportSelectedSections();
                       }}
                       onMouseDown={(e) => e.stopPropagation()}
+                      onMouseUp={(e) => e.stopPropagation()}
                       disabled={exportingMultiple}
                       className="flex items-center gap-2 px-3 py-2 bg-[#1E90FF] text-white rounded-lg shadow-md hover:bg-[#0066CC] hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-wait"
                       title={`Exporter ${selectedSectionsForExport.size} sections en 1 JPG`}
@@ -402,6 +425,7 @@ function AppContent() {
                         handleExportSeparateSections();
                       }}
                       onMouseDown={(e) => e.stopPropagation()}
+                      onMouseUp={(e) => e.stopPropagation()}
                       disabled={exportingMultiple}
                       className="flex items-center gap-2 px-3 py-2 bg-[#FFA500] text-white rounded-lg shadow-md hover:bg-[#FF8C00] hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-wait"
                       title={`Exporter ${selectedSectionsForExport.size} sections en ${selectedSectionsForExport.size} JPG`}

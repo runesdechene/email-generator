@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, GripVertical, Trash2, Copy, Image } from 'lucide-react';
+import { Plus, GripVertical, Trash2, Copy, Image, Download } from 'lucide-react';
 import { ImageLibraryModal } from '../ui/ImageLibraryModal';
 import { ProjectManager } from '../projects/ProjectManager';
 import { useTemplates, useSectionTemplates } from '../../hooks/useSupabase';
@@ -99,9 +99,10 @@ function SortableSectionItem({ section, isSelected, onSelect, onDelete, onDuplic
 
 interface SidebarProps {
   onOpenTemplateSelector: () => void;
+  onExportAll: () => void;
 }
 
-export function Sidebar({ onOpenTemplateSelector }: SidebarProps) {
+export function Sidebar({ onOpenTemplateSelector, onExportAll }: SidebarProps) {
   const { 
     sections, 
     selectedSectionId, 
@@ -192,12 +193,24 @@ export function Sidebar({ onOpenTemplateSelector }: SidebarProps) {
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-gray-700">Sections</h2>
-          <button
-            onClick={handleAddSection}
-            className="w-8 h-8 rounded-lg bg-[#1E90FF] hover:bg-[#0066CC] shadow-md hover:shadow-lg flex items-center justify-center transition-all text-white"
-          >
-            <Plus size={18} />
-          </button>
+          <div className="flex items-center gap-2">
+            {sections.length > 0 && (
+              <button
+                onClick={onExportAll}
+                className="w-8 h-8 rounded-lg bg-[#FFA500] hover:bg-[#FF8C00] shadow-md hover:shadow-lg flex items-center justify-center transition-all text-white"
+                title="Tout exporter en 1 image"
+              >
+                <Download size={16} />
+              </button>
+            )}
+            <button
+              onClick={handleAddSection}
+              className="w-8 h-8 rounded-lg bg-[#1E90FF] hover:bg-[#0066CC] shadow-md hover:shadow-lg flex items-center justify-center transition-all text-white"
+              title="Ajouter une section"
+            >
+              <Plus size={18} />
+            </button>
+          </div>
         </div>
       </div>
 
