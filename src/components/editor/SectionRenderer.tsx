@@ -4,6 +4,7 @@ import { HeroSection } from '../sections/HeroSection';
 import { ImageSection } from '../../sections/ImageSection/ImageSection';
 import { ImageTextSection } from '../../sections/ImageTextSection/ImageTextSection';
 import { TextHtmlImageSection } from '../../sections/TextHtmlImageSection/TextHtmlImageSection';
+import { IconsTextSection } from '../../sections/IconsTextSection/IconsTextSection';
 import { useSectionTemplates } from '../../hooks/useSupabase';
 import { AlertCircle } from 'lucide-react';
 
@@ -103,6 +104,17 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       <TextHtmlImageSection
         sectionId={section.id}
         content={(section.content.content as string) || '<p>Votre contenu ici...</p>'}
+        options={section.content.options as any}
+      />
+    );
+  }
+
+  // Si le type de section est "Icons + Texte"
+  if (sectionType?.name === 'Icons + Texte') {
+    return (
+      <IconsTextSection
+        sectionId={section.id}
+        blocks={(section.content as any).blocks || []}
         options={section.content.options as any}
       />
     );

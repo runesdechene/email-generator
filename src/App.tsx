@@ -259,11 +259,29 @@ function AppContent() {
   };
 
   const handleSelectSectionType = (sectionType: SectionTemplate) => {
+    const currentTemplate = templates.find(t => t.id === currentTemplateId);
+    
+    // Créer le contenu de base depuis le template de section
+    const baseContent = { ...sectionType.defaultContent };
+    
+    // Si le contenu a des options et qu'un template est actif, initialiser avec les paddings du template
+    if (baseContent.options && currentTemplate) {
+      baseContent.options = {
+        ...baseContent.options,
+        paddingTop: currentTemplate.paddingBlock,
+        paddingBottom: currentTemplate.paddingBlock,
+        paddingLeft: currentTemplate.paddingInline,
+        paddingRight: currentTemplate.paddingInline,
+        useTemplatePaddingInline: false,
+        useTemplatePaddingBlock: false,
+      };
+    }
+    
     const newSection: EmailSection = {
       id: `section-${Date.now()}`,
       templateId: sectionType.id,
       name: `Section ${sections.length + 1}`,
-      content: sectionType.defaultContent,
+      content: baseContent,
       order: sections.length,
     };
     addSection(newSection);
@@ -293,7 +311,7 @@ function AppContent() {
           <div className="flex-1 flex flex-col bg-gray-50">
             <EditorNavbar />
             <main 
-              className="flex-1 flex justify-center items-center overflow-y-auto p-8 relative"
+              className="flex-1 flex justify-center items-start overflow-y-auto p-8 relative"
               {...(multiSelectMode ? {
                 onMouseDown: handleMouseDown,
                 onMouseMove: handleMouseMove,

@@ -10,10 +10,17 @@ interface ParagraphSectionProps {
     content: string;
   };
   options?: {
+    backgroundEnabled?: boolean;
+    backgroundType?: 'color' | 'gradient' | 'image';
+    backgroundColor?: string;
+    gradientStart?: string;
+    gradientEnd?: string;
+    gradientDirection?: string;
     backgroundImageUrl?: string;
     backgroundSize?: string;
     backgroundPosition?: string;
     backgroundRepeat?: string;
+    backgroundClipPath?: string;
     overlay?: {
       enabled?: boolean;
       type?: 'color' | 'gradient';
@@ -134,23 +141,47 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
   const blurValue = options.overlay?.blur || 0;
   const blurFilter = generateBackgroundBlur(blurValue);
 
+  // Générer le style de fond selon le type (seulement si backgroundEnabled est true)
+  let backgroundStyleBase: React.CSSProperties = {};
+  const backgroundEnabled = options.backgroundEnabled || false;
+  const backgroundType = options.backgroundType || 'color';
+  
+  if (backgroundEnabled) {
+    if (backgroundType === 'color') {
+      backgroundStyleBase = {
+        backgroundColor: options.backgroundColor || '#ffffff',
+      };
+    } else if (backgroundType === 'gradient') {
+      const gradientDir = options.gradientDirection || 'to bottom';
+      const gradientCSS = gradientDir === 'radial'
+        ? `radial-gradient(circle, ${options.gradientStart || '#667eea'}, ${options.gradientEnd || '#764ba2'})`
+        : `linear-gradient(${gradientDir}, ${options.gradientStart || '#667eea'}, ${options.gradientEnd || '#764ba2'})`;
+      backgroundStyleBase = {
+        background: gradientCSS,
+      };
+    } else if (backgroundType === 'image' && options.backgroundImageUrl && blurValue === 0) {
+      backgroundStyleBase = {
+        backgroundImage: `url(${options.backgroundImageUrl})`,
+        backgroundSize: options.backgroundSize || 'cover',
+        backgroundPosition: options.backgroundPosition || 'center',
+        backgroundRepeat: options.backgroundRepeat || 'no-repeat',
+      };
+    }
+  }
+
   // Styles de base
   const baseStyle: React.CSSProperties = {
     paddingTop: `${finalPaddingTop}px`,
     paddingRight: `${finalPaddingRight}px`,
     paddingBottom: `${finalPaddingBottom}px`,
     paddingLeft: `${finalPaddingLeft}px`,
-    backgroundColor: 'transparent',
     textAlign,
     lineHeight,
     letterSpacing: `${letterSpacing}px`,
     color: color || '#000000',
-    // N'appliquer l'image de fond que si pas de blur
-    ...(options.backgroundImageUrl && blurValue === 0 && {
-      backgroundImage: `url(${options.backgroundImageUrl})`,
-      backgroundSize: options.backgroundSize || 'cover',
-      backgroundPosition: options.backgroundPosition || 'center',
-      backgroundRepeat: options.backgroundRepeat || 'no-repeat',
+    ...backgroundStyleBase,
+    ...(options.backgroundClipPath && options.backgroundClipPath !== 'none' && {
+      clipPath: options.backgroundClipPath,
     }),
   };
 
@@ -162,7 +193,7 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
   };
 
   // Style pour un élément qui contiendra l'image de fond avec blur
-  const backgroundStyle: React.CSSProperties | undefined = options.backgroundImageUrl && blurValue > 0 ? {
+  const backgroundStyle: React.CSSProperties | undefined = backgroundType === 'image' && options.backgroundImageUrl && blurValue > 0 ? {
     position: 'absolute',
     top: 0,
     left: 0,
@@ -174,6 +205,9 @@ export function ParagraphSection({ sectionId, data, options = {} }: ParagraphSec
     backgroundRepeat: options.backgroundRepeat || 'no-repeat',
     filter: blurFilter,
     zIndex: 0,
+    ...(options.backgroundClipPath && options.backgroundClipPath !== 'none' && {
+      clipPath: options.backgroundClipPath,
+    }),
   } : undefined;
 
   // Scoper le CSS personnalisé à cette section uniquement

@@ -6,6 +6,7 @@ interface ImageSectionProps {
   options: {
     imageUrl?: string;
     imageSize?: number;
+    imageHeight?: number;
     clipPath?: string;
     overlay?: {
       enabled?: boolean;
@@ -32,6 +33,7 @@ export const ImageSection: React.FC<ImageSectionProps> = ({
   const {
     imageUrl,
     imageSize = 100,
+    imageHeight,
     clipPath = 'none',
     overlay,
     customCSS = '',
@@ -98,10 +100,11 @@ export const ImageSection: React.FC<ImageSectionProps> = ({
 
   const imageStyle: React.CSSProperties = {
     width: '100%',
-    height: 'auto',
+    height: imageHeight ? `${imageHeight}px` : 'auto',
     display: 'block',
     clipPath: clipPath !== 'none' ? clipPath : undefined,
     filter: blurFilter !== 'none' ? blurFilter : undefined,
+    objectFit: imageHeight ? 'cover' : undefined,
   };
 
   if (!imageUrl) {

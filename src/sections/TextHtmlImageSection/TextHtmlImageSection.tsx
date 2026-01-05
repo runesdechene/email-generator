@@ -10,10 +10,17 @@ interface TextHtmlImageSectionProps {
     imagePosition?: 'left' | 'right';
     imageWidth?: number;
     clipPath?: string;
+    backgroundEnabled?: boolean;
+    backgroundType?: 'color' | 'gradient' | 'image';
+    backgroundColor?: string;
+    gradientStart?: string;
+    gradientEnd?: string;
+    gradientDirection?: string;
     backgroundImageUrl?: string;
     backgroundSize?: string;
     backgroundPosition?: string;
     backgroundRepeat?: string;
+    backgroundClipPath?: string;
     paddingTop?: number;
     paddingBottom?: number;
     paddingLeft?: number;
@@ -58,10 +65,17 @@ export function TextHtmlImageSection({ sectionId, content, options }: TextHtmlIm
     imagePosition = 'right',
     imageWidth = 50,
     clipPath = 'none',
+    backgroundEnabled = false,
+    backgroundType = 'color',
+    backgroundColor = '#ffffff',
+    gradientStart = '#667eea',
+    gradientEnd = '#764ba2',
+    gradientDirection = 'to bottom',
     backgroundImageUrl,
     backgroundSize = 'cover',
     backgroundPosition = 'center',
     backgroundRepeat = 'no-repeat',
+    backgroundClipPath = 'none',
     paddingTop = 40,
     paddingBottom = 40,
     paddingLeft = 40,
@@ -111,17 +125,40 @@ export function TextHtmlImageSection({ sectionId, content, options }: TextHtmlIm
     ${tagColors.h5 ? `[data-section-id="${sectionId}"] h5 { color: ${tagColors.h5} !important; }` : ''}
   ` : '';
 
+  // Générer le style de fond selon le type (seulement si backgroundEnabled est true)
+  let backgroundStyle: React.CSSProperties = {};
+  
+  if (backgroundEnabled) {
+    if (backgroundType === 'color') {
+      backgroundStyle = {
+        backgroundColor,
+      };
+    } else if (backgroundType === 'gradient') {
+      const gradientCSS = gradientDirection === 'radial'
+        ? `radial-gradient(circle, ${gradientStart}, ${gradientEnd})`
+        : `linear-gradient(${gradientDirection}, ${gradientStart}, ${gradientEnd})`;
+      backgroundStyle = {
+        background: gradientCSS,
+      };
+    } else if (backgroundType === 'image' && backgroundImageUrl) {
+      backgroundStyle = {
+        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundSize,
+        backgroundPosition,
+        backgroundRepeat,
+      };
+    }
+  }
+
   const containerStyle: React.CSSProperties = {
     paddingTop: `${finalPaddingTop}px`,
     paddingBottom: `${finalPaddingBottom}px`,
     paddingLeft: `${finalPaddingLeft}px`,
     paddingRight: `${finalPaddingRight}px`,
     position: 'relative',
-    ...(backgroundImageUrl && {
-      backgroundImage: `url(${backgroundImageUrl})`,
-      backgroundSize,
-      backgroundPosition,
-      backgroundRepeat,
+    ...backgroundStyle,
+    ...(backgroundClipPath !== 'none' && {
+      clipPath: backgroundClipPath,
     }),
   };
 

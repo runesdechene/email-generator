@@ -18,6 +18,8 @@ import {
   TextStyleControl, 
   CustomCSSControl,
   BackgroundImageControl,
+  BackgroundControl,
+  IconBlocksControl,
   DividerControl,
   OverlayControl,
   ShapeControl
@@ -170,12 +172,19 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               <p className="text-xs text-gray-400 mt-1">Supporte le HTML</p>
             </AccordionSection>
 
-            <AccordionSection title="Image de fond">
-              <BackgroundImageControl
+            <AccordionSection title="Fond de section">
+              <BackgroundControl
+                backgroundEnabled={(selectedSection.content.options as any)?.backgroundEnabled}
+                backgroundType={(selectedSection.content.options as any)?.backgroundType}
+                backgroundColor={(selectedSection.content.options as any)?.backgroundColor}
+                gradientStart={(selectedSection.content.options as any)?.gradientStart}
+                gradientEnd={(selectedSection.content.options as any)?.gradientEnd}
+                gradientDirection={(selectedSection.content.options as any)?.gradientDirection}
                 backgroundImageUrl={(selectedSection.content.options as any)?.backgroundImageUrl}
                 backgroundSize={(selectedSection.content.options as any)?.backgroundSize}
                 backgroundPosition={(selectedSection.content.options as any)?.backgroundPosition}
                 backgroundRepeat={(selectedSection.content.options as any)?.backgroundRepeat}
+                backgroundClipPath={(selectedSection.content.options as any)?.backgroundClipPath}
                 sectionId={selectedSection.id}
                 onUpdate={updateOption}
               />
@@ -264,12 +273,19 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               <p className="text-xs text-gray-400 mt-1">Texte simple (pas de HTML)</p>
             </AccordionSection>
 
-            <AccordionSection title="Image de fond">
-              <BackgroundImageControl
+            <AccordionSection title="Fond de section">
+              <BackgroundControl
+                backgroundEnabled={(selectedSection.content.options as any)?.backgroundEnabled}
+                backgroundType={(selectedSection.content.options as any)?.backgroundType}
+                backgroundColor={(selectedSection.content.options as any)?.backgroundColor}
+                gradientStart={(selectedSection.content.options as any)?.gradientStart}
+                gradientEnd={(selectedSection.content.options as any)?.gradientEnd}
+                gradientDirection={(selectedSection.content.options as any)?.gradientDirection}
                 backgroundImageUrl={(selectedSection.content.options as any)?.backgroundImageUrl}
                 backgroundSize={(selectedSection.content.options as any)?.backgroundSize}
                 backgroundPosition={(selectedSection.content.options as any)?.backgroundPosition}
                 backgroundRepeat={(selectedSection.content.options as any)?.backgroundRepeat}
+                backgroundClipPath={(selectedSection.content.options as any)?.backgroundClipPath}
                 sectionId={selectedSection.id}
                 onUpdate={updateOption}
               />
@@ -367,12 +383,19 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               />
             </AccordionSection>
 
-            <AccordionSection title="Image de fond">
-              <BackgroundImageControl
+            <AccordionSection title="Fond de section">
+              <BackgroundControl
+                backgroundEnabled={(selectedSection.content.options as any)?.backgroundEnabled}
+                backgroundType={(selectedSection.content.options as any)?.backgroundType}
+                backgroundColor={(selectedSection.content.options as any)?.backgroundColor}
+                gradientStart={(selectedSection.content.options as any)?.gradientStart}
+                gradientEnd={(selectedSection.content.options as any)?.gradientEnd}
+                gradientDirection={(selectedSection.content.options as any)?.gradientDirection}
                 backgroundImageUrl={(selectedSection.content.options as any)?.backgroundImageUrl}
                 backgroundSize={(selectedSection.content.options as any)?.backgroundSize}
                 backgroundPosition={(selectedSection.content.options as any)?.backgroundPosition}
                 backgroundRepeat={(selectedSection.content.options as any)?.backgroundRepeat}
+                backgroundClipPath={(selectedSection.content.options as any)?.backgroundClipPath}
                 sectionId={selectedSection.id}
                 onUpdate={updateOption}
               />
@@ -538,12 +561,19 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               />
             </AccordionSection>
 
-            <AccordionSection title="Image de fond">
-              <BackgroundImageControl
+            <AccordionSection title="Fond de section">
+              <BackgroundControl
+                backgroundEnabled={(selectedSection.content.options as any)?.backgroundEnabled}
+                backgroundType={(selectedSection.content.options as any)?.backgroundType}
+                backgroundColor={(selectedSection.content.options as any)?.backgroundColor}
+                gradientStart={(selectedSection.content.options as any)?.gradientStart}
+                gradientEnd={(selectedSection.content.options as any)?.gradientEnd}
+                gradientDirection={(selectedSection.content.options as any)?.gradientDirection}
                 backgroundImageUrl={(selectedSection.content.options as any)?.backgroundImageUrl}
                 backgroundSize={(selectedSection.content.options as any)?.backgroundSize}
                 backgroundPosition={(selectedSection.content.options as any)?.backgroundPosition}
                 backgroundRepeat={(selectedSection.content.options as any)?.backgroundRepeat}
+                backgroundClipPath={(selectedSection.content.options as any)?.backgroundClipPath}
                 sectionId={selectedSection.id}
                 onUpdate={updateOption}
               />
@@ -649,12 +679,19 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               <p className="text-xs text-gray-400 mt-1">Supporte le HTML</p>
             </AccordionSection>
 
-            <AccordionSection title="Image de fond">
-              <BackgroundImageControl
+            <AccordionSection title="Fond de section">
+              <BackgroundControl
+                backgroundEnabled={(selectedSection.content.options as any)?.backgroundEnabled}
+                backgroundType={(selectedSection.content.options as any)?.backgroundType}
+                backgroundColor={(selectedSection.content.options as any)?.backgroundColor}
+                gradientStart={(selectedSection.content.options as any)?.gradientStart}
+                gradientEnd={(selectedSection.content.options as any)?.gradientEnd}
+                gradientDirection={(selectedSection.content.options as any)?.gradientDirection}
                 backgroundImageUrl={(selectedSection.content.options as any)?.backgroundImageUrl}
                 backgroundSize={(selectedSection.content.options as any)?.backgroundSize}
                 backgroundPosition={(selectedSection.content.options as any)?.backgroundPosition}
                 backgroundRepeat={(selectedSection.content.options as any)?.backgroundRepeat}
+                backgroundClipPath={(selectedSection.content.options as any)?.backgroundClipPath}
                 sectionId={selectedSection.id}
                 onUpdate={updateOption}
               />
@@ -774,6 +811,40 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                     </div>
                   </div>
                   <p className="text-xs text-gray-400 mt-1">Largeur de l'image (20% à 100%)</p>
+                </div>
+              )}
+              {(selectedSection.content.options as any)?.imageUrl && (
+                <div className="mt-4">
+                  <label className="block text-xs font-medium text-gray-500 mb-2">
+                    Hauteur de l'image
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="range"
+                      min="0"
+                      max="1000"
+                      step="10"
+                      value={(selectedSection.content.options as any)?.imageHeight ?? 0}
+                      onChange={(e) => updateOption(['imageHeight'], parseInt(e.target.value) || undefined)}
+                      className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#1E90FF]"
+                    />
+                    <div className="flex items-center gap-1">
+                      <input
+                        type="number"
+                        min="0"
+                        max="1000"
+                        step="10"
+                        value={(selectedSection.content.options as any)?.imageHeight ?? 0}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value);
+                          updateOption(['imageHeight'], val > 0 ? val : undefined);
+                        }}
+                        className="w-16 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
+                      />
+                      <span className="text-xs text-gray-500">px</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">Hauteur fixe (0 = auto, crop si défini)</p>
                 </div>
               )}
             </AccordionSection>
@@ -918,6 +989,199 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                 paddingRight={(selectedSection.content.options as any)?.paddingRight}
                 useTemplatePaddingInline={(selectedSection.content.options as any)?.useTemplatePaddingInline}
                 useTemplatePaddingBlock={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="CSS personnalisé">
+              <CustomCSSControl
+                customCSS={(selectedSection.content.options as any)?.customCSS}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+          </>
+        )}
+
+        {sectionType?.name === 'Icons + Texte' && (
+          <>
+            <AccordionSection title="Blocs" defaultOpen={true}>
+              <IconBlocksControl
+                blocks={(selectedSection.content as any)?.blocks || []}
+                sectionId={selectedSection.id}
+                onUpdate={(path, value) => {
+                  updateSection(selectedSection.id, {
+                    content: {
+                      ...selectedSection.content,
+                      [path[0]]: value,
+                    },
+                  });
+                }}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Disposition">
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-2">
+                  Colonnes par ligne
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range"
+                    min="1"
+                    max="6"
+                    value={(selectedSection.content.options as any)?.columnsPerRow ?? 2}
+                    onChange={(e) => updateOption(['columnsPerRow'], parseInt(e.target.value))}
+                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#1E90FF]"
+                  />
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="number"
+                      min="1"
+                      max="6"
+                      value={(selectedSection.content.options as any)?.columnsPerRow ?? 2}
+                      onChange={(e) => updateOption(['columnsPerRow'], parseInt(e.target.value) || 2)}
+                      className="w-16 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400 mt-1">Nombre de colonnes par ligne (1 à 6)</p>
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-xs font-medium text-gray-700 mb-2">
+                  Taille des icônes
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range"
+                    min="40"
+                    max="200"
+                    value={(selectedSection.content.options as any)?.imageSize ?? 80}
+                    onChange={(e) => updateOption(['imageSize'], parseInt(e.target.value))}
+                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#1E90FF]"
+                  />
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="number"
+                      min="40"
+                      max="200"
+                      value={(selectedSection.content.options as any)?.imageSize ?? 80}
+                      onChange={(e) => updateOption(['imageSize'], parseInt(e.target.value) || 80)}
+                      className="w-16 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
+                    />
+                    <span className="text-xs text-gray-500">px</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-xs font-medium text-gray-700 mb-2">
+                  Espacement entre les blocs
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range"
+                    min="0"
+                    max="80"
+                    value={(selectedSection.content.options as any)?.gap ?? 20}
+                    onChange={(e) => updateOption(['gap'], parseInt(e.target.value))}
+                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#1E90FF]"
+                  />
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="number"
+                      min="0"
+                      max="80"
+                      value={(selectedSection.content.options as any)?.gap ?? 20}
+                      onChange={(e) => updateOption(['gap'], parseInt(e.target.value) || 20)}
+                      className="w-16 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
+                    />
+                    <span className="text-xs text-gray-500">px</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-xs font-medium text-gray-700 mb-2">
+                  Alignement du texte
+                </label>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => updateOption(['textAlign'], 'left')}
+                    className={`flex-1 px-3 py-2 rounded-lg text-sm transition-all ${
+                      (selectedSection.content.options as any)?.textAlign === 'left'
+                        ? 'bg-[#1E90FF] text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Gauche
+                  </button>
+                  <button
+                    onClick={() => updateOption(['textAlign'], 'center')}
+                    className={`flex-1 px-3 py-2 rounded-lg text-sm transition-all ${
+                      (selectedSection.content.options as any)?.textAlign === 'center' || !(selectedSection.content.options as any)?.textAlign
+                        ? 'bg-[#1E90FF] text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Centre
+                  </button>
+                  <button
+                    onClick={() => updateOption(['textAlign'], 'right')}
+                    className={`flex-1 px-3 py-2 rounded-lg text-sm transition-all ${
+                      (selectedSection.content.options as any)?.textAlign === 'right'
+                        ? 'bg-[#1E90FF] text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Droite
+                  </button>
+                </div>
+              </div>
+            </AccordionSection>
+
+            <AccordionSection title="Fond de section">
+              <BackgroundControl
+                backgroundEnabled={(selectedSection.content.options as any)?.backgroundEnabled}
+                backgroundType={(selectedSection.content.options as any)?.backgroundType}
+                backgroundColor={(selectedSection.content.options as any)?.backgroundColor}
+                gradientStart={(selectedSection.content.options as any)?.gradientStart}
+                gradientEnd={(selectedSection.content.options as any)?.gradientEnd}
+                gradientDirection={(selectedSection.content.options as any)?.gradientDirection}
+                backgroundImageUrl={(selectedSection.content.options as any)?.backgroundImageUrl}
+                backgroundSize={(selectedSection.content.options as any)?.backgroundSize}
+                backgroundPosition={(selectedSection.content.options as any)?.backgroundPosition}
+                backgroundRepeat={(selectedSection.content.options as any)?.backgroundRepeat}
+                backgroundClipPath={(selectedSection.content.options as any)?.backgroundClipPath}
+                sectionId={selectedSection.id}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Padding">
+              <PaddingControl
+                paddingTop={(selectedSection.content.options as any)?.paddingTop}
+                paddingBottom={(selectedSection.content.options as any)?.paddingBottom}
+                paddingLeft={(selectedSection.content.options as any)?.paddingLeft}
+                paddingRight={(selectedSection.content.options as any)?.paddingRight}
+                useTemplatePaddingInline={(selectedSection.content.options as any)?.useTemplatePaddingInline}
+                useTemplatePaddingBlock={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Taille de police">
+              <TagFontSizeControl
+                tagFontSizes={(selectedSection.content.options as any)?.tagFontSizes}
+                currentTemplate={templates.find(t => t.id === currentTemplateId)}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Couleur">
+              <TagColorControl
+                tagColors={(selectedSection.content.options as any)?.tagColors}
+                currentTemplate={templates.find(t => t.id === currentTemplateId)}
                 onUpdate={updateOption}
               />
             </AccordionSection>

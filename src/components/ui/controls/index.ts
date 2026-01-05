@@ -8,6 +8,8 @@ export { ColorControl } from './ColorControl';
 export { TextStyleControl } from './TextStyleControl';
 export { CustomCSSControl } from './CustomCSSControl';
 export { BackgroundImageControl } from './BackgroundImageControl';
+export { BackgroundControl } from './BackgroundControl';
+export { IconBlocksControl } from './IconBlocksControl';
 export { DividerControl } from './DividerControl';
 export { OverlayControl } from './OverlayControl';
 export { ShapeControl } from './ShapeControl';
