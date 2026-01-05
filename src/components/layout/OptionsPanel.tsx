@@ -13,6 +13,7 @@ import {
   PaddingControl, 
   TagFontSizeControl,
   TagColorControl,
+  TagTypeControl,
   ColorControl, 
   TextStyleControl, 
   CustomCSSControl,
@@ -340,6 +341,249 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                 bottomDividerHeight={(selectedSection.content.options as any)?.bottomDividerHeight}
                 bottomDividerFlip={(selectedSection.content.options as any)?.bottomDividerFlip}
                 sectionId={selectedSection.id}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+          </>
+        )}
+
+        {sectionType?.name === 'Titre' && (
+          <>
+            <AccordionSection title="Contenu" defaultOpen={true}>
+              <textarea
+                value={(selectedSection.content.content as string) || ''}
+                onChange={(e) => updateContent('content', e.target.value)}
+                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
+                rows={3}
+                placeholder="Votre titre ici..."
+              />
+              <p className="text-xs text-gray-400 mt-1">Texte simple (pas de HTML)</p>
+            </AccordionSection>
+
+            <AccordionSection title="Type de balise">
+              <TagTypeControl
+                tagType={(selectedSection.content.options as any)?.tagType}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Image de fond">
+              <BackgroundImageControl
+                backgroundImageUrl={(selectedSection.content.options as any)?.backgroundImageUrl}
+                backgroundSize={(selectedSection.content.options as any)?.backgroundSize}
+                backgroundPosition={(selectedSection.content.options as any)?.backgroundPosition}
+                backgroundRepeat={(selectedSection.content.options as any)?.backgroundRepeat}
+                sectionId={selectedSection.id}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Padding">
+              <PaddingControl
+                paddingTop={(selectedSection.content.options as any)?.paddingTop}
+                paddingBottom={(selectedSection.content.options as any)?.paddingBottom}
+                paddingLeft={(selectedSection.content.options as any)?.paddingLeft}
+                paddingRight={(selectedSection.content.options as any)?.paddingRight}
+                useTemplatePaddingInline={(selectedSection.content.options as any)?.useTemplatePaddingInline}
+                useTemplatePaddingBlock={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Taille de police">
+              <TagFontSizeControl
+                tagFontSizes={(selectedSection.content.options as any)?.tagFontSizes}
+                currentTemplate={templates.find(t => t.id === currentTemplateId)}
+                tagsToShow={[(selectedSection.content.options as any)?.tagType || 'h2']}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Couleur">
+              <TagColorControl
+                tagColors={(selectedSection.content.options as any)?.tagColors}
+                currentTemplate={templates.find(t => t.id === currentTemplateId)}
+                tagsToShow={[(selectedSection.content.options as any)?.tagType || 'h2']}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Style de texte">
+              <TextStyleControl
+                align={(selectedSection.content.options as any)?.textStyle?.align}
+                bold={(selectedSection.content.options as any)?.textStyle?.bold}
+                italic={(selectedSection.content.options as any)?.textStyle?.italic}
+                underline={(selectedSection.content.options as any)?.textStyle?.underline}
+                lineHeight={(selectedSection.content.options as any)?.textStyle?.lineHeight}
+                letterSpacing={(selectedSection.content.options as any)?.textStyle?.letterSpacing}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="CSS personnalisé">
+              <CustomCSSControl
+                customCSS={(selectedSection.content.options as any)?.customCSS}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Diviseurs">
+              <DividerControl
+                topDividerEnabled={(selectedSection.content.options as any)?.topDividerEnabled}
+                topDividerType={(selectedSection.content.options as any)?.topDividerType}
+                topDividerImageUrl={(selectedSection.content.options as any)?.topDividerImageUrl}
+                topDividerSvgType={(selectedSection.content.options as any)?.topDividerSvgType}
+                topDividerColor={(selectedSection.content.options as any)?.topDividerColor}
+                topDividerHeight={(selectedSection.content.options as any)?.topDividerHeight}
+                topDividerFlip={(selectedSection.content.options as any)?.topDividerFlip}
+                bottomDividerEnabled={(selectedSection.content.options as any)?.bottomDividerEnabled}
+                bottomDividerType={(selectedSection.content.options as any)?.bottomDividerType}
+                bottomDividerImageUrl={(selectedSection.content.options as any)?.bottomDividerImageUrl}
+                bottomDividerSvgType={(selectedSection.content.options as any)?.bottomDividerSvgType}
+                bottomDividerColor={(selectedSection.content.options as any)?.bottomDividerColor}
+                bottomDividerHeight={(selectedSection.content.options as any)?.bottomDividerHeight}
+                bottomDividerFlip={(selectedSection.content.options as any)?.bottomDividerFlip}
+                sectionId={selectedSection.id}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+          </>
+        )}
+
+        {sectionType?.name === 'Texte HTML + image' && (
+          <>
+            <AccordionSection title="Contenu" defaultOpen={true}>
+              <textarea
+                value={(selectedSection.content.content as string) || ''}
+                onChange={(e) => updateContent('content', e.target.value)}
+                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] font-mono"
+                rows={6}
+                placeholder="<h2>Titre</h2><p>Votre contenu HTML ici...</p>"
+              />
+              <p className="text-xs text-gray-400 mt-1">Supporte le HTML</p>
+            </AccordionSection>
+
+            <AccordionSection title="Image">
+              <ImagePicker
+                value={(selectedSection.content.options as any)?.imageUrl || ''}
+                onChange={(url) => updateOption(['imageUrl'], url)}
+                sectionId={selectedSection.id}
+                label="Image de la section"
+              />
+              {(selectedSection.content.options as any)?.imageUrl && (
+                <>
+                  <div className="mt-4">
+                    <label className="block text-xs font-medium text-gray-500 mb-2">
+                      Position de l'image
+                    </label>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => updateOption(['imagePosition'], 'left')}
+                        className={`flex-1 px-3 py-2 rounded-lg text-sm transition-all ${
+                          (selectedSection.content.options as any)?.imagePosition === 'left'
+                            ? 'bg-[#1E90FF] text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        Gauche
+                      </button>
+                      <button
+                        onClick={() => updateOption(['imagePosition'], 'right')}
+                        className={`flex-1 px-3 py-2 rounded-lg text-sm transition-all ${
+                          (selectedSection.content.options as any)?.imagePosition === 'right' || !(selectedSection.content.options as any)?.imagePosition
+                            ? 'bg-[#1E90FF] text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        Droite
+                      </button>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <label className="block text-xs font-medium text-gray-500 mb-2">
+                      Largeur de l'image
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="range"
+                        min="20"
+                        max="80"
+                        value={(selectedSection.content.options as any)?.imageWidth ?? 50}
+                        onChange={(e) => updateOption(['imageWidth'], parseInt(e.target.value))}
+                        className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#1E90FF]"
+                      />
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="number"
+                          min="20"
+                          max="80"
+                          value={(selectedSection.content.options as any)?.imageWidth ?? 50}
+                          onChange={(e) => updateOption(['imageWidth'], parseInt(e.target.value) || 50)}
+                          className="w-16 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
+                        />
+                        <span className="text-xs text-gray-500">%</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1">Largeur de l'image (20% à 80%)</p>
+                  </div>
+                </>
+              )}
+            </AccordionSection>
+
+            <AccordionSection title="Image de fond">
+              <BackgroundImageControl
+                backgroundImageUrl={(selectedSection.content.options as any)?.backgroundImageUrl}
+                backgroundSize={(selectedSection.content.options as any)?.backgroundSize}
+                backgroundPosition={(selectedSection.content.options as any)?.backgroundPosition}
+                backgroundRepeat={(selectedSection.content.options as any)?.backgroundRepeat}
+                sectionId={selectedSection.id}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Padding">
+              <PaddingControl
+                paddingTop={(selectedSection.content.options as any)?.paddingTop}
+                paddingBottom={(selectedSection.content.options as any)?.paddingBottom}
+                paddingLeft={(selectedSection.content.options as any)?.paddingLeft}
+                paddingRight={(selectedSection.content.options as any)?.paddingRight}
+                useTemplatePaddingInline={(selectedSection.content.options as any)?.useTemplatePaddingInline}
+                useTemplatePaddingBlock={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Taille de police">
+              <TagFontSizeControl
+                tagFontSizes={(selectedSection.content.options as any)?.tagFontSizes}
+                currentTemplate={templates.find(t => t.id === currentTemplateId)}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Couleur">
+              <TagColorControl
+                tagColors={(selectedSection.content.options as any)?.tagColors}
+                currentTemplate={templates.find(t => t.id === currentTemplateId)}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Style de texte">
+              <TextStyleControl
+                align={(selectedSection.content.options as any)?.textStyle?.align}
+                bold={(selectedSection.content.options as any)?.textStyle?.bold}
+                italic={(selectedSection.content.options as any)?.textStyle?.italic}
+                underline={(selectedSection.content.options as any)?.textStyle?.underline}
+                lineHeight={(selectedSection.content.options as any)?.textStyle?.lineHeight}
+                letterSpacing={(selectedSection.content.options as any)?.textStyle?.letterSpacing}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="CSS personnalisé">
+              <CustomCSSControl
+                customCSS={(selectedSection.content.options as any)?.customCSS}
                 onUpdate={updateOption}
               />
             </AccordionSection>

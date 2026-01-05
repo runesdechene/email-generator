@@ -1,8 +1,9 @@
 import type { EmailSection } from '../../types';
-import { ParagraphSection } from '../../sections/ParagraphSection';
+import { ParagraphSection } from '../../sections/ParagraphSection/ParagraphSection';
 import { HeroSection } from '../sections/HeroSection';
 import { ImageSection } from '../../sections/ImageSection/ImageSection';
 import { ImageTextSection } from '../../sections/ImageTextSection/ImageTextSection';
+import { TextHtmlImageSection } from '../../sections/TextHtmlImageSection/TextHtmlImageSection';
 import { useSectionTemplates } from '../../hooks/useSupabase';
 import { AlertCircle } from 'lucide-react';
 
@@ -53,6 +54,21 @@ export function SectionRenderer({ section }: SectionRendererProps) {
     );
   }
 
+  // Si le type de section est "Titre"
+  if (sectionType?.name === 'Titre') {
+    const titleContent = (section.content.content as string) || 'Votre titre ici...';
+    const tagType = (section.content.options as any)?.tagType || 'h2';
+    return (
+      <ParagraphSection
+        sectionId={section.id}
+        data={{
+          content: `<${tagType}>${titleContent}</${tagType}>`,
+        }}
+        options={section.content.options as any}
+      />
+    );
+  }
+
   // Si le type de section est "Hero"
   if (sectionType?.name === 'Hero') {
     return <HeroSection section={section} />;
@@ -76,6 +92,17 @@ export function SectionRenderer({ section }: SectionRendererProps) {
         content={{
           content: (section.content.content as string) || '<p>Votre contenu ici...</p>',
         }}
+        options={section.content.options as any}
+      />
+    );
+  }
+
+  // Si le type de section est "Texte HTML + image"
+  if (sectionType?.name === 'Texte HTML + image') {
+    return (
+      <TextHtmlImageSection
+        sectionId={section.id}
+        content={(section.content.content as string) || '<p>Votre contenu ici...</p>'}
         options={section.content.options as any}
       />
     );
