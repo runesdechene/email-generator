@@ -18,7 +18,8 @@ import {
   CustomCSSControl,
   BackgroundImageControl,
   DividerControl,
-  OverlayControl
+  OverlayControl,
+  ShapeControl
 } from '../ui/controls';
 import type { SectionPreset } from '../../types/supabase';
 
@@ -405,6 +406,83 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                 bottomDividerHeight={(selectedSection.content.options as any)?.bottomDividerHeight}
                 bottomDividerFlip={(selectedSection.content.options as any)?.bottomDividerFlip}
                 sectionId={selectedSection.id}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+          </>
+        )}
+
+        {sectionType?.name === 'Image' && (
+          <>
+            <AccordionSection title="Image" defaultOpen={true}>
+              <ImagePicker
+                value={(selectedSection.content.options as any)?.imageUrl || ''}
+                onChange={(url) => updateOption(['imageUrl'], url)}
+                sectionId={selectedSection.id}
+                label="Image de la section"
+              />
+              {(selectedSection.content.options as any)?.imageUrl && (
+                <div className="mt-4">
+                  <label className="block text-xs font-medium text-gray-500 mb-2">
+                    Taille de l'image
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="range"
+                      min="20"
+                      max="100"
+                      value={(selectedSection.content.options as any)?.imageSize ?? 100}
+                      onChange={(e) => updateOption(['imageSize'], parseInt(e.target.value))}
+                      className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#1E90FF]"
+                    />
+                    <div className="flex items-center gap-1">
+                      <input
+                        type="number"
+                        min="20"
+                        max="100"
+                        value={(selectedSection.content.options as any)?.imageSize ?? 100}
+                        onChange={(e) => updateOption(['imageSize'], parseInt(e.target.value) || 100)}
+                        className="w-16 bg-gray-50 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
+                      />
+                      <span className="text-xs text-gray-500">%</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">Largeur de l'image (20% à 100%)</p>
+                </div>
+              )}
+            </AccordionSection>
+
+            <AccordionSection title="Forme">
+              <ShapeControl
+                value={(selectedSection.content.options as any)?.clipPath || 'none'}
+                onChange={(value) => updateOption(['clipPath'], value)}
+                label="Forme de l'image (Clip-path)"
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Overlay">
+              <OverlayControl
+                value={(selectedSection.content.options as any)?.overlay || {}}
+                onChange={(value) => updateOption(['overlay'], value)}
+                label="Overlay sur l'image"
+              />
+            </AccordionSection>
+
+            <AccordionSection title="Padding">
+              <PaddingControl
+                paddingTop={(selectedSection.content.options as any)?.paddingTop}
+                paddingBottom={(selectedSection.content.options as any)?.paddingBottom}
+                paddingLeft={(selectedSection.content.options as any)?.paddingLeft}
+                paddingRight={(selectedSection.content.options as any)?.paddingRight}
+                useTemplatePaddingInline={(selectedSection.content.options as any)?.useTemplatePaddingInline}
+                useTemplatePaddingBlock={(selectedSection.content.options as any)?.useTemplatePaddingBlock}
+                onUpdate={updateOption}
+              />
+            </AccordionSection>
+
+            <AccordionSection title="CSS personnalisé">
+              <CustomCSSControl
+                customCSS={(selectedSection.content.options as any)?.customCSS}
                 onUpdate={updateOption}
               />
             </AccordionSection>

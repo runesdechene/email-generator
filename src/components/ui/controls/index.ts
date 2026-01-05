@@ -7,3 +7,4 @@ export { CustomCSSControl } from './CustomCSSControl';
 export { BackgroundImageControl } from './BackgroundImageControl';
 export { DividerControl } from './DividerControl';
 export { OverlayControl } from './OverlayControl';
+export { ShapeControl } from './ShapeControl';

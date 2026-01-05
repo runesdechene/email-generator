@@ -1,6 +1,7 @@
 import type { EmailSection } from '../../types';
 import { ParagraphSection } from '../../sections/ParagraphSection';
 import { HeroSection } from '../sections/HeroSection';
+import { ImageSection } from '../../sections/ImageSection/ImageSection';
 import { useSectionTemplates } from '../../hooks/useSupabase';
 import { AlertCircle } from 'lucide-react';
 
@@ -40,6 +41,16 @@ export function SectionRenderer({ section }: SectionRendererProps) {
   // Si le type de section est "Hero"
   if (sectionType?.name === 'Hero') {
     return <HeroSection section={section} />;
+  }
+
+  // Si le type de section est "Image"
+  if (sectionType?.name === 'Image') {
+    return (
+      <ImageSection
+        sectionId={section.id}
+        options={section.content.options as any}
+      />
+    );
   }
 
   // Fallback pour les sections non reconnues (seulement après le chargement)
