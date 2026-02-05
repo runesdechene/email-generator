@@ -1,4 +1,5 @@
 import { ImagePicker } from '../ImagePicker';
+import { BackgroundPositionPicker } from './BackgroundPositionPicker';
 
 interface BackgroundControlProps {
   backgroundEnabled?: boolean;
@@ -218,17 +219,11 @@ export function BackgroundControl({
                 <label className="block text-xs font-medium text-gray-700 mb-2">
                   Position
                 </label>
-                <select
+                <BackgroundPositionPicker
                   value={backgroundPosition}
-                  onChange={(e) => onUpdate(['backgroundPosition'], e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF]"
-                >
-                  <option value="center">Centre</option>
-                  <option value="top">Haut</option>
-                  <option value="bottom">Bas</option>
-                  <option value="left">Gauche</option>
-                  <option value="right">Droite</option>
-                </select>
+                  onChange={(pos) => onUpdate(['backgroundPosition'], pos)}
+                  previewImage={backgroundImageUrl}
+                />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-2">
