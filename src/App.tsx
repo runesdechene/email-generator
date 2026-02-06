@@ -25,10 +25,6 @@ function AppContent() {
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [selectedSectionsForExport, setSelectedSectionsForExport] = useState<Set<string>>(new Set());
   const [exportingMultiple, setExportingMultiple] = useState(false);
-  const [isSelecting, setIsSelecting] = useState(false);
-  const [selectionStart, setSelectionStart] = useState<{ x: number; y: number } | null>(null);
-  const [selectionEnd, setSelectionEnd] = useState<{ x: number; y: number } | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
   const [multiSelectMode, setMultiSelectMode] = useState(false);
   const sectionsRef = useRef<Map<string, HTMLDivElement>>(new Map());
   const toast = useToast();
@@ -38,93 +34,26 @@ function AppContent() {
   const { sectionTemplates } = useSectionTemplates();
   const { sections, selectedSectionId, currentTemplateId, addSection, selectSection } = useEmailStore();
   
-  // Gérer le début de la sélection
-  const handleMouseDown = (e: React.MouseEvent) => {
-    // N'activer la sélection que si le mode multi-sélection est activé
-    if (!multiSelectMode) return;
-    if (e.button !== 0 || e.ctrlKey || e.shiftKey || e.metaKey) return;
-    
-    e.preventDefault();
-    e.stopPropagation();
-    
-    setIsSelecting(true);
-    setSelectionStart({ x: e.clientX, y: e.clientY });
-    setSelectionEnd({ x: e.clientX, y: e.clientY });
-    setSelectedSectionsForExport(new Set());
-  };
-  
-  // Gérer le mouvement de la souris
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isSelecting || !selectionStart) return;
-    
-    // Détecter si c'est un vrai drag (mouvement > 5px)
-    const deltaX = Math.abs(e.clientX - selectionStart.x);
-    const deltaY = Math.abs(e.clientY - selectionStart.y);
-    if (deltaX > 5 || deltaY > 5) {
-      setIsDragging(true);
-    }
-    
-    e.preventDefault();
-    setSelectionEnd({ x: e.clientX, y: e.clientY });
-    
-    // Détecter les sections dans le cadre de sélection
-    const selectionRect = {
-      left: Math.min(selectionStart.x, e.clientX),
-      right: Math.max(selectionStart.x, e.clientX),
-      top: Math.min(selectionStart.y, e.clientY),
-      bottom: Math.max(selectionStart.y, e.clientY),
-    };
-    
-    const newSelectedSections = new Set<string>();
-    sections.forEach(section => {
-      const element = sectionsRef.current?.get(section.id);
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        if (
-          rect.left < selectionRect.right &&
-          rect.right > selectionRect.left &&
-          rect.top < selectionRect.bottom &&
-          rect.bottom > selectionRect.top
-        ) {
-          newSelectedSections.add(section.id);
-        }
+  // Toggle une section dans la sélection pour export
+  const toggleSectionForExport = (sectionId: string) => {
+    setSelectedSectionsForExport(prev => {
+      const next = new Set(prev);
+      if (next.has(sectionId)) {
+        next.delete(sectionId);
+      } else {
+        next.add(sectionId);
       }
+      return next;
     });
-    
-    setSelectedSectionsForExport(newSelectedSections);
   };
-  
-  // Gérer la fin de la sélection
-  const handleMouseUp = () => {
-    // Ne jamais vider la sélection automatiquement
-    // L'utilisateur doit désactiver le mode multi-sélection pour vider la sélection
-    
-    setIsSelecting(false);
-    setSelectionStart(null);
-    setSelectionEnd(null);
-    setIsDragging(false);
-  };
-  
-  // Calculer le style du cadre de sélection
-  const getSelectionBoxStyle = (): React.CSSProperties => {
-    if (!selectionStart || !selectionEnd || !isDragging) return { display: 'none' };
-    
-    const left = Math.min(selectionStart.x, selectionEnd.x);
-    const top = Math.min(selectionStart.y, selectionEnd.y);
-    const width = Math.abs(selectionEnd.x - selectionStart.x);
-    const height = Math.abs(selectionEnd.y - selectionStart.y);
-    
-    return {
-      position: 'fixed',
-      left: `${left}px`,
-      top: `${top}px`,
-      width: `${width}px`,
-      height: `${height}px`,
-      border: '2px dashed #FFA500',
-      backgroundColor: 'rgba(255, 165, 0, 0.1)',
-      pointerEvents: 'none',
-      zIndex: 1000,
-    };
+
+  // Sélectionner / désélectionner toutes les sections
+  const toggleSelectAll = () => {
+    if (selectedSectionsForExport.size === sections.length) {
+      setSelectedSectionsForExport(new Set());
+    } else {
+      setSelectedSectionsForExport(new Set(sections.map(s => s.id)));
+    }
   };
 
   const handleExportSelectedSections = async () => {
@@ -185,8 +114,8 @@ function AppContent() {
     try {
       setExportingMultiple(true);
       
-      // Toutes les sections triées par ordre
-      const sortedSectionIds = sections
+      // Toutes les sections triées par ordre (spread pour ne pas muter le state)
+      const sortedSectionIds = [...sections]
         .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
         .map(s => s.id);
       
@@ -332,28 +261,13 @@ function AppContent() {
           {/* 3. Zone centrale - flex 1, avec navbar en haut */}
           <div className="flex-1 flex flex-col bg-gray-50">
             <EditorNavbar />
-            <main 
-              className="flex-1 flex justify-center items-start overflow-y-auto p-8 relative"
-              {...(multiSelectMode ? {
-                onMouseDown: handleMouseDown,
-                onMouseMove: handleMouseMove,
-                onMouseUp: handleMouseUp,
-                onMouseLeave: handleMouseUp,
-                style: { userSelect: 'none' }
-              } : {})}
-            >
-              {/* Cadre de sélection visuel */}
-              {isSelecting && <div style={getSelectionBoxStyle()} />}
-              {/* Boutons en haut à gauche */}
-              <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
+            {/* Barre d'outils fixe au-dessus du contenu scrollable */}
+            {(selectedSectionId || sections.length > 1) && (
+              <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200 flex-shrink-0 flex-wrap">
                 {/* Bouton de visualisation */}
                 {selectedSectionId && (
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      selectSection(null);
-                    }}
-                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={() => selectSection(null)}
                     className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-blue-50 hover:border-[#1E90FF] transition-all"
                     title="Mode visualisation (désélectionner la section)"
                   >
@@ -365,19 +279,12 @@ function AppContent() {
                 {/* Bouton de sélection multiple */}
                 {sections.length > 1 && (
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
+                    onClick={() => {
                       setMultiSelectMode(!multiSelectMode);
                       if (multiSelectMode) {
-                        // Si on désactive le mode, nettoyer TOUS les états de sélection
                         setSelectedSectionsForExport(new Set());
-                        setIsSelecting(false);
-                        setSelectionStart(null);
-                        setSelectionEnd(null);
-                        setIsDragging(false);
                       }
                     }}
-                    onMouseDown={(e) => e.stopPropagation()}
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg shadow-sm transition-all ${
                       multiSelectMode
                         ? 'bg-[#FFA500] text-white border border-[#FFA500] hover:bg-[#FF8C00]'
@@ -387,7 +294,21 @@ function AppContent() {
                   >
                     <CheckSquare size={16} />
                     <span className="text-xs font-medium">
-                      {multiSelectMode ? 'Sélection active' : 'Sélectionner plusieurs'}
+                      {multiSelectMode ? `${selectedSectionsForExport.size} sélectionnée(s)` : 'Sélectionner plusieurs'}
+                    </span>
+                  </button>
+                )}
+
+                {/* Bouton tout sélectionner */}
+                {multiSelectMode && (
+                  <button
+                    onClick={() => toggleSelectAll()}
+                    className="flex items-center gap-2 px-3 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg shadow-sm hover:bg-blue-50 hover:border-[#1E90FF] transition-all"
+                    title={selectedSectionsForExport.size === sections.length ? 'Tout désélectionner' : 'Tout sélectionner'}
+                  >
+                    <CheckSquare size={16} />
+                    <span className="text-xs font-medium">
+                      {selectedSectionsForExport.size === sections.length ? 'Tout désélectionner' : 'Tout sélectionner'}
                     </span>
                   </button>
                 )}
@@ -396,12 +317,7 @@ function AppContent() {
                 {(selectedSectionsForExport.size > 1 || exportingMultiple) && (
                   <>
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleExportSelectedSections();
-                      }}
-                      onMouseDown={(e) => e.stopPropagation()}
-                      onMouseUp={(e) => e.stopPropagation()}
+                      onClick={() => handleExportSelectedSections()}
                       disabled={exportingMultiple}
                       className="flex items-center gap-2 px-3 py-2 bg-[#1E90FF] text-white rounded-lg shadow-md hover:bg-[#0066CC] hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-wait"
                       title={`Exporter ${selectedSectionsForExport.size} sections en 1 JPG`}
@@ -420,12 +336,7 @@ function AppContent() {
                     </button>
                     
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleExportSeparateSections();
-                      }}
-                      onMouseDown={(e) => e.stopPropagation()}
-                      onMouseUp={(e) => e.stopPropagation()}
+                      onClick={() => handleExportSeparateSections()}
                       disabled={exportingMultiple}
                       className="flex items-center gap-2 px-3 py-2 bg-[#FFA500] text-white rounded-lg shadow-md hover:bg-[#FF8C00] hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-wait"
                       title={`Exporter ${selectedSectionsForExport.size} sections en ${selectedSectionsForExport.size} JPG`}
@@ -445,10 +356,16 @@ function AppContent() {
                   </>
                 )}
               </div>
-              
+            )}
+
+            <main 
+              className="flex-1 flex justify-center items-start overflow-y-auto p-8"
+            >
               <EmailPreview 
                 sectionsRef={sectionsRef}
                 selectedSections={selectedSectionsForExport}
+                multiSelectMode={multiSelectMode}
+                onToggleSection={toggleSectionForExport}
               />
             </main>
           </div>

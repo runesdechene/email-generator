@@ -1,14 +1,17 @@
 import { useEmailStore } from '../../store/emailStore';
 import { useTemplates } from '../../hooks/useSupabase';
 import { SectionRenderer } from './SectionRenderer';
+import { Check } from 'lucide-react';
 import './EmailPreview.css';
 
 interface EmailPreviewProps {
   sectionsRef: React.RefObject<Map<string, HTMLDivElement> | null>;
   selectedSections: Set<string>;
+  multiSelectMode?: boolean;
+  onToggleSection?: (sectionId: string) => void;
 }
 
-export function EmailPreview({ sectionsRef, selectedSections }: EmailPreviewProps) {
+export function EmailPreview({ sectionsRef, selectedSections, multiSelectMode, onToggleSection }: EmailPreviewProps) {
   const { sections, selectedSectionId, selectSection, currentTemplateId } = useEmailStore();
   const { templates } = useTemplates();
 
@@ -84,8 +87,14 @@ export function EmailPreview({ sectionsRef, selectedSections }: EmailPreviewProp
                   sectionsRef.current.set(section.id, el);
                 }
               }}
-              onClick={() => selectSection(section.id)}
-              className={`cursor-pointer transition-all ${
+              onClick={() => {
+                if (multiSelectMode && onToggleSection) {
+                  onToggleSection(section.id);
+                } else {
+                  selectSection(section.id);
+                }
+              }}
+              className={`cursor-pointer transition-all relative ${
                 selectedSections.has(section.id)
                   ? 'ring-4 ring-[#FFA500]'
                   : selectedSectionId === section.id
@@ -93,6 +102,27 @@ export function EmailPreview({ sectionsRef, selectedSections }: EmailPreviewProp
                   : 'hover:ring-2 hover:ring-[#00BFFF]'
               }`}
             >
+              {/* Checkbox en mode multi-sélection */}
+              {multiSelectMode && (
+                <div
+                  data-export-ignore
+                  className="absolute top-3 right-3 z-10 export-ignore"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleSection?.(section.id);
+                  }}
+                >
+                  <div
+                    className={`w-7 h-7 rounded-md border-2 flex items-center justify-center cursor-pointer transition-all shadow-md ${
+                      selectedSections.has(section.id)
+                        ? 'bg-[#FFA500] border-[#FFA500] text-white'
+                        : 'bg-white/90 border-gray-300 hover:border-[#FFA500]'
+                    }`}
+                  >
+                    {selectedSections.has(section.id) && <Check size={16} strokeWidth={3} />}
+                  </div>
+                </div>
+              )}
               <SectionRenderer section={section} />
             </div>
           ))

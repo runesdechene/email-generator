@@ -4,7 +4,7 @@ interface ExportMultipleSectionsOptions {
   sectionIds: string[];
   sectionsRef: Map<string, HTMLDivElement>;
   backgroundImageUrl?: string;
-  backgroundSize?: 'cover' | 'repeat';
+  backgroundSize?: string;
   fileName: string;
 }
 
@@ -115,6 +115,9 @@ export async function exportMultipleSections({
         quality: 0.95,
         pixelRatio,
         cacheBust: true,
+        filter: (node: HTMLElement) => {
+          return !node.hasAttribute?.('data-export-ignore');
+        },
       });
       
       // Restaurer le style original

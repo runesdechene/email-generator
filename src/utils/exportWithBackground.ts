@@ -24,6 +24,9 @@ export async function exportSectionWithBackground({
     const dataUrl = await toJpeg(element, {
       quality: 0.95,
       pixelRatio,
+      filter: (node: HTMLElement) => {
+        return !node.hasAttribute?.('data-export-ignore');
+      },
     });
     downloadImage(dataUrl, fileName);
     return;
@@ -71,6 +74,9 @@ export async function exportSectionWithBackground({
       quality: 0.95,
       pixelRatio,
       cacheBust: true,
+      filter: (node: HTMLElement) => {
+        return !node.hasAttribute?.('data-export-ignore');
+      },
     });
     
     // 6. Restaurer le style original
