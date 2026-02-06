@@ -11,9 +11,12 @@ interface ExportMultipleSectionsOptions {
 function loadImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.crossOrigin = 'anonymous';
+    // Ne pas mettre crossOrigin pour les data URLs
+    if (!url.startsWith('data:')) {
+      img.crossOrigin = 'anonymous';
+    }
     img.onload = () => resolve(img);
-    img.onerror = reject;
+    img.onerror = () => reject(new Error(`Impossible de charger l'image: ${url.substring(0, 100)}`));
     img.src = url;
   });
 }
@@ -86,7 +89,7 @@ export async function exportMultipleSections({
       }
     }
 
-    // 5. Exporter chaque section AVEC LA MÊME MÉTHODE que l'export individuel
+    // 5. Exporter chaque section
     let currentY = 0;
     
     for (let i = 0; i < elements.length; i++) {
@@ -98,36 +101,66 @@ export async function exportMultipleSections({
       // Sauvegarder le style original
       const originalStyle = element.style.cssText;
       
-      // Appliquer le background directement sur l'élément (comme dans exportSectionWithBackground)
-      if (backgroundImageUrl) {
-        element.style.transition = 'none';
-        element.style.backgroundImage = `url(${backgroundImageUrl})`;
-        element.style.backgroundRepeat = 'repeat-y';
-        element.style.backgroundSize = backgroundSize === 'cover' ? 'cover' : '100% auto';
-        element.style.backgroundPosition = `center -${currentY}px`;
+      try {
+        // Appliquer le background directement sur l'élément
+        if (backgroundImageUrl) {
+          element.style.transition = 'none';
+          element.style.backgroundImage = `url(${backgroundImageUrl})`;
+          element.style.backgroundRepeat = 'repeat-y';
+          element.style.backgroundSize = backgroundSize === 'cover' ? 'cover' : '100% auto';
+          element.style.backgroundPosition = `center -${currentY}px`;
+        }
+        
+        // Attendre que le background soit chargé
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Exporter la section en image
+        const sectionDataUrl = await toJpeg(element, {
+          quality: 0.95,
+          pixelRatio,
+          cacheBust: true,
+          skipFonts: true,
+          filter: (node: Element) => {
+            if (node instanceof HTMLElement) {
+              return !node.hasAttribute('data-export-ignore');
+            }
+            return true;
+          },
+        });
+        
+        // Restaurer le style original
+        element.style.cssText = originalStyle;
+        
+        // Charger l'image de la section et dessiner sur le canvas
+        const sectionImg = await loadImage(sectionDataUrl);
+        ctx.drawImage(sectionImg, 0, currentY, width, height);
+      } catch (sectionError) {
+        console.warn(`Erreur export section ${i + 1}, tentative sans cacheBust...`, sectionError);
+        // Restaurer le style original dans tous les cas
+        element.style.cssText = originalStyle;
+        
+        // Retry sans cacheBust (évite les problèmes d'images cassées)
+        try {
+          const fallbackDataUrl = await toJpeg(element, {
+            quality: 0.95,
+            pixelRatio,
+            skipFonts: true,
+            filter: (node: Element) => {
+              if (node instanceof HTMLElement) {
+                return !node.hasAttribute('data-export-ignore');
+              }
+              return true;
+            },
+          });
+          const fallbackImg = await loadImage(fallbackDataUrl);
+          ctx.drawImage(fallbackImg, 0, currentY, width, height);
+        } catch (fallbackError) {
+          console.warn(`Section ${i + 1} ignorée dans l'export (images inaccessibles)`, fallbackError);
+          // Dessiner un rectangle blanc en fallback
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, currentY, width, height);
+        }
       }
-      
-      // Attendre que le background soit chargé
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Exporter la section EXACTEMENT comme dans exportSectionWithBackground
-      const sectionDataUrl = await toJpeg(element, {
-        quality: 0.95,
-        pixelRatio,
-        cacheBust: true,
-        filter: (node: HTMLElement) => {
-          return !node.hasAttribute?.('data-export-ignore');
-        },
-      });
-      
-      // Restaurer le style original
-      element.style.cssText = originalStyle;
-      
-      // Charger l'image de la section
-      const sectionImg = await loadImage(sectionDataUrl);
-      
-      // Dessiner la section sur le canvas
-      ctx.drawImage(sectionImg, 0, currentY, width, height);
       
       currentY += height;
     }
@@ -141,6 +174,10 @@ export async function exportMultipleSections({
     console.log('Export multi-sections terminé avec succès');
   } catch (error) {
     console.error('Erreur lors de l\'export multi-sections:', error);
+    if (error instanceof Error) {
+      console.error('Message:', error.message);
+      console.error('Stack:', error.stack);
+    }
     throw error;
   }
 }
