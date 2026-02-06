@@ -314,7 +314,7 @@ function AppContent() {
                 )}
                 
                 {/* Boutons d'export multi-sections */}
-                {(selectedSectionsForExport.size > 1 || exportingMultiple) && (
+                {(selectedSectionsForExport.size >= 1 || exportingMultiple) && (
                   <>
                     <button
                       onClick={() => handleExportSelectedSections()}
