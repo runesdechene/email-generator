@@ -36,15 +36,31 @@ export async function exportMultipleSections({
 
   try {
     // 1. Récupérer tous les éléments des sections à exporter
-    const elements = sectionIds
-      .map(id => sectionsRef.get(id))
-      .filter((el): el is HTMLDivElement => el !== undefined);
+    // Si des refs manquent, tenter de les retrouver via data-section-id
+    const elements: HTMLDivElement[] = [];
+    for (const id of sectionIds) {
+      let el = sectionsRef.get(id);
+      if (!el || !el.isConnected) {
+        // Fallback: chercher dans le DOM par data-section-id
+        const found = document.querySelector(`[data-section-id="${id}"]`) as HTMLDivElement | null;
+        if (found) {
+          el = found;
+          sectionsRef.set(id, found); // Mettre à jour la ref
+          console.log(`Section ${id} retrouvée via DOM query`);
+        }
+      }
+      if (el) {
+        elements.push(el);
+      } else {
+        console.warn(`Section ${id} introuvable dans le DOM`);
+      }
+    }
 
     if (elements.length === 0) {
       throw new Error('Aucune section à exporter');
     }
 
-    console.log(`Export de ${elements.length} section(s)`);
+    console.log(`Export de ${elements.length}/${sectionIds.length} section(s)`);
 
     // 2. Calculer dimensions
     const width = elements[0].offsetWidth;
@@ -119,7 +135,7 @@ export async function exportMultipleSections({
           quality: 0.95,
           pixelRatio,
           cacheBust: true,
-          skipFonts: true,
+          includeQueryParams: true,
           filter: (node: Element) => {
             if (node instanceof HTMLElement) {
               return !node.hasAttribute('data-export-ignore');
@@ -144,7 +160,6 @@ export async function exportMultipleSections({
           const fallbackDataUrl = await toJpeg(element, {
             quality: 0.95,
             pixelRatio,
-            skipFonts: true,
             filter: (node: Element) => {
               if (node instanceof HTMLElement) {
                 return !node.hasAttribute('data-export-ignore');

@@ -24,8 +24,11 @@ export async function exportSectionWithBackground({
     const dataUrl = await toJpeg(element, {
       quality: 0.95,
       pixelRatio,
-      filter: (node: HTMLElement) => {
-        return !node.hasAttribute?.('data-export-ignore');
+      filter: (node: Element) => {
+        if (node instanceof HTMLElement) {
+          return !node.hasAttribute('data-export-ignore');
+        }
+        return true;
       },
     });
     downloadImage(dataUrl, fileName);
@@ -74,8 +77,11 @@ export async function exportSectionWithBackground({
       quality: 0.95,
       pixelRatio,
       cacheBust: true,
-      filter: (node: HTMLElement) => {
-        return !node.hasAttribute?.('data-export-ignore');
+      filter: (node: Element) => {
+        if (node instanceof HTMLElement) {
+          return !node.hasAttribute('data-export-ignore');
+        }
+        return true;
       },
     });
     
