@@ -62,11 +62,16 @@ export function EmailPreview({ sectionsRef, selectedSections, multiSelectMode, o
       )}
       
       <div 
-        className={`bg-white rounded-lg shadow-2xl ${backgroundImage ? 'email-preview-container' : ''}`}
-        style={backgroundImage ? {
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: backgroundSize === 'cover' ? 'cover' : '100% auto',
-        } : undefined}
+        className="bg-white rounded-lg shadow-2xl email-preview-container"
+        style={{
+          ...(backgroundImage ? {
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize: backgroundSize === 'cover' ? 'cover' : '100% auto',
+          } : {}),
+          ...(currentTemplate?.backgroundColor ? {
+            backgroundColor: currentTemplate.backgroundColor,
+          } : {}),
+        }}
       >
         {sortedSections.length === 0 ? (
           <div className="h-96 flex items-center justify-center bg-gray-50">

@@ -5,6 +5,7 @@ interface ExportMultipleSectionsOptions {
   sectionsRef: Map<string, HTMLDivElement>;
   backgroundImageUrl?: string;
   backgroundSize?: string;
+  backgroundColor?: string;
   fileName: string;
 }
 
@@ -30,6 +31,7 @@ export async function exportMultipleSections({
   sectionsRef,
   backgroundImageUrl,
   backgroundSize = 'cover',
+  backgroundColor,
   fileName,
 }: ExportMultipleSectionsOptions): Promise<void> {
   const pixelRatio = 2;
@@ -87,7 +89,13 @@ export async function exportMultipleSections({
 
     ctx.scale(pixelRatio, pixelRatio);
 
-    // 4. Dessiner le background si présent
+    // 4a. Dessiner la couleur de fond si présente
+    if (backgroundColor) {
+      ctx.fillStyle = backgroundColor;
+      ctx.fillRect(0, 0, width, totalHeight);
+    }
+
+    // 4b. Dessiner le background image si présent
     if (backgroundImageUrl) {
       try {
         const bgImg = await loadImage(backgroundImageUrl);

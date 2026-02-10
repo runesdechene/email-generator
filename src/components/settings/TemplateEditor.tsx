@@ -19,6 +19,7 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
     description: template.description || '',
     backgroundImage: template.backgroundImage || '',
     backgroundSize: template.backgroundSize || 'cover',
+    backgroundColor: template.backgroundColor || '',
     fonts: template.fonts,
     colors: template.colors,
     customColors: template.customColors || [],
@@ -239,6 +240,40 @@ export function TemplateEditor({ template, onSave, onBack }: TemplateEditorProps
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+
+          {/* Couleur de fond */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Couleur de fond</h3>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  value={formData.backgroundColor || '#ffffff'}
+                  onChange={(e) => setFormData({ ...formData, backgroundColor: e.target.value })}
+                  className="w-10 h-10 rounded cursor-pointer border border-gray-300"
+                />
+                <input
+                  type="text"
+                  value={formData.backgroundColor}
+                  onChange={(e) => setFormData({ ...formData, backgroundColor: e.target.value })}
+                  className="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1E90FF] focus:ring-1 focus:ring-[#1E90FF] text-sm"
+                  placeholder="#ffffff"
+                />
+              </div>
+              {formData.backgroundColor && (
+                <button
+                  onClick={() => setFormData({ ...formData, backgroundColor: '' })}
+                  className="px-3 py-2 text-sm bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all flex items-center gap-1"
+                >
+                  <X size={14} />
+                  Supprimer
+                </button>
+              )}
+              <p className="text-xs text-gray-500">
+                Couleur d'arrière-plan de l'email (visible si pas d'image de fond)
+              </p>
             </div>
           </div>
 

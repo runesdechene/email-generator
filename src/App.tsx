@@ -87,6 +87,7 @@ function AppContent() {
       const currentTemplate = templates.find(t => t.id === currentTemplateId);
       const backgroundImageUrl = currentTemplate?.backgroundImage;
       const backgroundSize = currentTemplate?.backgroundSize || 'cover';
+      const backgroundColor = currentTemplate?.backgroundColor;
       
       const fileName = `export-${sectionsCount}-sections-${Date.now()}.jpg`;
       
@@ -95,6 +96,7 @@ function AppContent() {
         sectionsRef: sectionsRef.current,
         backgroundImageUrl,
         backgroundSize,
+        backgroundColor,
         fileName,
       });
       
@@ -122,6 +124,7 @@ function AppContent() {
       const currentTemplate = templates.find(t => t.id === currentTemplateId);
       const backgroundImageUrl = currentTemplate?.backgroundImage;
       const backgroundSize = currentTemplate?.backgroundSize || 'cover';
+      const backgroundColor = currentTemplate?.backgroundColor;
       
       const fileName = `export-all-${sections.length}-sections-${Date.now()}.jpg`;
       
@@ -130,6 +133,7 @@ function AppContent() {
         sectionsRef: sectionsRef.current,
         backgroundImageUrl,
         backgroundSize,
+        backgroundColor,
         fileName,
       });
       

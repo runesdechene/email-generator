@@ -13,6 +13,7 @@ function templateFromSupabase(data: TemplateData): GlobalStyleTemplate {
     description: data.description || undefined,
     backgroundImage: data.background_image || undefined,
     backgroundSize: (data.background_size as 'cover' | 'repeat') || undefined,
+    backgroundColor: data.background_color || undefined,
     fonts: data.fonts,
     colors: data.colors,
     customColors: data.custom_colors || undefined,
@@ -33,6 +34,7 @@ function templateToSupabase(template: Omit<GlobalStyleTemplate, 'id' | 'createdA
     description: template.description || null,
     background_image: template.backgroundImage || null,
     background_size: template.backgroundSize || null,
+    background_color: template.backgroundColor || null,
     fonts: template.fonts,
     colors: template.colors,
     custom_colors: template.customColors || null,
@@ -134,6 +136,7 @@ export function useTemplates() {
       if (updates.description !== undefined) supabaseUpdates.description = updates.description || null;
       if (updates.backgroundImage !== undefined) supabaseUpdates.background_image = updates.backgroundImage || null;
       if (updates.backgroundSize !== undefined) supabaseUpdates.background_size = updates.backgroundSize || null;
+      if (updates.backgroundColor !== undefined) supabaseUpdates.background_color = updates.backgroundColor || null;
       if (updates.fonts !== undefined) supabaseUpdates.fonts = updates.fonts;
       if (updates.colors !== undefined) supabaseUpdates.colors = updates.colors;
       if (updates.customColors !== undefined) supabaseUpdates.custom_colors = updates.customColors || null;
