@@ -4,6 +4,7 @@ interface ExportOptions {
   element: HTMLElement;
   backgroundImageUrl?: string;
   backgroundSize?: 'cover' | 'repeat';
+  backgroundColor?: string;
   fileName: string;
 }
 
@@ -15,6 +16,7 @@ export async function exportSectionWithBackground({
   element,
   backgroundImageUrl,
   backgroundSize = 'cover',
+  backgroundColor,
   fileName,
 }: ExportOptions): Promise<void> {
   const pixelRatio = 2;
@@ -24,6 +26,7 @@ export async function exportSectionWithBackground({
     const dataUrl = await toJpeg(element, {
       quality: 0.95,
       pixelRatio,
+      backgroundColor: backgroundColor || '#ffffff',
       filter: (node: Element) => {
         if (node instanceof HTMLElement) {
           return !node.hasAttribute('data-export-ignore');
@@ -76,6 +79,7 @@ export async function exportSectionWithBackground({
     const dataUrl = await toJpeg(element, {
       quality: 0.95,
       pixelRatio,
+      backgroundColor: backgroundColor || '#ffffff',
       cacheBust: true,
       filter: (node: Element) => {
         if (node instanceof HTMLElement) {
@@ -98,6 +102,7 @@ export async function exportSectionWithBackground({
     const dataUrl = await toJpeg(element, {
       quality: 0.95,
       pixelRatio,
+      backgroundColor: backgroundColor || '#ffffff',
     });
     downloadImage(dataUrl, fileName);
   }

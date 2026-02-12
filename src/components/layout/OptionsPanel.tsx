@@ -1220,6 +1220,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
               const currentTemplate = templates.find(t => t.id === currentTemplateId);
               const backgroundImageUrl = currentTemplate?.backgroundImage;
               const backgroundSize = currentTemplate?.backgroundSize || 'cover';
+              const backgroundColor = currentTemplate?.backgroundColor;
               
               const fileName = `${selectedSection.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()}-section-${selectedSection.order + 1}.jpg`;
               
@@ -1227,6 +1228,7 @@ export function OptionsPanel({ sectionsRef }: OptionsPanelProps) {
                 element,
                 backgroundImageUrl,
                 backgroundSize,
+                backgroundColor,
                 fileName,
               });
               

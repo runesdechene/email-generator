@@ -89,11 +89,9 @@ export async function exportMultipleSections({
 
     ctx.scale(pixelRatio, pixelRatio);
 
-    // 4a. Dessiner la couleur de fond si présente
-    if (backgroundColor) {
-      ctx.fillStyle = backgroundColor;
-      ctx.fillRect(0, 0, width, totalHeight);
-    }
+    // 4a. Remplir le fond (blanc par défaut pour JPEG, puis couleur choisie)
+    ctx.fillStyle = backgroundColor || '#ffffff';
+    ctx.fillRect(0, 0, width, totalHeight);
 
     // 4b. Dessiner le background image si présent
     if (backgroundImageUrl) {
@@ -142,6 +140,7 @@ export async function exportMultipleSections({
         const sectionDataUrl = await toJpeg(element, {
           quality: 0.95,
           pixelRatio,
+          backgroundColor: backgroundColor || '#ffffff',
           cacheBust: true,
           includeQueryParams: true,
           filter: (node: Element) => {
@@ -168,6 +167,7 @@ export async function exportMultipleSections({
           const fallbackDataUrl = await toJpeg(element, {
             quality: 0.95,
             pixelRatio,
+            backgroundColor: backgroundColor || '#ffffff',
             filter: (node: Element) => {
               if (node instanceof HTMLElement) {
                 return !node.hasAttribute('data-export-ignore');

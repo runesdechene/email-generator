@@ -164,6 +164,7 @@ function AppContent() {
       const currentTemplate = templates.find(t => t.id === currentTemplateId);
       const backgroundImageUrl = currentTemplate?.backgroundImage;
       const backgroundSize = currentTemplate?.backgroundSize || 'cover';
+      const backgroundColor = currentTemplate?.backgroundColor;
       
       console.log(`Début export de ${sortedSectionIds.length} sections séparées`);
       
@@ -186,6 +187,7 @@ function AppContent() {
               element,
               backgroundImageUrl,
               backgroundSize,
+              backgroundColor,
               fileName,
             });
             
